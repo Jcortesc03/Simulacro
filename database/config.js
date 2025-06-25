@@ -1,13 +1,20 @@
-import Database from 'better-sqlite3';
+import mysql from 'mysql2';
+import dotenv from 'dotenv';
 
-const db = new Database('../database/database.db');
+dotenv.config();
 
-db.prepare(`
-    CREATE TABLE IF NOT EXISTS users(
-    name VARCHAR(50) NOT NULL,
-    password VARCHAR(50) NOT NULL,
-    rol TEXT CHECK(rol IN('user', 'admin', 'teacher'))
-    )
-    `).run();
+const connection = mysql.createConnection({
+    host: process.env.localhost || 'localhost',
+    user: process.env.user || 'root',
+    password: process.env.password || '',
+    database: process.env.database || 'simulacro',
+});
 
-
+connection.connect(err => {
+    if(err){
+        console.error(`Hubo un error ${err}`);
+        return;
+    }
+    console.log('Conexión exitosa');
+    
+})
