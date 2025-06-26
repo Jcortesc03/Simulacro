@@ -3,11 +3,13 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+console.log(process.env.host);
+
 const connection = mysql.createConnection({
-    host: process.env.localhost || 'localhost',
-    user: process.env.user || 'root',
-    password: process.env.password || '',
-    database: process.env.database || 'simulacro',
+    host: process.env.HOST || 'localhost',
+    user: process.env.USER || 'root',
+    password: process.env.PASSWORD || '',
+    database: process.env.DATABASE || 'simulacro',
 });
 
 connection.connect(err => {
@@ -17,4 +19,4 @@ connection.connect(err => {
     }
     console.log('Conexión exitosa');
     
-})
+});
