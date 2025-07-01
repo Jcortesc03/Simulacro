@@ -1,12 +1,13 @@
 import bcrypt from 'bcrypt';
+import db from '../models/interaction.js'
 
 //Constante de prueba
 
 const loginUser = () => {
-    const {user, password} = req.body;
+    const {name, password} = req.body;
     const dbPassword = undefined; //Toca poner toda la lógica de la DB.
+    const user = db.getUser(name);
     const isMatch = bcrypt.compare(password, dbPassword);
-
 }
 
 const registerUser = (req, res) => {
@@ -21,12 +22,8 @@ const registerUser = (req, res) => {
         const hash = await bcrypt.hash(password, saltRounds);
         console.log(hash);
         
-        //deshasheada de prueba
-        const isMatch = await bcrypt.compare(password, hash);
-        console.log(isMatch);
-        
         //poner lógica para guardar en db
-
+        db.saveUser(name, hash);
 
     } 
     hashPassword();

@@ -1,22 +1,16 @@
-import mysql from 'mysql2';
+import mysql from 'mysql2/promise';
 import dotenv from 'dotenv';
 
-dotenv.config();
+dotenv.config({path: '../.env'}); //for the relative route
 
-console.log(process.env.host);
+console.log(process.env.HOST);
 
-const connection = mysql.createConnection({
+const connection = await mysql.createConnection({
     host: process.env.HOST || 'localhost',
     user: process.env.USER || 'root',
     password: process.env.PASSWORD || '',
     database: process.env.DATABASE || 'simulacro',
 });
 
-connection.connect(err => {
-    if(err){
-        console.error(`Hubo un error ${err}`);
-        return;
-    }
-    console.log('Conexión exitosa');
-    
-});
+
+export default connection;
