@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt';
-import db from '../models/interaction.js'
+import db from '../database/usersAuth.js';
 
 //Constante de prueba
 

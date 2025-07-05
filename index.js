@@ -11,7 +11,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use('/users', userRouter);
+app.use('/auth', userRouter);
 
 app.listen(port, () => {
     console.log(`Servidor corriendo en: http://localhost:${port}`);
