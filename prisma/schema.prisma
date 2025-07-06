@@ -133,6 +133,7 @@ model users {
   email               String                @unique(map: "email") @db.VarChar(100)
   password_hash       String                @db.VarChar(255)
   registration_date   DateTime?             @default(now()) @db.DateTime(0)
+  verificated         Boolean?              @default(false)
   simulation_attempts simulation_attempts[]
   roles               roles                 @relation(fields: [role_id], references: [role_id], onDelete: NoAction, onUpdate: NoAction, map: "users_ibfk_1")
   programs            programs?             @relation(fields: [program_id], references: [program_id], onDelete: NoAction, onUpdate: NoAction, map: "users_ibfk_2")

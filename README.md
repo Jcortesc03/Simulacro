@@ -1,7 +1,7 @@
 # Simulacro
 
 
-npm i mysql2 express cors dotenv uuid prisma 
+npm i mysql2 express cors dotenv uuid prisma nodemailer
 
 npx prisma init
 

@@ -1,7 +1,9 @@
 import bcrypt from 'bcrypt';
 import db from '../database/usersAuth.js';
-
-//Constante de prueba
+import generateToken from '../utils/generateToken.js';
+import sendVerificationEmail from '../services/emailService.js';
+import id from '../utils/uuid.js';
+import jwt from 'jsonwebtoken';
 
 const loginUser = async (req, res) => {
     try{
@@ -11,36 +13,50 @@ const loginUser = async (req, res) => {
     const isMatch = await bcrypt.compare(password, dbPassword);
     console.log(isMatch);
     
+    
+    
 }
     catch(err){
         throw new Error(`Hubo un error ${err}`);
     }
 };
 
-const registerUser = (req, res) => {
+const registerUser = async (req, res) => {
     try {
-    const { password, name } = req.body;
-    const contraPrueba = undefined;
-    console.log(name, password);
+    const { password, name, programId, email } = req.body;
 
     const saltRounds = 10;
+    const hash = await bcrypt.hash(password, saltRounds);
 
-    const hashPassword = async () => {
-        //Hashear la info
-        const hash = await bcrypt.hash(password, saltRounds);
-        console.log(hash);
-        
-        //poner lógica para guardar en db
-        db.saveUser(name, hash);
+    const token = generateToken(id);
 
-    } 
-    hashPassword();
-    res.status(201).send(`Usuario ${name} creado con éxito`);
+    await db.saveUser(id, name, hash, programId, email);
+    await sendVerificationEmail(email, token);
+    
+    res.status(201).send(`Usuario ${name} creado con éxito, por favor verifique su correo`);
 }catch(err){
     throw new Error(`Hubo un error: ${err}`);
 }
-    
 
 };
+
+const verifyEmail = async (req, res) => {
+    const {token} = req.params;
+    try{
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await db.getUser(decoded.id);
+
+        if(!user)
+            return res.status(400).send(`error: Usuario no existente`);
+        if(user.verificated)
+            return res.status(400).send(`Usuario ya verificado`);
+        
+        user.verificated = true;
+
+    }
+    catch(err){
+        console.log(`Hubo un error ${err}`);
+    }
+}
 
 export default { registerUser, loginUser };
