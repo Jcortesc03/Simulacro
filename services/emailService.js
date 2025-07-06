@@ -14,7 +14,7 @@ const transporter = nodemailer.createTransport({
 });
 
 const sendVerificationEmail = async (email, token) => {
-    const link = `http://localhost:${process.env.PORT}/auth/verify/${token}`;
+    const link = `${process.env.NGROOK_DOMAIN}/auth/verify/${token}`;
 
     await transporter.sendMail({
         from: `Prueba <${process.env.CORREO_EMISOR}>`,

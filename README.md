@@ -1,7 +1,7 @@
 # Simulacro
 
 
-npm i mysql2 express cors dotenv uuid prisma nodemailer
+npm i mysql2 express cors dotenv uuid prisma nodemailer jsonwebtoken
 
 npx prisma init
 
@@ -12,3 +12,5 @@ npx prisma migrate dev --name nombre //esto es para generar las migraciones, bus
 npx prisma db pull //Esto es para copiar la estructura de MYSQL al prisma como migración.
 
 npx prisma reset //Eliminar todos los datos de las migraciones
+
+Para usar ngrook, lo instalas, sigues los pasos del setup y ejecutas: ngrok http PORT(Generalmente el 3000)

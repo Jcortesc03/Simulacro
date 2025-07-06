@@ -9,7 +9,7 @@ const saveUser = async (id, name, password, programId, email) => {
 
 const getUser = async (email) => {
     const [ rows ] = await db.query(
-        `SELECT * from users where email = (?)`, email
+        `SELECT * from users where email = (?)`, [email]
     )
     if (rows.length === 0)
         return null;
@@ -17,8 +17,10 @@ const getUser = async (email) => {
     return rows[0];
 };
 
-const existingUser = async (email) => {
+const verifyUser = async (email) => {
+    await db.query(
+        `UPDATE users SET verificated = TRUE where email = ?`, [email]
+    )
+};
 
-}
-
-export default { saveUser, getUser };
+export default { saveUser, getUser, verifyUser };

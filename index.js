@@ -14,6 +14,6 @@ app.use(express.json());
 app.use('/auth', userRouter);
 
 app.listen(port, () => {
-    console.log(`Servidor corriendo en: http://localhost:${port}`);
+    console.log(`Servidor corriendo en: ${process.env.NGROOK_DOMAIN}`); //o http://localhost:${port}
 });
 
