@@ -23,7 +23,6 @@ const loginUser = async (req, res) => {
 
     const dbPassword = user.password_hash; //Toca poner toda la lógica de la DB.
     const isMatch = await bcrypt.compare(password, dbPassword);
-    console.log(isMatch);
     
     if(isMatch)
         return res.status(200).send('Usuario loggeado con exito');
@@ -45,7 +44,6 @@ const registerUser = async (req, res) => {
     const generatedId = id();
 
     const token = generateToken(email);
-    console.log(email);
 
     await db.saveUser(generatedId, name, hash, programId, email);
     await sendVerificationEmail(email, token);

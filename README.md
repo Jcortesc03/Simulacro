@@ -1,7 +1,7 @@
 # Simulacro
 
 
-npm i mysql2 express cors dotenv uuid prisma nodemailer jsonwebtoken
+npm i mysql2 express cors dotenv uuid prisma nodemailer jsonwebtoken @google/generative-ai
 
 npx prisma init
 
