@@ -44,17 +44,23 @@ const questionsMap = new Map();
 };
 
 const saveQuestion = async (questionId, subCategoryId, statement, questionType, imagePath, creationDate,
-    aiGenerated, difficulty, justification, status) => {
+    aiGenerated, difficulty, justification, status, optionId, optionText, isCorrect) => {
     //La estructura es question_id, sub_category_id, statement, question_type, image_path,
     //creation_date, ai_generated, difficulty,  justification, status.
     //La tabla de preguntas se llama questions
     
     db.query(`
     INSERT INTO questions(question_id, sub_category_id, statement, question_type, image_path, creation_date,
-    ai_generated, difficulty, justification, status)`), 
+    ai_generated, difficulty, justification, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`), 
     [questionId, subCategoryId, statement, questionType, imagePath, creationDate, aiGenerated, difficulty, 
     justification, status];
+    
+    //la tabla se llama answer_options
+    //La estructura es: option_id(uuid), question_id(uuid), option_text, is_correct(boolean)
 
+    db.query(` 
+    INSERT INTO answer_options(option_id, question_id, option_text, is_correct) VALUES (?, ?, ?, ?)`,
+    [optionId, questionId, optionText, isCorrect]);
     
 }
 
