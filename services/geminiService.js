@@ -33,4 +33,28 @@ const generateQuestion = async (topic, subtopic, difficulty, pastQuestions, ques
   return response;
 };
 
-export default generateQuestion;
+const evaluateQuestion = async (subject, question, answer) =>  {
+  const model = genAI.getGenerativeModel({ model: "gemini-2.5-pro" });
+
+  const prompt = `Eres una IA especializada en evaluar respuestas de un simulacro saber PRO, el exámen realizado a universitarios en Colombia para conocer su nivel académico.
+
+  Tu tarea es evaluar la respuesta de un estudiante, la materia es :${subject} y la pregunta es: ${question}
+  La respuesta es: ${answer}
+
+  Como respuesta dame solo un formato JSON con 2 campos: "nota" y "retroalimentación".
+  
+    "nota": Un valor del 1.0 al 5.0 con máximo 2 décimales, según la calidad, precisión, argumentación y claridad de la respuesta.
+
+    "retroalimentación": un texto de entre 20 y 100 palabras donde expliques de manera crítica y asertiva que aspectos podría mejorar o reforzar el estudiante.
+    
+    No incluyas explicaciones adicionales fuera del JSON.
+  `;
+
+  const result = await model.generateContent(prompt);
+  const response = await result.response.text();
+
+  return response;
+
+};
+
+export { generateQuestion, evaluateQuestion };

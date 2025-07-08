@@ -6,31 +6,29 @@ import id from '../utils/uuid.js';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 
-//dotenv.config({path: './.env'});
-
 
 const loginUser = async (req, res) => {
     try{
     const {email, password} = req.body;
     if(!password)
-        return res.status(400).send('La contraseña es obligatoria');
+        return res.status(400).send('The password is required');
     if(!email)
-        return res.status(400).send('El correo electrónico es obligatorio');
+        return res.status(400).send('The e-mail is required');
 
     const user = await db.getUser(email);
     if(!user)
-        return res.status(400).send('Usuario no encontrado');
+        return res.status(400).send('User not found');
 
-    const dbPassword = user.password_hash; //Toca poner toda la lógica de la DB.
+    const dbPassword = user.password_hash;
     const isMatch = await bcrypt.compare(password, dbPassword);
     
     if(isMatch)
-        return res.status(200).send('Usuario loggeado con exito');
+        return res.status(200).send('User logged in succesfully');
     else
-        return res.status(400).send('Credenciales invalidas');
+        return res.status(400).send('Invalid credencials');
 }
     catch(err){
-        throw new Error(`Hubo un error ${err}`);
+        throw new Error(`An error ocurred: ${err}`);
     }
 };
 

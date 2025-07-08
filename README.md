@@ -13,4 +13,4 @@ npx prisma db pull //Esto es para copiar la estructura de MYSQL al prisma como m
 
 npx prisma reset //Eliminar todos los datos de las migraciones
 
-Para usar ngrook, lo instalas, sigues los pasos del setup y ejecutas: ngrok http PORT(Generalmente el 3000)
+Para usar ngrok, lo instalas, sigues los pasos del setup y ejecutas: ngrok http PORT(Generalmente el 3000)

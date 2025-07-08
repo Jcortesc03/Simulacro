@@ -43,4 +43,19 @@ const questionsMap = new Map();
     return questions;
 };
 
-export default {getLastQuestions};
+const saveQuestion = async (questionId, subCategoryId, statement, questionType, imagePath, creationDate,
+    aiGenerated, difficulty, justification, status) => {
+    //La estructura es question_id, sub_category_id, statement, question_type, image_path,
+    //creation_date, ai_generated, difficulty,  justification, status.
+    //La tabla de preguntas se llama questions
+    
+    db.query(`
+    INSERT INTO questions(question_id, sub_category_id, statement, question_type, image_path, creation_date,
+    ai_generated, difficulty, justification, status)`), 
+    [questionId, subCategoryId, statement, questionType, imagePath, creationDate, aiGenerated, difficulty, 
+    justification, status];
+
+    
+}
+
+export { getLastQuestions, saveQuestion };

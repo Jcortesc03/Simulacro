@@ -1,32 +1,59 @@
-import Questions from '../database/questions.js';
-import generateQuestion  from '../services/geminiService.js'
+import { getLastQuestions} from '../database/questions.js';
+import { generateQuestion, evaluateQuestion }  from '../services/geminiService.js'
 
 const generateQuestionHandler = async (req, res) => {
-    const { topic,subtopic, difficulty, questionNumbers } = req.body;
+    const { topic, subtopic, difficulty, questionNumbers } = req.body;
 
     if (!topic) return res.status(400).json({ error: "Topic is required" });
-
+    if (!subtopic) return res.status(400).json({ error: "Subtopic is required" });
+    if (!difficulty) return res.status(400).json({ error: "Difficulty is required" });
+    if(!questionNumbers) questionNumbers=1;
+    
     try {
-        const pastQuestions = await Questions.getLastQuestions();
+        const pastQuestions = await getLastQuestions();
         const rawText = await generateQuestion(topic, subtopic, difficulty, pastQuestions , questionNumbers);
 
-        // Regex para extraer el JSON limpio si viene envuelto en backticks
+        // Regex para extraer el JSON limpio si viene envuelto en backticks c:
         const regex = /```json\n([\s\S]*?)\n```/;
         const match = rawText.match(regex);
-
+        
         let jsonToParse = rawText;
-
+        
         if (match && match[1]) {
             jsonToParse = match[1];
         }
-
+        
         const questions = JSON.parse(jsonToParse);
         
         return res.status(200).json({ questions });
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ error: "Error generando la pregunta" });
+        return res.status(500).json({ error: "Error generating the question" });
     }
 };
 
-export default { generateQuestionHandler };
+const evaluateQuestionHandler = async (req, res) => {
+    const { subject, question, answer } = req.body;
+    if (!subject)
+        return res.status(400).send('Subject is required');
+    
+    try{
+    const rawText = await evaluateQuestion( subject, question, answer);
+    const regex = /```json\n([\s\S]*?)\n```/;
+    const match = rawText.match(regex);
+    
+    let jsonToParse = rawText;
+
+    if (match && match[1]) {
+            jsonToParse = match[1];
+    }    
+    const response = JSON.parse(jsonToParse);
+        
+    return res.status(200).json({ response });
+    }catch(err){
+        console.log(err);
+        return res.status(400).send({error: 'error: error generating the answer'});
+    }
+};
+
+export default { generateQuestionHandler, evaluateQuestionHandler };
