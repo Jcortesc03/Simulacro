@@ -17,10 +17,10 @@ const sendVerificationEmail = async (email, token) => {
     const link = `${process.env.NGROOK_DOMAIN}/auth/verify/${token}`;
 
     await transporter.sendMail({
-        from: `Prueba <${process.env.SENDER_EMAIL}>`,
+        from: `Confirmación <${process.env.SENDER_EMAIL}>`,
         to: email,
-        subject: `Prueba jeje`,
-        html: `<h3>Gracias por registrarte</h3> <p>Esto solo es una prueba :D</p> <a href="${link}">Verificar cuenta</a>`
+        subject: `Por favor autentique su correo electrónico`,
+        html: `<h3>Gracias por registrarte</h3> <p>Por favor verifique su correo electrónico para continuar.</p> <a href="${link}">Verificar cuenta</a>`
     });
 };
 

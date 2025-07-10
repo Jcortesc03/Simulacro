@@ -1,4 +1,5 @@
 import db from './config.js';
+import id from '../utils/uuid.js';
 
 const getLastQuestions = async () => {
     const [rows] = await db.query(`SELECT 
@@ -43,24 +44,31 @@ const questionsMap = new Map();
     return questions;
 };
 
-const saveQuestion = async (questionId, subCategoryId, statement, questionType, imagePath, creationDate,
-    aiGenerated, difficulty, justification, status, optionId, optionText, isCorrect) => {
+const saveQuestion = async (subCategoryId, statement, questionType, imagePath, creationDate,
+    aiGenerated, difficulty, justification, status, answers) => {
     //La estructura es question_id, sub_category_id, statement, question_type, image_path,
     //creation_date, ai_generated, difficulty,  justification, status.
     //La tabla de preguntas se llama questions
     
+    const questionId = id();
+
     db.query(`
     INSERT INTO questions(question_id, sub_category_id, statement, question_type, image_path, creation_date,
-    ai_generated, difficulty, justification, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`), 
+    ai_generated, difficulty, justification, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, 
     [questionId, subCategoryId, statement, questionType, imagePath, creationDate, aiGenerated, difficulty, 
-    justification, status];
+    justification, status]);
     
     //la tabla se llama answer_options
     //La estructura es: option_id(uuid), question_id(uuid), option_text, is_correct(boolean)
 
-    db.query(` 
-    INSERT INTO answer_options(option_id, question_id, option_text, is_correct) VALUES (?, ?, ?, ?)`,
-    [optionId, questionId, optionText, isCorrect]);
+    for (const answer of answers){
+        const { optionText, isCorrect } = answer;
+
+        await db.query(` 
+        INSERT INTO answer_options(option_id, question_id, option_text, is_correct) VALUES (?, ?, ?, ?)`,
+        [id(), questionId, optionText, isCorrect]);
+    };
+    return {success: true, questionId};
     
 }
 

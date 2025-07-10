@@ -2,7 +2,6 @@ import { saveQuestion, } from '../database/questions.js';
 
 const saveQuestionHandler = async (req, res) => {
     const {
-        questionId,
         subCategoryId,
         statement,
         questionType,
@@ -12,13 +11,10 @@ const saveQuestionHandler = async (req, res) => {
         difficulty,
         justification,
         status,
-        optionId,
-        optionText,
-        isCorrect
+        answers
     } = req.body
 
     const requiredFields = [
-    questionId,
     subCategoryId,
     statement,
     questionType,
@@ -28,16 +24,15 @@ const saveQuestionHandler = async (req, res) => {
     difficulty,
     justification,
     status,
-    optionId,
-    optionText,
-    isCorrect
+    answers
     ];
 
     if (requiredFields.some(field => field === undefined || field === null || field === ''))
     return res.status(400).send('Falta un dato');
 
     try{
-        const [ result ] = await saveQuestion(questionId, subCategoryId, statement, questionType, imagePath, creationDate, aiGenerated, difficulty, justification, status, optionId, optionText, isCorrect);
+        const [ result ] = await saveQuestion(subCategoryId, statement, questionType, imagePath,
+        creationDate, aiGenerated, difficulty, justification, status, answers);
         console.log(result);
 
 
