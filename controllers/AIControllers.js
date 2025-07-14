@@ -1,4 +1,4 @@
-import { getLastQuestions} from '../database/questions.js';
+import { getLastQuestionsForAI} from '../database/questions.js';
 import { generateQuestion, evaluateQuestion }  from '../services/geminiService.js'
 
 const generateQuestionHandler = async (req, res) => {
@@ -10,7 +10,7 @@ const generateQuestionHandler = async (req, res) => {
     if(!questionNumbers) questionNumbers=1;
     
     try {
-        const pastQuestions = await getLastQuestions();
+        const pastQuestions = await getLastQuestionsForAI();
         const rawText = await generateQuestion(topic, subtopic, difficulty, pastQuestions , questionNumbers);
 
         // Regex para extraer el JSON limpio si viene envuelto en backticks c:

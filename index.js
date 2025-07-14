@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import userRouter from './router/userRoutes.js';
 import AIRouter from './router/AIRoutes.js';
+import questionRouter from './router/questionRoutes.js'
 
 dotenv.config();
 
@@ -14,6 +15,7 @@ app.use(express.json());
 
 app.use('/auth', userRouter);
 app.use('/AI', AIRouter);
+app.use('/questions', questionRouter);
 
 app.listen(port, () => {
     console.log(`Servidor corriendo en: ${process.env.NGROOK_DOMAIN}`); //o http://localhost:${port}

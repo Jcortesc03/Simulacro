@@ -1,7 +1,7 @@
 import db from './config.js';
 import id from '../utils/uuid.js';
 
-const getLastQuestions = async () => {
+const getLastQuestionsForAI = async () => {
     const [rows] = await db.query(`SELECT 
     Q.question_id,
     Q.statement,
@@ -72,4 +72,25 @@ const saveQuestion = async (subCategoryId, statement, questionType, imagePath, c
     
 }
 
-export { getLastQuestions, saveQuestion };
+const getLastQuestions = async (subcategoryId, questionNumber) => {
+    const [questions] = await db.query(`
+            select * from questions where sub_category_id = ? order by RAND() LIMIT ?`,[ subcategoryId, questionNumber]);
+
+    const enrichedQuestions = [];
+
+    for (const question of questions) {
+    const [answers] = await db.query(`
+      SELECT option_id, option_text, is_correct 
+      FROM answer_options 
+      WHERE question_id = ?
+    `, [question.question_id]);
+
+    enrichedQuestions.push({
+      ...question,
+      answers
+    });
+  }
+    return enrichedQuestions;
+    
+};
+export { getLastQuestionsForAI, saveQuestion, getLastQuestions };

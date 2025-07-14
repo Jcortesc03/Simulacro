@@ -1,4 +1,4 @@
-import { saveQuestion, } from '../database/questions.js';
+import { saveQuestion, getLastQuestions } from '../database/questions.js';
 
 const saveQuestionHandler = async (req, res) => {
     const {
@@ -31,10 +31,9 @@ const saveQuestionHandler = async (req, res) => {
     return res.status(400).send('Falta un dato');
 
     try{
-        const [ result ] = await saveQuestion(subCategoryId, statement, questionType, imagePath,
+        const result = await saveQuestion(subCategoryId, statement, questionType, imagePath,
         creationDate, aiGenerated, difficulty, justification, status, answers);
-        console.log(result);
-
+        res.status(201).send('Usuario creado correctamente');
 
     }catch(err){
         console.log(err);
@@ -44,4 +43,17 @@ const saveQuestionHandler = async (req, res) => {
 
 }
 
-export { saveQuestionHandler };
+const getLastQuestionsHandler = async (req, res) => {
+    const { subcategoryId, questionNumber } = req.body;
+    try{
+        const result = await getLastQuestions(subcategoryId, questionNumber);
+        res.status(200).send(result);
+    }
+    catch(err){
+        console.log(err);
+        res.status(500).send('Hubo un error');
+    }
+
+}
+
+export { saveQuestionHandler, getLastQuestionsHandler };
