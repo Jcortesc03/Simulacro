@@ -9,7 +9,7 @@ import dotenv from 'dotenv';
 
 const loginUser = async (req, res) => {
     try{
-    const {email, password} = req.body;
+    const { email, password } = req.body;
     if(!password)
         return res.status(400).send('The password is required');
     if(!email)
@@ -22,12 +22,21 @@ const loginUser = async (req, res) => {
     const dbPassword = user.password_hash;
     const isMatch = await bcrypt.compare(password, dbPassword);
     
-    if(isMatch)
+    if(!user.verificated)
+        return res.status(400).send('Usuario no está verificado');
+    else if(isMatch)
         return res.status(200).send('User logged in succesfully');
     else
         return res.status(400).send('Invalid credencials');
 }
     catch(err){
+        if( err.name === 'TokenExpiredError'){
+            
+            const token = generateToken(email)
+            await sendVerificationEmail(email, token);
+            
+            res.status(400).send('El token expiró, se envio un nuevo token');
+        }
         throw new Error(`An error ocurred: ${err}`);
     }
 };
@@ -70,7 +79,8 @@ const verifyEmail = async (req, res) => {
     catch(err){
         if(err === 'TokenExpiredError')
             return res.status(400).send('El token ha expirado');
-        res.status(400).send({error: 'Token invalido'});
+        console.log(err);
+        return res.status(400).send({error: 'Token invalido'});
     }
 }
 

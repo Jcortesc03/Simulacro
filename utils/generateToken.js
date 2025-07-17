@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 dotenv.config({path: './.env'});
 
 const generateToken = (email) => {
-    return jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1h'});
+    return jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1m'});
 };
 
 export default generateToken;
