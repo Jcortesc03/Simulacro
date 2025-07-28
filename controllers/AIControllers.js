@@ -1,6 +1,9 @@
-import { getLastQuestionsForAI} from '../database/questions.js';
-import { generateQuestion, evaluateQuestion }  from '../services/geminiService.js'
+/*En este archivo se manejan los controladores para todas las funciones del programa que tengan que ver
+con la IA de gemini*/
+import { getLastQuestionsForAI} from '../database/questions.js'; //Importa las ultimas preguntas de la DB para pasarsela a la IA
+import { generateQuestion, evaluateQuestion }  from '../services/geminiService.js' //Importa la generación y evaluación de preguntas mediante la IA
 
+//Este controlador es para generar preguntas mediante la IA.
 const generateQuestionHandler = async (req, res) => {
     const { topic, subtopic, difficulty, questionNumbers } = req.body;
 
@@ -15,6 +18,8 @@ const generateQuestionHandler = async (req, res) => {
 
         // Regex para extraer el JSON limpio si viene envuelto en backticks c:
         const regex = /```json\n([\s\S]*?)\n```/;
+
+        //Para confirmar que el texto sin formato sea compatible con 
         const match = rawText.match(regex);
         
         let jsonToParse = rawText;

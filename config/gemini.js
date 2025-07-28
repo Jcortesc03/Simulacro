@@ -1,3 +1,5 @@
+//Exporta el genAI para utilizar el API de google gemini
+
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import dotenv from 'dotenv';
 
