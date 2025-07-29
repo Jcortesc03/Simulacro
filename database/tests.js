@@ -8,6 +8,6 @@ const saveTest = async (attemptId, userId, simulationId, startTime, endTime, tot
     console.log(rows);
     
     return rows;
-}
+};
 
 export { saveTest };
