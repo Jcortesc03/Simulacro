@@ -16,17 +16,20 @@ const loginUser = async (req, res) => {
             return res.status(400).send('El e-mail es obligatorio.');
 
         const user = await db.getUser(email);
-        console.log(user);
         if(!user)
             return res.status(400).send('Usuario no existente.');
 
         const dbPassword = user.password_hash;
         const isMatch = await bcrypt.compare(password, dbPassword);
         
-        if(!user.verificated)
+        if(!user.is_verified)
             return res.status(400).send('Usuario no está verificado');
-        else if(isMatch)
-            return generateToken(email, user.role); //Esta linea casi me deja calvo XD
+        else if(isMatch){
+            return res.status(200).send({
+                message: `Usuario verificado con éxito`,
+                token: generateToken(email, user.role_id)
+            });
+        }
         else
             return res.status(400).send('Invalid credencials');
 }

@@ -62,11 +62,11 @@ const saveQuestion = async (subCategoryId, statement, questionType, imagePath, c
     //La estructura es: option_id(uuid), question_id(uuid), option_text, is_correct(boolean)
 
     for (const answer of answers){
-        const { optionText, isCorrect } = answer;
+        const { option_text, isCorrect } = answer;
 
         await db.query(` 
         INSERT INTO answer_options(option_id, question_id, option_text, is_correct) VALUES (?, ?, ?, ?)`,
-        [id(), questionId, optionText, isCorrect]);
+        [id(), questionId, option_text, isCorrect]);
     };
     return {success: true, questionId};
     

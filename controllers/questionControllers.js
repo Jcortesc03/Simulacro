@@ -18,7 +18,6 @@ const saveQuestionHandler = async (req, res) => {
     subCategoryId,
     statement,
     questionType,
-    imagePath,
     creationDate,
     aiGenerated,
     difficulty,
@@ -29,11 +28,11 @@ const saveQuestionHandler = async (req, res) => {
 
     if (requiredFields.some(field => field === undefined || field === null || field === ''))
     return res.status(400).send('Falta un dato');
-
+    
     try{
         const result = await saveQuestion(subCategoryId, statement, questionType, imagePath,
         creationDate, aiGenerated, difficulty, justification, status, answers);
-        res.status(201).send('Usuario creado correctamente');
+        res.status(201).send('Pregunta creada correctamente');
 
     }catch(err){
         console.log(err);

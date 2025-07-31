@@ -19,7 +19,7 @@ const getUser = async (email) => {
 
 const verifyUser = async (email) => {
     await db.query(
-        `UPDATE users SET verificated = TRUE where email = ?`, [email]
+        `UPDATE users SET is_verified = TRUE where email = ?`, [email]
     )
 };
 
