@@ -9,25 +9,26 @@ import dotenv from 'dotenv';
 
 const loginUser = async (req, res) => {
     try{
-    const { email, password } = req.body;
-    if(!password)
-        return res.status(400).send('The password is required');
-    if(!email)
-        return res.status(400).send('The e-mail is required');
+        const { email, password } = req.body;
+        if(!password)
+            return res.status(400).send('La contraseña es obligatoria.');
+        if(!email)
+            return res.status(400).send('El e-mail es obligatorio.');
 
-    const user = await db.getUser(email);
-    if(!user)
-        return res.status(400).send('User not found');
+        const user = await db.getUser(email);
+        console.log(user);
+        if(!user)
+            return res.status(400).send('Usuario no existente.');
 
-    const dbPassword = user.password_hash;
-    const isMatch = await bcrypt.compare(password, dbPassword);
-    
-    if(!user.verificated)
-        return res.status(400).send('Usuario no está verificado');
-    else if(isMatch)
-        return res.status(200).send('User logged in succesfully');
-    else
-        return res.status(400).send('Invalid credencials');
+        const dbPassword = user.password_hash;
+        const isMatch = await bcrypt.compare(password, dbPassword);
+        
+        if(!user.verificated)
+            return res.status(400).send('Usuario no está verificado');
+        else if(isMatch)
+            return generateToken(email, user.role); //Esta linea casi me deja calvo XD
+        else
+            return res.status(400).send('Invalid credencials');
 }
     catch(err){
         if( err.name === 'TokenExpiredError'){
