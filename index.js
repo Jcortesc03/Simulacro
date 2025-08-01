@@ -4,14 +4,17 @@ import cors from 'cors';
 import userRouter from './router/userRoutes.js';
 import AIRouter from './router/AIRoutes.js';
 import questionRouter from './router/questionRoutes.js'
+import rateLimiter from './middlewares/rateLimiter.js'
 
 dotenv.config();
+
 
 const port = process.env.PORT || 2000
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(rateLimiter);
 
 app.use('/auth', userRouter);
 app.use('/AI', AIRouter);
