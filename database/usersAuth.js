@@ -1,10 +1,18 @@
 import db from './config.js';
 
 
-const saveUser = async (id, name, password, programId, email) => {
+const saveUser = async (id, name, password, programName, email) => {
+
+    const [ [ {program_id } ] ]  = await db.query(`
+        SELECT program_id
+        FROM PROGRAMS
+        WHERE program_name = ?;`, [ programName ]);
+
+    console.log(program_id);
+
     const [ result ] = await db.query(
         `INSERT INTO users (user_id, user_name, password_hash, role_id, program_id, email) 
-        values (?, ?, ?, ?, ?, ?)`, [id, name, password, "1", programId, email]
+        values (?, ?, ?, ?, ?, ?)`, [id, name, password, '1', program_id, email]
     )};
 
 const getUser = async (email) => {

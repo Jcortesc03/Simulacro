@@ -72,9 +72,15 @@ const saveQuestion = async (subCategoryId, statement, questionType, imagePath, c
     
 }
 
-const getLastQuestions = async (subcategoryId, questionNumber) => {
+const getLastQuestions = async (categoryName, questionNumber) => {
     const [questions] = await db.query(`
-            select * from questions where sub_category_id = ? order by RAND() LIMIT ?`,[ subcategoryId, questionNumber]);
+            SELECT q.question_id, q.statement, q.difficulty, sc.sub_category_name
+            FROM QUESTIONS q
+            JOIN SUB_CATEGORIES sc ON q.sub_category_id = sc.sub_category_id
+            JOIN CATEGORIES c ON sc.category_id = c.category_id
+            WHERE c.category_name = 'Civic Competencies'
+            ORDER BY RAND()
+            LIMIT 5;`,[ categoryName, questionNumber]);
 
     const enrichedQuestions = [];
 

@@ -15,6 +15,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(rateLimiter);
+app.set('trust proxy', 1); //Para probar con ngrok
 
 app.use('/auth', userRouter);
 app.use('/AI', AIRouter);

@@ -5,6 +5,6 @@ import verified from '../middlewares/verifyToken.js';
 const router = express.Router();
 
 router.post('/saveQuestion', verified, saveQuestionHandler);
-router.post('/getQuestions', getLastQuestionsHandler);
+router.get('/getQuestions', verified, getLastQuestionsHandler);
 
 export default router;

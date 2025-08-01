@@ -57,7 +57,7 @@ const evaluateQuestionHandler = async (req, res) => {
     return res.status(200).json({ response });
     }catch(err){
         console.log(err);
-        return res.status(400).send({error: 'error: error generating the answer'});
+        return res.status(400).send('Hubo un error');
     }
 };
 

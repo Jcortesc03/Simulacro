@@ -43,16 +43,15 @@ const saveQuestionHandler = async (req, res) => {
 }
 
 const getLastQuestionsHandler = async (req, res) => {
-    const { subcategoryId, questionNumber } = req.body;
+    const { categoryName, questionNumber } = req.body;
     try{
-        const result = await getLastQuestions(subcategoryId, questionNumber);
+        const result = await getLastQuestions(categoryName, questionNumber);
         res.status(200).send(result);
     }
     catch(err){
         console.log(err);
         res.status(500).send('Hubo un error');
     }
-
 }
 
 export { saveQuestionHandler, getLastQuestionsHandler };

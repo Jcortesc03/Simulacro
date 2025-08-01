@@ -47,7 +47,7 @@ const loginUser = async (req, res) => {
 
 const registerUser = async (req, res) => {
     try {
-    const { password, name, programId, email } = req.body;
+    const { password, name, programName, email } = req.body;
 
     const saltRounds = 10;
     const hash = await bcrypt.hash(password, saltRounds);
@@ -56,7 +56,7 @@ const registerUser = async (req, res) => {
 
     const token = generateToken(email);
 
-    await db.saveUser(generatedId, name, hash, programId, email);
+    await db.saveUser(generatedId, name, hash, programName, email);
     await sendVerificationEmail(email, token);
     
     res.status(201).send(`Usuario ${name} creado con éxito, por favor verifique su correo`);
