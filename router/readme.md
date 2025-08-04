@@ -19,8 +19,8 @@ AIRoutes:
             "question": "Lea el siguiente fragmento:\n\n\"En Colombia, la informalidad laboral afecta a más del 50% de los trabajadores, lo cual implica falta de acceso a seguridad social, inestabilidad económica y bajos niveles de ahorro para la vejez. A pesar de los esfuerzos del gobierno, el crecimiento de la informalidad ha sido persistente en zonas rurales y entre jóvenes.\"\n\nCon base en el texto, ¿cuál es la principal consecuencia de la informalidad laboral en Colombia?",
             "answer": "La informalidad laboral hace que las personas ganen menos dinero, porque no tienen un trabajo fijo y eso las vuelve pobres. Además, el gobierno no puede ayudar a todos y por eso no hay mucha solución. Esto es especialmente malo en las ciudades grandes."
         }
-questionRoutes:
 
+questionRoutes:
     Ejemplo para probar el endpoint de /questions/saveQuestions (post):
     {
         "subCategoryId": "17e55df2-5688-11f0-8239-0897989b7c9d",
@@ -53,10 +53,10 @@ userRoutes:
         
         Esta ruta se usa para registrar al usuario
         {
-            "": "",
-            "": "",
-            "": "",
-            
+            "email": "",
+            "name": "",
+            "password": "",
+            "programName": "",
         }
 
     Ejemplo para probar /auth/ (Get):

@@ -5,7 +5,7 @@ dotenv.config({ path: './.env' });
 
 const verifyToken = (req, res, next) => {
     const authHeader = req.headers["authorization"];
-    const token = authHeader.split(' ')[1]
+    const token = authHeader.split(' ')[1];
     if(!token)
         res.status(403).send({error: 'Token requerido'});
     jwt.verify(token, process.env.JWT_SECRET, (err, decoded)=> {
