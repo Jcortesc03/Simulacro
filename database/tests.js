@@ -1,6 +1,6 @@
 import db from './config.js';
 
-const saveTest = async (attemptId, userId, simulationId, startTime, endTime, totalScore, status) => {
+const saveSimulationAttempt = async (attemptId, userId, simulationId, startTime, endTime, totalScore, status) => {
     
     const [rows] = await db.prepare(`
         INSERT INTO simulation_attempts (attempt_id, user_id, simulation_id, start_time, end_time, total_score, status)
@@ -10,4 +10,10 @@ const saveTest = async (attemptId, userId, simulationId, startTime, endTime, tot
     return rows;
 };
 
-export { saveTest };
+const saveSimulation = async (simulationId, simulationName, description, creationDate, isActive) => {
+    const [rows] = await db.prepare(`
+        INSERT INTO simulations (simulation_id, simulation_name, description, creation_date, is_active) VALUES
+        (?, ?, ?, ?, ?)`, [simulationId, simulationName, description, creationDate, isActive])
+}
+
+export { saveSimulationAttempt, saveSimulation };
