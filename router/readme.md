@@ -1,8 +1,8 @@
 Como probar los endpoints
 
-La petición debe llevar 2 campos en los headers
-    Authorization: Bearer "Acá va el token que se obtiene en la ruta de /login"
-    Content-Type: application/json
+La petición debe llevar 2 campos en los HEADERS
+    Authorization: Bearer "Acá va el token que se obtiene en la ruta de /auth/login"
+    Content-Type: application/json (si usan axios no hace falta)
 
 AIRoutes:
 
@@ -59,7 +59,7 @@ userRoutes:
             "programName": "",
         }
 
-    Ejemplo para probar /auth/ (Get):
+    Ejemplo para probar /auth/login (post):
         Esta ruta se usa para que el usuario inicie sesión
 
         {

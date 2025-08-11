@@ -6,7 +6,7 @@ import { verifyTeacher, verifyAdmin } from '../middlewares/verifyRole.js';
 const router = express.Router();
 
 router.get('/generateQuestion',verified, verifyTeacher,  AIControllers.generateQuestionHandler);
-router.get('/evaluateQuestion', verified, verifyTeacher, AIControllers.evaluateQuestionHandler);
+router.get('/evaluateQuestion', verified, AIControllers.evaluateQuestionHandler);
 
 
 
