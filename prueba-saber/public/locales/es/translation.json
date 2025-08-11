@@ -1,0 +1,20 @@
+{
+  "sidebar": {
+    "profile": "PERFIL",
+    "home": "INICIO",
+    "users": "USUARIOS",
+    "simulations": "SIMULACROS",
+    "categories": "CATEGORÍAS",
+    "logout": "Salir"
+  },
+  "usersPage": {
+    "title": "USUARIOS",
+    "searchPlaceholder": "Buscar...",
+    "addNew": "Añadir Nuevo"
+  },
+  "loginPage": {
+    "title": "Simulacro Prueba Saber Pro",
+    "loginButton": "INICIAR SESIÓN",
+    "registerButton": "REGISTRARSE"
+  }
+}
