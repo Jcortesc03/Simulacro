@@ -1,7 +1,7 @@
 /*En este archivo se manejan los controladores para todas las funciones del programa que tengan que ver
 con la IA de gemini*/
 import { getLastQuestionsForAI} from '../database/questions.js'; //Importa las ultimas preguntas de la DB para pasarsela a la IA
-import { generateQuestion, evaluateQuestion }  from '../services/geminiService.js' //Importa la generación y evaluación de preguntas mediante la IA
+import { generateQuestion, evaluateQuestion, retroalimentateTest }  from '../services/geminiService.js' //Importa la generación y evaluación de preguntas mediante la IA
 
 //Este controlador es para generar preguntas mediante la IA.
 const generateQuestionHandler = async (req, res) => {
@@ -61,4 +61,14 @@ const evaluateQuestionHandler = async (req, res) => {
     }
 };
 
-export default { generateQuestionHandler, evaluateQuestionHandler };
+const testRetroAlimentationHandler = async (req, res) => {
+    const { questions } = req.body;
+    try{
+        const response = await retroalimentateTest(questions);
+        return res.status(200).send({message: 'Prueba evaluada con éxito', response});
+    }catch(e){
+        return res.status(500).send('Hubo un error')
+    } 
+};
+
+export default { generateQuestionHandler, evaluateQuestionHandler, testRetroAlimentationHandler };

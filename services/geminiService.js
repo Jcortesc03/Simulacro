@@ -57,4 +57,23 @@ const evaluateQuestion = async (subject, question, answer) =>  {
 
 };
 
-export { generateQuestion, evaluateQuestion };
+const retroalimentateTest = async (test) => {
+  const model = genAI.getGenerativeModel({ model: "gemini-2.5-pro" });
+
+  const prompt = `
+  Eres una inteligencia artificial especializada en evaluar respuestas de simulacros del examen Saber PRO, una prueba estandarizada aplicada a universitarios en Colombia para medir competencias genéricas y específicas.
+
+  Tu tarea es analizar el siguiente conjunto de respuestas, que se encuentra en formato JSON:
+  ${test}
+
+  Genera una retroalimentación escrita en un tono académico y constructivo, de máximo 500 palabras. En tu análisis, identifica los puntos fuertes y débiles del desempeño evidenciado en la prueba. Puedes referirte a aspectos como comprensión lectora, razonamiento cuantitativo, comunicación escrita, competencias ciudadanas, o cualquier otra área evaluada según el contenido del JSON.
+
+  No incluyas encabezados ni repitas el contenido del JSON. Solo entrega el análisis como un texto continuo.
+  `
+  const result = await model.generateContent(prompt);
+  const response = await result.response.text();
+
+  return response;
+};
+
+export { generateQuestion, evaluateQuestion, retroalimentateTest };
