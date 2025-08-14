@@ -1,10 +1,15 @@
 import express from 'express';
 import usersControllers from '../controllers/authControllers.js';
+import verified from '../middlewares/verifyToken.js';
+import { verifyAdmin, verifyTeacher } from '../middlewares/verifyRole.js';
 
 const router = express.Router();
        
-router.post('/', usersControllers.registerUser);
+router.post('/register', usersControllers.registerUser);
+router.post('/adminRegister', verified, verifyAdmin, usersControllers.adminCreateUserHandler);
 router.get('/verify/:token', usersControllers.verifyEmail);
 router.post('/login', usersControllers.loginUser);
+router.delete('/deleteUser', verified, verifyAdmin, usersControllers.deleteUserHandler);
+
 
 export default router;

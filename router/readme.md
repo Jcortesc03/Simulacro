@@ -49,7 +49,17 @@ questionRoutes:
 
 userRoutes:
 
-    Ejemplo para probar /auth/ (Post):
+    Ejemplo para probar /auth/register (Post):
+        
+        Esta ruta se usa para registrar al usuario
+        {
+            "email": "",
+            "name": "",
+            "password": "",
+            "programName": "",
+        }
+    
+    Ejemplo para probar /auth/adminRegister (Post):
         
         Esta ruta se usa para registrar al usuario
         {

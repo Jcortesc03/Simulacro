@@ -29,4 +29,15 @@ const verifyUser = async (email) => {
     )
 };
 
-export default { saveUser, getUser, verifyUser };
+const adminSaveUser = async (id, name, password, programName, email) =>  {
+    await saveUser(id, name, password, programName, email);
+    await verifyUser(email);
+};
+
+const deleteUser = async (email) => {
+    await db.query(
+        `delete from users where email = ?`, [email]
+    );
+}
+
+export default { saveUser, getUser, verifyUser, adminSaveUser, deleteUser };

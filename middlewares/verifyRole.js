@@ -38,5 +38,5 @@ const verifyTeacher = (req, res, next) => {
         });
 } 
 
-export {verifyAdmin, verifyTeacher};
+export { verifyAdmin, verifyTeacher };
 

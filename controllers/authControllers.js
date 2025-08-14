@@ -61,10 +61,31 @@ const registerUser = async (req, res) => {
     
     res.status(201).send(`Usuario ${name} creado con éxito, por favor verifique su correo`);
 }catch(err){
-    throw new Error(`Hubo un error: ${err}`);
+    console.log(err);
+    return res.status(400).send('Hubo un error');
 }
 
 };
+
+const adminCreateUserHandler = async (req, res) => {
+    try{
+        const { password, name, programName, email } = req.body;
+        
+        const saltRounds = 10;
+        const hash = await bcrypt.hash(password, saltRounds);
+        
+        const generatedId = id();
+        
+        const token = generateToken(email);
+        
+        await db.adminSaveUser(generatedId, name, hash, programName, email);
+        
+        res.status(201).send(`Usuario ${name} creado con éxito.`);
+    }catch(err){
+        console.log(err);
+        return res.status(400).send('Hubo un error');
+    }
+}
 
 const verifyEmail = async (req, res) => {
     const {token} = req.params;
@@ -88,4 +109,17 @@ const verifyEmail = async (req, res) => {
     }
 }
 
-export default { registerUser, loginUser, verifyEmail };
+const deleteUserHandler = async (req, res) =>{
+    try{
+
+        const { email } = req.body;
+        db.deleteUser(email);
+
+        return res.status(200).send('Usuario eliminado con éxito');
+    }catch(err){
+        console.log(err);
+        return res.status(400).send('Hubo un error');
+    }
+} 
+
+export default { registerUser, loginUser, verifyEmail, adminCreateUserHandler, deleteUserHandler };
