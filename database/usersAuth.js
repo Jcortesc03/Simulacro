@@ -54,4 +54,12 @@ const changeRole = async (email, roleName) => {
     );
 };
 
-export default { saveUser, getUser, verifyUser, adminSaveUser, deleteUser, changeRole };
+const changePassword = async (email, password) => {
+    db.query(`
+        UPDATE users
+        SET password = ?
+        where email = ?
+    `, [password, email]);
+};
+
+export default { saveUser, getUser, verifyUser, adminSaveUser, deleteUser, changeRole, changePassword };

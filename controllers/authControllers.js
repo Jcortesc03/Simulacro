@@ -118,7 +118,7 @@ const deleteUserHandler = async (req, res) =>{
         return res.status(200).send('Usuario eliminado con éxito');
     }catch(err){
         console.log(err);
-        return res.status(400).send('Hubo un error');
+        return res.status(400).send('Hubo un error eliminando el usuario');
     }
 } 
 
@@ -130,8 +130,24 @@ const changeRoleHandler = async (req, res) => {
     }
     catch(err){
         console.log(err);
-        return res.status(400).send('Hubo un error');
+        return res.status(400).send('Hubo un error cambiando el rol');
     }
 }
 
-export default { registerUser, loginUser, verifyEmail, adminCreateUserHandler, deleteUserHandler, changeRoleHandler };
+const changePasswordHandler = async (req, res) => {
+    try{
+        const { email, newPassword } = req.body;
+
+        const saltRounds = 10;   
+        const hash = await bcrypt.hash(newPassword, saltRounds);
+
+        await db.changePassword(email, hash);
+
+        return res.status(200).send('Contraseña actualizada con éxito');
+    }catch(err){
+        console.log(err);
+        return res.status(400).send('Hubo un error cambiando la contraseña');
+    }
+}
+
+export default { registerUser, loginUser, verifyEmail, adminCreateUserHandler, deleteUserHandler, changeRoleHandler, changePasswordHandler };

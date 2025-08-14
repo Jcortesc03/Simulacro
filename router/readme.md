@@ -76,3 +76,19 @@ userRoutes:
             "email": "emailEjemplo@gmail.com",
             "password": "123456"
         }
+    
+    Ejemplo para probar /auth/deleteUser (delete):
+        Esta ruta se usa para eliminar un usuario, pide nivel admin en el token
+        {
+            "email": "emailEjemplo@dominio.io"
+        }
+
+    Ejemplo para probar /auth/adminRegister (post):
+        Esta ruta se usa para crear un usuario ya autenticado, pide nivel de admin
+        {
+            "email": "emailEjemplo@dominio.io",
+            "name": "Juan",
+            "password": "123456",
+            "programName": "Sistemas"
+        }
+    
