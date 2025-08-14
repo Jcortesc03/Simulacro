@@ -10,6 +10,7 @@ router.post('/adminRegister', verified, verifyAdmin, usersControllers.adminCreat
 router.get('/verify/:token', usersControllers.verifyEmail);
 router.post('/login', usersControllers.loginUser);
 router.delete('/deleteUser', verified, verifyAdmin, usersControllers.deleteUserHandler);
+router.patch('/modifyRole', verified, verifyAdmin, usersControllers.changeRoleHandler);
 
 
 export default router;

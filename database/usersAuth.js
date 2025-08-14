@@ -1,6 +1,5 @@
 import db from './config.js';
 
-
 const saveUser = async (id, name, password, programName, email) => {
 
     const [ [ {program_id } ] ]  = await db.query(`
@@ -40,4 +39,19 @@ const deleteUser = async (email) => {
     );
 }
 
-export default { saveUser, getUser, verifyUser, adminSaveUser, deleteUser };
+const changeRole = async (email, roleName) => {
+    [ rows ] = await db.query(`
+        select role_id
+        from roles
+        where role_name = ?
+    `, [roleName]);
+
+    await db.query(
+        `UPDATE users
+        SET role_id = ?
+        WHERE email = ?`,
+        [ rows[0].role_id, email]
+    );
+};
+
+export default { saveUser, getUser, verifyUser, adminSaveUser, deleteUser, changeRole };

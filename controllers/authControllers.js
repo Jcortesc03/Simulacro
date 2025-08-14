@@ -122,4 +122,16 @@ const deleteUserHandler = async (req, res) =>{
     }
 } 
 
-export default { registerUser, loginUser, verifyEmail, adminCreateUserHandler, deleteUserHandler };
+const changeRoleHandler = async (req, res) => {
+    try{
+        const { email, roleName } = req.body;      
+        await db.changeRole(email, roleName);
+        res.status(200).send('Usuario modificado con éxito');
+    }
+    catch(err){
+        console.log(err);
+        return res.status(400).send('Hubo un error');
+    }
+}
+
+export default { registerUser, loginUser, verifyEmail, adminCreateUserHandler, deleteUserHandler, changeRoleHandler };
