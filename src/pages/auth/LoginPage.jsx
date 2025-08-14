@@ -1,25 +1,42 @@
 // src/pages/auth/LoginPage.jsx
-
-import React, { useState } from 'react'; // ¡ESTA ES LA LÍNEA CORREGIDA!
-import { Link, useNavigate } from 'react-router-dom';
-import AuthLayout from './AuthLayout';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import AuthLayout from './AuthLayout'; // ✅ Ruta corregida
 import { User, Lock } from 'lucide-react';
+import api from '../../api/axiosInstance'; // ✅ Asume que existe
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    console.log(`Intentando iniciar sesión con Usuario: ${username}`);
+    setError('');
 
-    if (username.toLowerCase() === 'admin') {
-      navigate('/admin/dashboard');
-    } else if (username.toLowerCase() === 'teacher') {
-      console.log('Login de profesor aún no implementado');
-    } else {
-      navigate('/student/inicio');
+    try {
+      const response = await api.post('/auth/login', {
+        email: username,
+        password: password,
+      });
+
+      const { token } = response.data;
+      localStorage.setItem('token', token);
+
+      // Decodificar rol del token
+      const decoded = JSON.parse(atob(token.split('.')[1]));
+      const roleId = decoded.role_id;
+
+      if (roleId === '3') {
+        navigate('/admin/dashboard');
+      } else if (roleId === '2') {
+        navigate('/teacher/dashboard');
+      } else {
+        navigate('/student/inicio');
+      }
+    } catch (err) {
+      setError(err.response?.data || 'Credenciales inválidas');
     }
   };
 
@@ -42,6 +59,7 @@ const LoginPage = () => {
             className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            required
           />
         </div>
         <div className="relative">
@@ -52,8 +70,15 @@ const LoginPage = () => {
             className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            required
           />
         </div>
+
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+            {error}
+          </div>
+        )}
 
         <div className="flex flex-col items-center space-y-4 text-sm sm:flex-row sm:justify-between sm:space-y-0">
           <label className="flex items-center space-x-2 text-gray-600 cursor-pointer">
