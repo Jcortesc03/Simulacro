@@ -150,4 +150,14 @@ const changePasswordHandler = async (req, res) => {
     }
 }
 
-export default { registerUser, loginUser, verifyEmail, adminCreateUserHandler, deleteUserHandler, changeRoleHandler, changePasswordHandler };
+const getSubjects = async (req, res) => {
+    try{
+        const subjects = await db.getSubjects();
+        return res.status(200).send(subjects);
+    }catch(err){
+        console.log(err);
+        return res.status(400).send('Hubo un error obteniendo las materias');
+    };
+};
+
+export default { registerUser, loginUser, verifyEmail, adminCreateUserHandler, deleteUserHandler, changeRoleHandler, changePasswordHandler, getSubjects };

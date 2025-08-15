@@ -12,6 +12,6 @@ router.post('/login', usersControllers.loginUser);
 router.delete('/deleteUser', verified, verifyAdmin, usersControllers.deleteUserHandler);
 router.patch('/modifyRole', verified, verifyAdmin, usersControllers.changeRoleHandler);
 router.patch('/changePassword', verified, usersControllers.changePasswordHandler);
-
+router.get('/getSubjects', usersControllers.getSubjects);
 
 export default router;

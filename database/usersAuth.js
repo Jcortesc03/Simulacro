@@ -40,7 +40,7 @@ const deleteUser = async (email) => {
 }
 
 const changeRole = async (email, roleName) => {
-    [ rows ] = await db.query(`
+    const [ rows ] = await db.query(`
         select role_id
         from roles
         where role_name = ?
@@ -62,4 +62,12 @@ const changePassword = async (email, password) => {
     `, [password, email]);
 };
 
-export default { saveUser, getUser, verifyUser, adminSaveUser, deleteUser, changeRole, changePassword };
+const getSubjects = async () => {
+    const [ rows ] = await db.query(`
+        SELECT * FROM programs
+        `);
+    console.log(rows);
+    return rows;
+};
+
+export default { saveUser, getUser, verifyUser, adminSaveUser, deleteUser, changeRole, changePassword, getSubjects };

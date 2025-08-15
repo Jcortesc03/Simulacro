@@ -91,4 +91,10 @@ userRoutes:
             "password": "123456",
             "programName": "Sistemas"
         }
+
+    Ejemplo para probar /auth/getSubjects (get):
+        Esta ruta se usa para obtener las materias de la db:
+            /auth/getSubjects
+
+    
     
