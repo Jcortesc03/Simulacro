@@ -26,15 +26,30 @@ const QuestionCard = ({ question, onEdit, onDelete }) => {
           <p className="text-xs text-gray-400">Editado por</p>
           <p className="font-bold text-gray-800 text-lg">{question.editadoPor}</p>
         </div>
-        {/* --- CAMBIO CLAVE --- Estilos de botones idénticos a UsersPage */}
-        <div className="flex gap-2">
-          <button onClick={onEdit} className="p-2 rounded-full text-gray-500 hover:bg-blue-100 hover:text-blue-600 transition-colors" title="Editar">
-            <Edit size={20} />
-          </button>
-          <button onClick={onDelete} className="p-2 rounded-full text-gray-500 hover:bg-red-100 hover:text-red-600 transition-colors" title="Eliminar">
-            <Trash2 size={20} />
-          </button>
-        </div>
+
+        {/* ✅ Solo muestra el contenedor si hay al menos una acción */}
+        {(onEdit || onDelete) && (
+          <div className="flex gap-2">
+            {onEdit && (
+              <button 
+                onClick={onEdit} 
+                className="p-2 rounded-full text-gray-500 hover:bg-blue-100 hover:text-blue-600 transition-colors" 
+                title="Editar"
+              >
+                <Edit size={20} />
+              </button>
+            )}
+            {onDelete && (
+              <button 
+                onClick={onDelete} 
+                className="p-2 rounded-full text-gray-500 hover:bg-red-100 hover:text-red-600 transition-colors" 
+                title="Eliminar"
+              >
+                <Trash2 size={20} />
+              </button>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

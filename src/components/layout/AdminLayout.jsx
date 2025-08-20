@@ -2,6 +2,7 @@
 
 import Sidebar from './Sidebar'; // Importa el Sidebar de Admin
 import { Outlet, useLocation } from 'react-router-dom';
+import api from '../../api/axiosInstance';
 import React from 'react';
 
 // Función para obtener el título dinámicamente de la URL

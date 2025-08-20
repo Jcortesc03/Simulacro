@@ -1,9 +1,10 @@
 // src/pages/auth/LoginPage.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import AuthLayout from './AuthLayout'; // ✅ Ruta corregida
+import AuthLayout from './AuthLayout';
 import { User, Lock } from 'lucide-react';
-import api from '../../api/axiosInstance'; // ✅ Asume que existe
+import api from '../../api/axiosInstance';
+import { jwtDecode } from 'jwt-decode';
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -15,23 +16,31 @@ const LoginPage = () => {
     e.preventDefault();
     setError('');
 
+ 
     try {
       const response = await api.post('/auth/login', {
         email: username,
         password: password,
       });
+      const userData = response.data;
+
+     //guardas datos de usuario para que se inicie con ese nombre en el perfil creado
+    localStorage.setItem('user', JSON.stringify(userData));
+      
 
       const { token } = response.data;
       localStorage.setItem('token', token);
-
+      
+     
       // Decodificar rol del token
-      const decoded = JSON.parse(atob(token.split('.')[1]));
-      const roleId = decoded.role_id;
+      const decoded = jwtDecode(token);
+      const role = decoded.role;
+      
 
-      if (roleId === '3') {
+      if (role === '3') {
         navigate('/admin/dashboard');
-      } else if (roleId === '2') {
-        navigate('/teacher/dashboard');
+      } else if (role === '2') {
+        navigate('/teacher/simulacros');
       } else {
         navigate('/student/inicio');
       }
@@ -40,13 +49,15 @@ const LoginPage = () => {
     }
   };
 
+  
+
   return (
     <AuthLayout title="Simulacro Prueba Saber Pro">
       <div className="text-center mb-4 md:mb-4">
         <div className="w-20 h-20 md:w-24 md:h-24 rounded-full p-1 bg-gradient-to-br from-pink-400 to-blue-400 inline-flex items-center justify-center">
-            <div className="w-full h-full rounded-full bg-white flex items-center justify-center">
-                <User size={40} className="text-blue-500 md:size-48" />
-            </div>
+          <div className="w-full h-full rounded-full bg-white flex items-center justify-center">
+            <User size={40} className="text-blue-500 md:size-48" />
+          </div>
         </div>
       </div>
 

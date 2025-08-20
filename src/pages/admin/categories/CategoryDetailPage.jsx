@@ -1,5 +1,4 @@
 // src/pages/admin/categories/CategoryDetailPage.jsx
-
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import QuestionCard from '../../../components/questions/QuestionCard';
@@ -7,45 +6,80 @@ import ConfirmationModal from '../../../components/ui/ConfirmationModal';
 import SuccessModal from '../../../components/ui/SuccessModal';
 import Button from '../../../components/ui/Button';
 import { PlusCircle } from 'lucide-react';
+import api from '../../../api/axiosInstance.jsx';
 
-// Datos de ejemplo
-const allData = {
-  'lectura-critica': {
-    title: 'Lectura Crítica',
-    questions: [
-      { id: 1, pregunta: "Pregunta Literal de Lectura Crítica 1...", opciones: [{ texto: "A)", esCorrecta: true }], dificultad: "Fácil", editadoPor: "Admin" },
-    ]
-  },
-  // ... más datos ...
+// Mapeo de URL a nombre real
+const categoryMap = {
+  'lectura-critica': 'Critical Reading',
+  'razonamiento-cuantitativo': 'Quantitative Reasoning',
+  'competencias-ciudadanas': 'Civic Competencies',
+  'comunicacion-escrita': 'Writing',
+  'ingles': 'English'
 };
 
 export default function CategoryDetailPage() {
   const { categoryPath } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-
   const [questions, setQuestions] = useState([]);
   const [modal, setModal] = useState({ type: null, isOpen: false, id: null });
 
   useEffect(() => {
-    const categoryData = allData[categoryPath];
-    setQuestions(categoryData?.questions || []);
+    const fetchQuestions = async () => {
+      const categoryName = categoryMap[categoryPath];
+      if (!categoryName) return;
+
+      try {
+        // CORRECCIÓN: Los parámetros van directamente en el body, no dentro de params
+        const res = await api.post('/questions/getQuestions', {
+          categoryName,
+          questionNumber: 50
+        });
+
+        // Mapea a formato de ejemplo
+        const mapped = res.data.map(q => ({
+          id: q.question_id,
+          enunciado: q.statement,
+          pregunta: q.statement,
+          opciones: q.answers.map(a => ({
+            texto: a.option_text,
+            esCorrecta: a.is_correct
+          })),
+          dificultad: q.difficulty,
+          editadoPor: "Sistema"
+        }));
+
+        setQuestions(mapped);
+      } catch (error) {
+        console.error('Error cargando preguntas', error);
+        setQuestions([]);
+      }
+    };
+
+    fetchQuestions();
   }, [categoryPath]);
 
-  // --- ¡ESTA ES LA LÓGICA CLAVE CORREGIDA! ---
   const handleAddQuestion = () => {
-    // Navega a la página del formulario, pasando la ruta actual para poder volver
     navigate('/admin/questions/add', { state: { from: location.pathname } });
   };
-  
+
   const handleEditQuestion = (question) => {
-    // Navega a la página del formulario en modo edición
-    navigate(`/admin/questions/edit/${question.id}`, { state: { questionData: question, from: location.pathname } });
+    navigate(`/admin/questions/edit/${question.id}`, { 
+      state: { questionData: question, from: location.pathname } 
+    });
   };
-  
-  const handleDeleteClick = (questionId) => setModal({ type: 'deleteConfirm', isOpen: true, id: questionId });
-  const handleConfirmDelete = () => setModal({ type: 'deleteSuccess', isOpen: true });
-  const closeNotificationModals = () => setModal({ type: null, isOpen: false, id: null });
+
+  const handleDeleteClick = (questionId) => {
+    setModal({ type: 'deleteConfirm', isOpen: true, id: questionId });
+  };
+
+  const handleConfirmDelete = () => {
+    setModal({ type: 'deleteSuccess', isOpen: true });
+  };
+
+  const closeNotificationModals = () => {
+    setModal({ type: null, isOpen: false, id: null });
+  };
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
@@ -74,9 +108,17 @@ export default function CategoryDetailPage() {
         )}
       </div>
       
-      {/* ¡YA NO HAY MODAL PARA EL FORMULARIO AQUÍ! */}
-      <ConfirmationModal show={modal.type === 'deleteConfirm' && modal.isOpen} onConfirm={handleConfirmDelete} onClose={closeNotificationModals} title="Confirmar Eliminación" />
-      <SuccessModal show={modal.type === 'deleteSuccess' && modal.isOpen} onClose={closeNotificationModals} message="¡Pregunta eliminada!" />
+      <ConfirmationModal 
+        show={modal.type === 'deleteConfirm' && modal.isOpen} 
+        onConfirm={handleConfirmDelete} 
+        onClose={closeNotificationModals} 
+        title="Confirmar Eliminación" 
+      />
+      <SuccessModal 
+        show={modal.type === 'deleteSuccess' && modal.isOpen} 
+        onClose={closeNotificationModals} 
+        message="¡Pregunta eliminada!" 
+      />
     </div>
   );
 }
