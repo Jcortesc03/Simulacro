@@ -1,5 +1,3 @@
-// src/App.jsx
-
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 // LAYOUTS
@@ -19,7 +17,7 @@ import SimulacrosPage from './pages/admin/SimulacrosPage';
 import CategoriesPage from './pages/admin/categories/CategoriesPage';
 import CategoryDetailPage from './pages/admin/categories/CategoryDetailPage';
 import PerfilPage from './pages/admin/PerfilPage';
-import QuestionFormPage from './pages/admin/QuestionFormPage'; 
+import QuestionFormPage from './pages/admin/QuestionFormPage';
 
 // STUDENT PAGES
 import InicioPage from './pages/student/InicioPage';
@@ -52,13 +50,13 @@ function App() {
           <Route path="users/add" element={<UserFormPage />} />
           <Route path="users/edit/:id" element={<UserFormPage />} />
           <Route path="simulacros" element={<SimulacrosPage />} />
-          <Route path="categories" element={<CategoriesPage />} /> 
+          <Route path="categories" element={<CategoriesPage />} />
           <Route path="categories/:categoryPath" element={<CategoryDetailPage />} />
           <Route path="perfil" element={<PerfilPage />} />
           <Route path="questions/add" element={<QuestionFormPage />} />
           <Route path="questions/edit/:questionId" element={<QuestionFormPage />} />
         </Route>
-        
+
         {/* Rutas de Estudiante (Anidadas bajo StudentLayout) */}
         <Route path="/student" element={<StudentLayout />}>
           <Route index element={<Navigate to="inicio" replace />} />
@@ -71,7 +69,7 @@ function App() {
         </Route>
 
 
-         {/* --- ¡RUTAS DE PROFESOR! --- */}
+         {/* RUTAS DE PROFESOR */}
          <Route path="/teacher" element={<TeacherLayout />}>
           <Route index element={<Navigate to="simulacros" replace />} />
           <Route path="simulacros" element={<TeacherSimulacrosPage />} />

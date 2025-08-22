@@ -1,9 +1,8 @@
-// src/pages/auth/RegisterPage.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import AuthLayout from './AuthLayout'; // ✅ Ruta corregida
+import AuthLayout from './AuthLayout';
 import { User } from 'lucide-react';
-import api from '../../api/axiosInstance'; // ✅ Asume que existe
+import api from '../../api/axiosInstance';
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -16,6 +15,19 @@ const RegisterPage = () => {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const carreras = [
+    'Administración de Empresas',
+    'Arquitectura',
+    'Comunicación Social',
+    'Contaduría Pública',
+    'Derecho',
+    'Ingeniería Industrial',
+    'Ingeniería de Sistemas',
+    'Ingeniería de Software',
+    'Psicología',
+    'Medicina Veterinaria y Zootecnia'
+  ];
 
   const handleChange = (e) => {
     setFormData({
@@ -61,20 +73,29 @@ const RegisterPage = () => {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-            <input type="text" name="name" placeholder="Nombre Completo" 
-                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
+            <input type="text" name="name" placeholder="Nombre Completo"
+                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                    value={formData.name} onChange={handleChange} required />
-            <input type="text" name="programName" placeholder="Carrera" 
-                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                   value={formData.programName} onChange={handleChange} required />
-            <input type="email" name="email" placeholder="Correo Electrónico" 
-                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
+
+            <select name="programName"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white appearance-none"
+                    value={formData.programName} onChange={handleChange} required>
+                <option value="">Selecciona tu carrera</option>
+                {carreras.map((carrera, index) => (
+                    <option key={index} value={carrera}>
+                        {carrera}
+                    </option>
+                ))}
+            </select>
+
+            <input type="email" name="email" placeholder="Correo Electrónico"
+                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                    value={formData.email} onChange={handleChange} required />
-            <input type="password" name="password" placeholder="Contraseña" 
-                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
+            <input type="password" name="password" placeholder="Contraseña"
+                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                    value={formData.password} onChange={handleChange} required />
-            <input type="password" name="confirmPassword" placeholder="Confirmar Contraseña" 
-                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
+            <input type="password" name="confirmPassword" placeholder="Confirmar Contraseña"
+                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                    value={formData.confirmPassword} onChange={handleChange} required />
 
             {error && (
@@ -88,7 +109,7 @@ const RegisterPage = () => {
                         className="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition-colors disabled:bg-blue-300">
                     {loading ? 'Creando cuenta...' : 'Crear Cuenta'}
                 </button>
-                <button type="button" onClick={() => navigate('/login')} 
+                <button type="button" onClick={() => navigate('/login')}
                         className="w-full bg-white text-gray-600 border border-gray-300 font-bold py-3 rounded-lg hover:bg-gray-100 transition-colors">
                     ← Volver
                 </button>

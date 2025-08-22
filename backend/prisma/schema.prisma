@@ -1,0 +1,155 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model answer_options {
+  option_id    String         @id @db.VarChar(36)
+  question_id  String         @db.VarChar(36)
+  option_text  String         @db.Text
+  is_correct   Boolean
+  questions    questions      @relation(fields: [question_id], references: [question_id], onDelete: Cascade, onUpdate: NoAction, map: "answer_options_ibfk_1")
+  user_answers user_answers[]
+
+  @@index([question_id], map: "question_id")
+}
+
+model categories {
+  category_id    String           @id @db.VarChar(36)
+  category_name  String           @unique(map: "category_name") @db.VarChar(50)
+  description    String?          @db.Text
+  sub_categories sub_categories[]
+}
+
+model programs {
+  program_id   String  @id @db.VarChar(36)
+  program_name String  @unique(map: "program_name") @db.VarChar(150)
+  users        users[]
+}
+
+model questions {
+  question_id          String                 @id @db.VarChar(36)
+  sub_category_id      String                 @db.VarChar(36)
+  statement            String                 @db.Text
+  question_type        String                 @db.VarChar(30)
+  image_path           String?                @db.VarChar(255)
+  creation_date        DateTime?              @default(now()) @db.DateTime(0)
+  ai_generated         Boolean?               @default(false)
+  difficulty           questions_difficulty   @default(medium)
+  justification        String?                @db.Text
+  status               questions_status       @default(draft)
+  answer_options       answer_options[]
+  sub_categories       sub_categories         @relation(fields: [sub_category_id], references: [sub_category_id], onDelete: Cascade, onUpdate: NoAction, map: "questions_ibfk_1")
+  simulation_questions simulation_questions[]
+  user_answers         user_answers[]
+
+  @@index([sub_category_id], map: "sub_category_id")
+}
+
+model roles {
+  role_id          String  @id @db.VarChar(36)
+  role_name        String  @unique(map: "role_name") @db.VarChar(20)
+  role_description String? @db.Text
+  users            users[]
+}
+
+model simulation_attempts {
+  attempt_id    String         @id @db.VarChar(36)
+  user_id       String         @db.VarChar(36)
+  simulation_id String         @db.VarChar(36)
+  start_time    DateTime       @db.DateTime(0)
+  end_time      DateTime?      @db.DateTime(0)
+  total_score   Decimal?       @db.Decimal(5, 2)
+  status        String         @db.VarChar(20)
+  users         users          @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "simulation_attempts_ibfk_1")
+  simulations   simulations    @relation(fields: [simulation_id], references: [simulation_id], onDelete: Cascade, onUpdate: NoAction, map: "simulation_attempts_ibfk_2")
+  user_answers  user_answers[]
+
+  @@index([simulation_id], map: "simulation_id")
+  @@index([user_id], map: "user_id")
+}
+
+model simulation_questions {
+  simulation_question_id String      @id @db.VarChar(36)
+  simulation_id          String      @db.VarChar(36)
+  question_id            String      @db.VarChar(36)
+  display_order          Int?
+  simulations            simulations @relation(fields: [simulation_id], references: [simulation_id], onDelete: Cascade, onUpdate: NoAction, map: "simulation_questions_ibfk_1")
+  questions              questions   @relation(fields: [question_id], references: [question_id], onDelete: Cascade, onUpdate: NoAction, map: "simulation_questions_ibfk_2")
+
+  @@unique([simulation_id, question_id], map: "simulation_id")
+  @@unique([simulation_id, display_order], map: "simulation_id_2")
+  @@index([question_id], map: "question_id")
+}
+
+model simulations {
+  simulation_id        String                 @id @db.VarChar(36)
+  simulation_name      String                 @db.VarChar(150)
+  description          String?                @db.Text
+  creation_date        DateTime?              @default(now()) @db.DateTime(0)
+  is_active            Boolean?               @default(true)
+  simulation_attempts  simulation_attempts[]
+  simulation_questions simulation_questions[]
+}
+
+model sub_categories {
+  sub_category_id   String      @id @db.VarChar(36)
+  category_id       String      @db.VarChar(36)
+  sub_category_name String      @db.VarChar(150)
+  description       String?     @db.Text
+  questions         questions[]
+  categories        categories  @relation(fields: [category_id], references: [category_id], onDelete: Cascade, onUpdate: NoAction, map: "sub_categories_ibfk_1")
+
+  @@index([category_id], map: "category_id")
+}
+
+model user_answers {
+  user_answer_id      String              @id @db.VarChar(36)
+  attempt_id          String              @db.VarChar(36)
+  question_id         String              @db.VarChar(36)
+  selected_option_id  String?             @db.VarChar(36)
+  answer_text         String?             @db.Text
+  is_correct          Boolean?
+  question_score      Decimal?            @db.Decimal(5, 2)
+  simulation_attempts simulation_attempts @relation(fields: [attempt_id], references: [attempt_id], onDelete: Cascade, onUpdate: NoAction, map: "user_answers_ibfk_1")
+  questions           questions           @relation(fields: [question_id], references: [question_id], onDelete: NoAction, onUpdate: NoAction, map: "user_answers_ibfk_2")
+  answer_options      answer_options?     @relation(fields: [selected_option_id], references: [option_id], onDelete: NoAction, onUpdate: NoAction, map: "user_answers_ibfk_3")
+
+  @@index([attempt_id], map: "attempt_id")
+  @@index([question_id], map: "question_id")
+  @@index([selected_option_id], map: "selected_option_id")
+}
+
+model users {
+  user_id             String                @id @db.VarChar(36)
+  role_id             String                @db.VarChar(36)
+  program_id          String?               @db.VarChar(36)
+  user_name           String                @db.VarChar(100)
+  email               String                @unique(map: "email") @db.VarChar(100)
+  password_hash       String                @db.VarChar(255)
+  registration_date   DateTime?             @default(now()) @db.DateTime(0)
+  verificated         Boolean?              @default(false)
+  simulation_attempts simulation_attempts[]
+  roles               roles                 @relation(fields: [role_id], references: [role_id], onDelete: NoAction, onUpdate: NoAction, map: "users_ibfk_1")
+  programs            programs?             @relation(fields: [program_id], references: [program_id], onDelete: NoAction, onUpdate: NoAction, map: "users_ibfk_2")
+
+  @@index([program_id], map: "program_id")
+  @@index([role_id], map: "role_id")
+}
+
+enum questions_difficulty {
+  low
+  medium
+  high
+}
+
+enum questions_status {
+  draft
+  pending_review
+  approved
+}
