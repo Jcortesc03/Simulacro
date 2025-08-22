@@ -1,5 +1,3 @@
-// src/pages/admin/DashboardPage.jsx
-
 import Card from '../../components/ui/Card';
 
 const DashboardPage = () => {

@@ -1,5 +1,3 @@
-// src/pages/admin/QuestionFormPage.jsx
-
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Sparkles, Check, AlertCircle } from 'lucide-react';
@@ -72,7 +70,7 @@ export default function QuestionFormPage() {
     console.log("Guardando pregunta (Admin):", formData);
     setShowSuccessModal(true);
   };
-  
+
   const handleCloseModalAndReturn = () => {
     setShowSuccessModal(false);
     navigate(returnPath);
@@ -82,20 +80,20 @@ export default function QuestionFormPage() {
     console.log('🎯 ADMIN - BOTÓN IA CLICKED - generateWithAI ejecutándose');
     setLoadingAI(true);
     setAiError('');
-    
+
     try {
       console.log('🚀 [ADMIN] Iniciando generación con IA...');
       console.log('📡 [ADMIN] Enviando request a:', '/ai/generateQuestion');
       console.log('📋 [ADMIN] Parámetros:', {
         topic: "Lectura Crítica",
-        subtopic: "Inferencial", 
+        subtopic: "Inferencial",
         difficulty: "medium",
         questionNumbers: 1
       });
-      
+
       const res = await api.post('/ai/generateQuestion', {
         topic: "Lectura Crítica",
-        subtopic: "Inferencial", 
+        subtopic: "Inferencial",
         difficulty: "medium",
         questionNumbers: 1
       });
@@ -109,7 +107,7 @@ export default function QuestionFormPage() {
         console.log('✅ [ADMIN] Estructura válida encontrada');
         const aiQuestion = res.data.questions;
         console.log('📝 [ADMIN] Datos de pregunta:', aiQuestion);
-        
+
         // Validar que la pregunta tenga la estructura correcta
         if (aiQuestion.statement && aiQuestion.option_A && aiQuestion.option_B && aiQuestion.option_C && aiQuestion.option_D && aiQuestion.Correct_Answer) {
           console.log('✅ [ADMIN] Pregunta y opciones válidas');
@@ -119,34 +117,34 @@ export default function QuestionFormPage() {
           console.log('🅾️ [ADMIN] Option C:', aiQuestion.option_C);
           console.log('🆔 [ADMIN] Option D:', aiQuestion.option_D);
           console.log('✅ [ADMIN] Correct Answer:', aiQuestion.Correct_Answer);
-          
+
           // Crear las opciones basadas en la respuesta de la API
           const opciones = [
-            { 
-              texto: aiQuestion.option_A, 
-              esCorrecta: aiQuestion.Correct_Answer === 'A' 
+            {
+              texto: aiQuestion.option_A,
+              esCorrecta: aiQuestion.Correct_Answer === 'A'
             },
-            { 
-              texto: aiQuestion.option_B, 
-              esCorrecta: aiQuestion.Correct_Answer === 'B' 
+            {
+              texto: aiQuestion.option_B,
+              esCorrecta: aiQuestion.Correct_Answer === 'B'
             },
-            { 
-              texto: aiQuestion.option_C, 
-              esCorrecta: aiQuestion.Correct_Answer === 'C' 
+            {
+              texto: aiQuestion.option_C,
+              esCorrecta: aiQuestion.Correct_Answer === 'C'
             },
-            { 
-              texto: aiQuestion.option_D, 
-              esCorrecta: aiQuestion.Correct_Answer === 'D' 
+            {
+              texto: aiQuestion.option_D,
+              esCorrecta: aiQuestion.Correct_Answer === 'D'
             }
           ];
-          
+
           console.log('🔧 [ADMIN] Opciones procesadas:', opciones);
 
           // Extraer enunciado y pregunta del statement
           const fullStatement = aiQuestion.statement;
           let enunciado = '';
           let pregunta = '';
-          
+
           // Buscar donde termina el enunciado y empieza la pregunta
           // Generalmente la pregunta empieza con "Del texto anterior..." o similar
           const preguntaStart = fullStatement.indexOf('Del texto anterior');
@@ -176,15 +174,15 @@ export default function QuestionFormPage() {
         console.error('❌ [ADMIN] No se encontraron preguntas en la respuesta:', res.data);
         throw new Error('No se recibieron preguntas de la IA');
       }
-      
+
     } catch (error) {
       console.error('🚨 [ADMIN] ERROR COMPLETO:', error);
       console.error('🔍 [ADMIN] Error.message:', error.message);
       console.error('🌐 [ADMIN] Error.response:', error.response);
       console.error('📡 [ADMIN] Error.request:', error.request);
-      
+
       let errorMessage = 'Error al generar pregunta con IA';
-      
+
       if (error.response) {
         // Error del servidor
         console.error('❌ [ADMIN] Error del servidor - Status:', error.response.status);
@@ -199,10 +197,10 @@ export default function QuestionFormPage() {
         console.error('⚠️ [ADMIN] Error de lógica:', error.message);
         errorMessage = error.message;
       }
-      
+
       console.error('📢 [ADMIN] Mensaje final de error:', errorMessage);
       setAiError(errorMessage);
-      
+
       // También mostrar el error en un alert para el usuario
       alert(errorMessage);
     } finally {
@@ -218,7 +216,7 @@ export default function QuestionFormPage() {
         <p>🔍 [ADMIN] DEBUG: isEditing = {String(isEditing)}, loadingAI = {String(loadingAI)}</p>
         <p>📊 [ADMIN] Botón IA visible: {String(!isEditing)}</p>
         <p>🚨 [ADMIN] Botón IA habilitado: {String(!loadingAI)}</p>
-        <button 
+        <button
           onClick={() => {
             console.log('🧪 [ADMIN] TEST: Botón de prueba clickeado');
             alert('¡Botón de prueba ADMIN funciona!');
@@ -243,46 +241,46 @@ export default function QuestionFormPage() {
       <form id="admin-question-form" onSubmit={handleSubmit} className="space-y-6">
         <div>
           <label className="font-semibold text-gray-700">Enunciado <span className="text-gray-400 font-normal">(Opcional)</span></label>
-          <textarea 
-            name="enunciado" 
-            value={formData.enunciado} 
-            onChange={handleChange} 
-            rows="5" 
-            className="mt-1 w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" 
+          <textarea
+            name="enunciado"
+            value={formData.enunciado}
+            onChange={handleChange}
+            rows="5"
+            className="mt-1 w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
             placeholder="El joven explorador, Marco, fue enviado..."
           />
         </div>
-        
+
         <div>
           <label className="font-semibold text-gray-700">Pregunta</label>
-          <input 
-            name="pregunta" 
-            value={formData.pregunta} 
-            onChange={handleChange} 
-            type="text" 
-            className="mt-1 w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" 
+          <input
+            name="pregunta"
+            value={formData.pregunta}
+            onChange={handleChange}
+            type="text"
+            className="mt-1 w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
             placeholder="En el texto, ¿cuál de las siguientes opciones...?"
           />
         </div>
-        
+
         <div>
           <label className="font-semibold text-gray-700">Respuestas</label>
           <div className="space-y-3 mt-1">
             {formData.opciones.map((opcion, index) => (
               <div key={index} className="flex items-center gap-2">
-                <input 
-                  type="text" 
-                  value={opcion.texto} 
-                  onChange={(e) => handleOpcionChange(index, e.target.value)} 
-                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" 
+                <input
+                  type="text"
+                  value={opcion.texto}
+                  onChange={(e) => handleOpcionChange(index, e.target.value)}
+                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
                   placeholder={`Opción ${index + 1}`}
                 />
-                <button 
-                  type="button" 
-                  onClick={() => handleSetRespuestaCorrecta(index)} 
+                <button
+                  type="button"
+                  onClick={() => handleSetRespuestaCorrecta(index)}
                   className={`flex-shrink-0 p-3 rounded-lg transition-colors ${
                     opcion.esCorrecta ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-500 hover:bg-green-200'
-                  }`} 
+                  }`}
                   title="Marcar como correcta"
                 >
                   <Check size={20} />
@@ -291,7 +289,7 @@ export default function QuestionFormPage() {
             ))}
           </div>
         </div>
-        
+
         <div className="pt-6 border-t flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
           <Button type="button" variant="cancel" onClick={() => navigate(returnPath)}>
             Cancelar
@@ -299,9 +297,9 @@ export default function QuestionFormPage() {
           <Button type="submit" variant="primary" className="bg-blue-600">
             {isEditing ? 'Guardar Cambios' : 'Agregar Pregunta'}
           </Button>
-          
+
           {!isEditing && (
-            <button 
+            <button
               type="button"
               onClick={(e) => {
                 e.preventDefault();
@@ -324,7 +322,7 @@ export default function QuestionFormPage() {
           )}
         </div>
       </form>
-      
+
       <SuccessModal
         show={showSuccessModal}
         onClose={handleCloseModalAndReturn}

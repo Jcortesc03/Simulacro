@@ -4,15 +4,24 @@ import dotenv from 'dotenv';
 dotenv.config({ path: './.env' });
 
 const verifyToken = (req, res, next) => {
-    const authHeader = req.headers["authorization"];
-    const token = authHeader.split(' ')[1];
-    if(!token)
-        res.status(403).send({error: 'Token requerido'});
-    jwt.verify(token, process.env.JWT_SECRET, (err, decoded)=> {
-        if(err) return res.status(401).send({error: 'Token invalido'});
-        req.user= decoded;
-        next();
-    });
+  const authHeader = req.headers["authorization"];
+
+  if (!authHeader) {
+    return res.status(401).json({ error: 'Token requerido' });
+  }
+
+  const token = authHeader.split(' ')[1];
+  if (!token) {
+    return res.status(401).json({ error: 'Token requerido' });
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    if (err) {
+      return res.status(401).json({ error: 'Token inválido' });
+    }
+    req.user = decoded;
+    next();
+  });
 };
 
 export default verifyToken;

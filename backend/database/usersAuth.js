@@ -31,10 +31,10 @@ const verifyUser = async (email) => {
   );
 };
 
-const changePassword = async (email, password) => {
+const changePassword = async (id, password) => {
   await db.query(
-    `UPDATE users SET password_hash = ? WHERE email = ?`,
-    [password, email]
+    `UPDATE users SET password_hash = ? WHERE user_id = ?`,
+    [password, id]
   );
 };
 

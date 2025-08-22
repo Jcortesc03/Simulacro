@@ -1,14 +1,19 @@
-import express from 'express';
-import usersControllers from '../controllers/authControllers.js';
-import verified from '../middlewares/verifyToken.js';
-import { verifyAdmin, verifyTeacher } from '../middlewares/verifyRole.js';
+import express from "express";
+import {
+  loginUser,
+  registerUser,
+  verifyEmail,
+  changePasswordHandler,
+  getProfile,
+} from "../controllers/authControllers.js";
+import authMiddleware from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-router.post('/register', usersControllers.registerUser);
-router.get('/verify/:token', usersControllers.verifyEmail);
-router.post('/login', usersControllers.loginUser);
-router.get('/getSubjects', usersControllers.getSubjects);
-router.patch('changePassword/', verified, usersControllers.changePasswordHandler);
+router.post("/login", loginUser);
+router.post("/register", registerUser);
+router.get("/verify/:token", verifyEmail);
+router.patch("/changePassword", authMiddleware, changePasswordHandler);
+router.get("/profile", authMiddleware, getProfile);
 
 export default router;
