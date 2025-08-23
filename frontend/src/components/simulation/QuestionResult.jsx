@@ -1,10 +1,9 @@
 // src/components/simulation/QuestionResult.jsx
 
 import React from 'react';
-import { CheckCircle2, XCircle } from 'lucide-react';
+import { CheckCircle2, XCircle, MessageSquareText } from 'lucide-react';
 
-const QuestionResult = ({ question, questionNumber, userAnswer, correctAnswer }) => {
-  // Manejo de seguridad en caso de que alguna prop no llegue
+const QuestionResult = ({ question, questionNumber, userAnswer, correctAnswer, feedback }) => {
   const isCorrect = userAnswer?.selectedOption === correctAnswer?.optionId;
 
   const renderOptionContent = (text) => {
@@ -18,20 +17,16 @@ const QuestionResult = ({ question, questionNumber, userAnswer, correctAnswer })
     <div className="p-4 border-b border-gray-200 last:border-b-0">
       {/* --- SECCIÓN DE LA PREGUNTA --- */}
       <div className="flex items-start gap-4 mb-4">
-        {/* Ícono de Correcto/Incorrecto */}
         {isCorrect ? (
           <CheckCircle2 className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
         ) : (
           <XCircle className="w-6 h-6 text-red-500 flex-shrink-0 mt-1" />
         )}
-        {/* Enunciado y Contexto de la Pregunta */}
         <div className="flex-grow">
           <p className="font-semibold text-gray-800">
             Pregunta {questionNumber}:
           </p>
-          {/* Mostramos el texto del enunciado */}
           <p className="mt-1 text-gray-700">{question?.statement}</p>
-          {/* Mostramos la imagen de la pregunta si existe */}
           {question?.image_path && (
             <div className="mt-4 p-2 border rounded-lg bg-gray-50 inline-block">
               <img src={question.image_path} alt={`Contexto para la pregunta ${questionNumber}`} className="max-w-full h-auto rounded-md" />
@@ -53,6 +48,19 @@ const QuestionResult = ({ question, questionNumber, userAnswer, correctAnswer })
           </div>
         )}
       </div>
+
+      {/* --- SECCIÓN DE RETROALIMENTACIÓN --- */}
+      {feedback && (
+        <div className="ml-10 mt-4 p-3 rounded-lg bg-blue-50 border border-blue-200">
+          <div className="flex items-start gap-3">
+            <MessageSquareText className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+            <div className="flex-grow">
+              <h4 className="font-semibold text-sm text-blue-800">Retroalimentación de la IA</h4>
+              <p className="text-sm text-gray-700 mt-1">{feedback}</p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

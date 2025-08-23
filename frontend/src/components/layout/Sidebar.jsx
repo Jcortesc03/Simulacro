@@ -45,7 +45,7 @@ const AdminSidebar = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const token = localStorage.getItem("token"); // 👈 si guardas JWT en localStorage
+        const token = localStorage.getItem("token");
         const response = await api.get("/auth/profile", {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -65,7 +65,7 @@ const AdminSidebar = () => {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("token"); // 👈 limpia token
+    localStorage.removeItem("token");
     navigate("/login");
   };
 
@@ -137,7 +137,7 @@ const AdminSidebar = () => {
                 <p className="font-semibold text-sm leading-tight truncate">
                   {user.fullName}
                 </p>
-                <p className="text-xs text-blue-300 truncate">{user.role}</p>
+                <p className="text-xs text-blue-300 truncate">Administrador</p>
               </div>
             )}
           </NavLink>

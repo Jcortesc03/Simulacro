@@ -1,58 +1,117 @@
 // src/components/questions/QuestionCard.jsx
+import React from "react";
+import Button from "../ui/Button";
+import { Edit2, Trash2, CheckCircle, XCircle } from "lucide-react";
 
-import { Check, Edit, Trash2 } from 'lucide-react';
-
-const QuestionCard = ({ question, onEdit, onDelete }) => {
+export default function QuestionCard({ question, onEdit, onDelete }) {
   return (
-    <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200 flex flex-col md:flex-row gap-6 hover:shadow-lg transition-shadow">
-      <div className="flex-grow">
-        <p className="font-semibold text-gray-800 mb-4 text-lg">{question.pregunta}</p>
-        <div className="space-y-3 text-gray-700">
+    <div className="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200">
+      {/* Header con enunciado */}
+      <div className="p-6 pb-4">
+        <h3 className="text-xl font-semibold text-gray-900 leading-relaxed">
+          {question.enunciado}
+        </h3>
+      </div>
+
+      {/* Imagen si existe */}
+      {question.imagePath && (
+        <div className="px-6 pb-4">
+          <div className="bg-gray-50 rounded-lg p-4 border border-gray-100">
+            <img
+              src={question.imagePath}
+              alt="Ilustración de la pregunta"
+              className="max-w-full h-auto rounded-md shadow-sm"
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Opciones */}
+      <div className="px-6 pb-4">
+        <div className="space-y-3">
           {question.opciones.map((opcion, index) => (
-            <div key={index} className="flex items-center gap-3">
-              <div className="w-6 flex justify-center">
-                {opcion.esCorrecta && <Check className="text-green-600 font-bold" size={20} />}
+            <div
+              key={index}
+              className={`flex items-start gap-3 p-4 rounded-lg border transition-colors duration-150 ${
+                opcion.esCorrecta
+                  ? 'bg-green-50 border-green-200 hover:bg-green-100'
+                  : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
+              }`}
+            >
+              {/* Letra de opción */}
+              <span className="flex-shrink-0 w-6 h-6 bg-white border border-gray-300 rounded-full flex items-center justify-center text-sm font-medium text-gray-600">
+                {String.fromCharCode(65 + index)}
+              </span>
+
+              {/* Texto de la opción */}
+              <div className="flex-1 min-w-0">
+                <span
+                  className="text-gray-800 leading-relaxed block"
+                  dangerouslySetInnerHTML={{ __html: opcion.texto }}
+                />
               </div>
-              <span>{opcion.texto}</span>
+
+              {/* Indicador de respuesta correcta */}
+              <div className="flex-shrink-0">
+                {opcion.esCorrecta ? (
+                  <CheckCircle className="w-5 h-5 text-green-600" />
+                ) : (
+                  <XCircle className="w-5 h-5 text-red-500" />
+                )}
+              </div>
             </div>
           ))}
         </div>
       </div>
 
-      <div className="flex-shrink-0 w-full md:w-52 flex flex-row-reverse md:flex-col justify-between items-center md:items-end border-t md:border-t-0 md:border-l pt-4 md:pt-0 md:pl-6 mt-4 md:mt-0">
-        <div className="text-right">
-          <p className="text-xs text-gray-400">Nivel de dificultad</p>
-          <p className="font-bold text-gray-800 text-lg mb-3">{question.dificultad}</p>
-          <p className="text-xs text-gray-400">Editado por</p>
-          <p className="font-bold text-gray-800 text-lg">{question.editadoPor}</p>
+      {/* Footer con metadata y botones */}
+      <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 rounded-b-xl">
+        {/* Información de la pregunta */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-6 text-sm text-gray-600">
+            <div className="flex items-center gap-2">
+              <span className="font-medium">Dificultad:</span>
+              <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                question.dificultad === 'Fácil' ? 'bg-green-100 text-green-800' :
+                question.dificultad === 'Medio' ? 'bg-yellow-100 text-yellow-800' :
+                'bg-red-100 text-red-800'
+              }`}>
+                {question.dificultad}
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="font-medium">Editado por:</span>
+              <span className="text-gray-800">{question.editadoPor}</span>
+            </div>
+          </div>
         </div>
 
-        {/* ✅ Solo muestra el contenedor si hay al menos una acción */}
+        {/* Botones de acción */}
         {(onEdit || onDelete) && (
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             {onEdit && (
-              <button 
-                onClick={onEdit} 
-                className="p-2 rounded-full text-gray-500 hover:bg-blue-100 hover:text-blue-600 transition-colors" 
-                title="Editar"
+              <Button
+                onClick={onEdit}
+                variant="secondary"
+                className="flex items-center gap-2 px-4 py-2 text-sm font-medium"
               >
-                <Edit size={20} />
-              </button>
+                <Edit2 className="w-4 h-4" />
+                Editar
+              </Button>
             )}
             {onDelete && (
-              <button 
-                onClick={onDelete} 
-                className="p-2 rounded-full text-gray-500 hover:bg-red-100 hover:text-red-600 transition-colors" 
-                title="Eliminar"
+              <Button
+                onClick={onDelete}
+                variant="danger"
+                className="flex items-center gap-2 px-4 py-2 text-sm font-medium"
               >
-                <Trash2 size={20} />
-              </button>
+                <Trash2 className="w-4 h-4" />
+                Eliminar
+              </Button>
             )}
           </div>
         )}
       </div>
     </div>
   );
-};
-
-export default QuestionCard;
+}

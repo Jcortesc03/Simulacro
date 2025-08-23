@@ -1,6 +1,3 @@
-// src/api/axiosInstance.jsx
-
-// 1. Importa axios
 import axios from 'axios';
 
 // 2. Crea la instancia

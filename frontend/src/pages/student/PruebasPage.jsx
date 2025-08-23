@@ -16,7 +16,7 @@ const pruebas = [
 
 const PruebaCard = ({ prueba, onStart }) => {
   return (
-    <div 
+    <div
       onClick={() => onStart(prueba)}
       className="flex items-center bg-white p-4 rounded-xl shadow-md border border-gray-200 cursor-pointer transition-all duration-300 hover:shadow-lg hover:border-blue-500 hover:-translate-y-1"
     >
@@ -57,17 +57,17 @@ const PruebasPage = () => {
     if (!modalState.prueba) return;
     const { id, name } = modalState.prueba;
     const questionCount = modalState.questionCount;
-    
+
     console.log(`Navegando a /student/simulacro/${id} con ${questionCount} preguntas.`);
-    
+
     setModalState({ isOpen: false, prueba: null, questionCount: 10 });
 
     // La lógica de navegación
-    navigate(`/student/simulacro/${id}`, { 
-      state: { 
-        examName: name, 
-        questionCount: questionCount 
-      } 
+    navigate(`/student/simulacro/${id}`, {
+      state: {
+        examName: name,
+        questionCount: questionCount
+      }
     });
   };
 
@@ -76,17 +76,17 @@ const PruebasPage = () => {
   };
 
   const isGeneralSimulacro = modalState.prueba?.id === 'general';
-  
+
   return (
     <div className="max-w-4xl mx-auto py-8 px-4">
       <h1 className="text-3xl font-bold text-gray-800 mb-10 text-center">Selecciona una Prueba para Iniciar</h1>
-      
+
       <div className="space-y-6 mb-12">
         {pruebas.map(p => (
           <PruebaCard key={p.id} prueba={p} onStart={handleStartAttempt} />
         ))}
       </div>
-      
+
       <h2 className="text-2xl font-semibold text-gray-700 mb-6 text-center">Prueba Definitiva</h2>
       <GeneralSimulationCard onStart={handleStartAttempt} />
 

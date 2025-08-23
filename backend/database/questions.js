@@ -117,7 +117,7 @@ const getLastQuestions = async (categoryName, questionNumber) => {
 
   const [questions] = await db.query(
     `
-      SELECT q.question_id, q.statement, q.difficulty, sc.sub_category_name
+      SELECT q.question_id, q.statement, q.difficulty, q.image_path, sc.sub_category_name
       FROM questions q
       JOIN sub_categories sc ON q.sub_category_id = sc.sub_category_id
       JOIN categories c ON sc.category_id = c.category_id

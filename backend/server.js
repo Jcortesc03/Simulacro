@@ -7,6 +7,7 @@ import adminRouter from './router/adminRoutes.js'
 import questionRouter from './router/questionRoutes.js'
 import testsRouter from './router/testsRoutes.js'
 import rateLimiter from './middlewares/rateLimiter.js'
+import categoriesRouter from './router/categoriesRoutes.js';
 
 dotenv.config();
 
@@ -24,6 +25,7 @@ app.use('/AI', AIRouter);
 app.use('/questions', questionRouter);
 app.use('/tests', testsRouter);
 app.use('/admin', adminRouter);
+app.use('/categories', categoriesRouter);
 
 app.listen(port, () => {
   const url = process.env.NGROOK_DOMAIN

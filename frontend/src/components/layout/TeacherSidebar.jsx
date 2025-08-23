@@ -9,7 +9,7 @@ import {
   X,
 } from "lucide-react";
 import { logo } from "../../assets/backgraund-login/index";
-import api from "../../api/axiosInstance"; // 👈 tu cliente axios
+import api from "../../api/axiosInstance";
 
 const NavItem = ({ to, icon, children, isCollapsed }) => {
   const baseClasses =
@@ -51,8 +51,7 @@ const TeacherSidebar = () => {
         const response = await api.get("auth/profile"); // ajusta a tu endpoint real
         if (response.data) {
           setTeacherUser({
-            fullName: response.data.name,
-            role: response.data.role,
+            fullName: response.data.name
           });
         }
       } catch (err) {
@@ -139,7 +138,7 @@ const TeacherSidebar = () => {
                   {teacherUser.fullName}
                 </p>
                 <p className="text-xs text-blue-300 truncate">
-                  {teacherUser.role}
+                  Profesor
                 </p>
               </div>
             )}

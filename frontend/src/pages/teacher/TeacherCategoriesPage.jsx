@@ -1,148 +1,90 @@
-// src/pages/teacher/categories/TeacherCategoryDetailPage.jsx
-
+// src/pages/teacher/categories/TeacherCategoriesPage.jsx
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import QuestionCard from '../../components/questions/QuestionCard';
-import ConfirmationModal from '../../components/ui/ConfirmationModal';
-import SuccessModal from '../../components/ui/SuccessModal';
-import Button from '../../components/ui/Button';
-import { PlusCircle } from 'lucide-react';
-import api from '../../api/axiosInstance'; // Asegúrate de tener la instancia de axios
+import { useNavigate } from 'react-router-dom';
+import api from '../../api/axiosInstance';
+import { categoriesData } from '../../data/categoriesData'; // respaldo
 
-// Mapeo de URL a nombre real (igual que en admin)
-const categoryMap = {
-  'lectura-critica': 'Critical Reading',
-  'razonamiento-cuantitativo': 'Quantitative Reasoning',
-  'competencias-ciudadanas': 'Civic Competencies',
-  'comunicacion-escrita': 'Writing',
-  'ingles': 'English'
-};
-
-export default function TeacherCategoryDetailPage() {
-  const { categoryPath } = useParams();
+const TeacherCategoriesPage = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+  const [categories, setCategories] = useState([]);
 
-  const [questions, setQuestions] = useState([]);
-  const [modal, setModal] = useState({ type: null, isOpen: false, id: null });
-  const [loading, setLoading] = useState(true);
+  const inferCategory = (subcat) => {
+    if (!subcat) return "Sin categoría";
+    const map = {
+      'literal': 'Lectura Crítica',
+      'inferencial': 'Lectura Crítica',
+      'analítica': 'Lectura Crítica',
+      'algebra': 'Razonamiento Cuantitativo',
+      'estadística': 'Razonamiento Cuantitativo',
+      'geometría': 'Razonamiento Cuantitativo',
+      'etica': 'Competencias Ciudadanas',
+      'derechos humanos': 'Competencias Ciudadanas',
+      'argumentación': 'Competencias Ciudadanas',
+      'coherencia': 'Comunicación Escrita',
+      'gramática': 'Inglés',
+      'vocabulario': 'Inglés',
+      'comprensión': 'Inglés'
+    };
+    const key = subcat.toLowerCase().trim();
+    return map[key] || subcat;
+  };
 
   useEffect(() => {
-    const fetchQuestions = async () => {
-      const categoryName = categoryMap[categoryPath];
-      if (!categoryName) {
-        setQuestions([]);
-        setLoading(false);
-        return;
-      }
-
+    const fetchCategories = async () => {
       try {
-        // ✅ Usa GET con params, como ya funciona en backend
-        const res = await api.get('/questions/getQuestions', {
-          params: {
-            categoryName,
-            questionNumber: 50
+        const res = await api.get('/categories/');
+        const fetchedCategories = res.data.map((cat, idx) => {
+          const catName = cat.name || cat.category_name;
+          if (!catName) {
+            return categoriesData[idx] || {
+              name: "Sin nombre",
+              path: "sin-nombre",
+              theme: { main: '#4A90E2', light: '#DDEBFF' }
+            };
           }
+          const existingCategory = categoriesData.find(c => c.name === catName);
+          return existingCategory || {
+            name: catName,
+            path: catName.toLowerCase().replace(/\s+/g, '-'),
+            theme: { main: '#4A90E2', light: '#DDEBFF' }
+          };
         });
-
-        // Mapea los datos del backend al formato que usa QuestionCard
-        const mapped = Array.isArray(res.data) ? res.data.map(q => {
-          const isSystem =   
-            q.createdBy === 'system' || 
-            q.aiGenerated === true || 
-            q.source === 'default' || 
-            !q.createdBy; // si no tiene creador, asume que es del sistema
-
-      return {
-          id: q.question_id,
-          enunciado: q.statement,
-          pregunta: q.statement,
-          opciones: q.answers.map(a => ({
-            texto: a.option_text,
-            esCorrecta: a.is_correct
-          })),
-          dificultad: q.difficulty,
-          editadoPor: q.created_by || "Sistema",
-          isSystem
-      };
-        }) : [];
-
-        setQuestions(mapped);
+        setCategories(fetchedCategories);
       } catch (error) {
-        console.error('Error cargando preguntas', error);
-        setQuestions([]);
-      } finally {
-        setLoading(false);
+        console.error('Error cargando categorías', error);
+        setCategories(categoriesData);
       }
     };
 
-    fetchQuestions();
-  }, [categoryPath]);
-
-  const handleAddQuestion = () => {
-    navigate('/teacher/questions/add', { state: { from: location.pathname } });
-  };
-
-  const handleEditQuestion = (question) => {
-    navigate(`/teacher/questions/edit/${question.id}`, {
-      state: { questionData: question, from: location.pathname }
-    });
-  };
-
-  const handleDeleteClick = (questionId) => {
-    setModal({ type: 'deleteConfirm', isOpen: true, id: questionId });
-  };
-
-  const handleConfirmDelete = () => {
-    setModal({ type: 'deleteSuccess', isOpen: true });
-  };
-
-  const closeNotificationModals = () => {
-    setModal({ type: null, isOpen: false, id: null });
-  };
-
-  if (loading) {
-    return <div className="p-6 text-center">Cargando preguntas...</div>;
-  }
+    fetchCategories();
+  }, []);
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
-      <div className="flex justify-end mb-8">
-        <Button onClick={handleAddQuestion} variant="primary" className="bg-blue-600">
-          <PlusCircle className="inline md:mr-2" />
-          <span className="hidden md:inline">Añadir Pregunta</span>
-        </Button>
-      </div>
-
-      <div className="space-y-6">
-        <h2 className="text-2xl font-bold text-gray-800">Preguntas Existentes</h2>
-        {questions.length > 0 ? (
-          questions.map(q => (
-            <QuestionCard
-             key={q.id} 
-             question={q}
-             onEdit={q.isSystem ? undefined : () => handleEditQuestion(q)} // solo si NO es del sistema
-             onDelete={q.isSystem ? undefined : () => handleDeleteClick(q.id)} // solo si NO es del sistema
-          />
-          ))
-        ) : (
-          <div className="text-center text-gray-500 bg-gray-100 p-8 rounded-lg">
-            <p className="font-semibold">No hay preguntas para esta categoría.</p>
+      <h2 className="text-xl font-bold mb-4">Categorías</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {categories.map((cat, idx) => (
+          <div
+            key={cat.name || idx}
+            className="p-6 rounded-lg shadow-md cursor-pointer hover:scale-105 transition-transform border-l-4"
+            style={{ backgroundColor: cat.theme.light, borderColor: cat.theme.main }}
+            onClick={() =>
+              navigate(`/teacher/categories/${cat.path}`, {
+                state: { categoryName: cat.name }
+              })
+            }
+          >
+            <h3
+              className="font-bold text-lg mb-2 break-words"
+              style={{ color: cat.theme.main }}
+            >
+              {cat.name}
+            </h3>
           </div>
-        )}
+        ))}
       </div>
-
-      <ConfirmationModal
-        show={modal.type === 'deleteConfirm' && modal.isOpen}
-        onConfirm={handleConfirmDelete}
-        onClose={closeNotificationModals}
-        title="Confirmar Eliminación"
-      />
-      <SuccessModal
-        show={modal.type === 'deleteSuccess' && modal.isOpen}
-        onClose={closeNotificationModals}
-        message="¡Pregunta eliminada!"
-      />
     </div>
   );
-}
+};
+
+export default TeacherCategoriesPage;
