@@ -17,13 +17,19 @@ const deleteUserHandler = async (req, res) => {
 const changeRoleHandler = async (req, res) => {
   try {
     const { email, roleName } = req.body;
+
+    if (!email || !roleName) {
+      return res.status(400).send('Faltan parámetros: email o roleName');
+    }
+
     await db.changeRole(email, roleName);
     res.status(200).send('Usuario modificado con éxito');
-  } catch(err) {
-    console.log(err);
+  } catch (err) {
+    console.error("Error en changeRoleHandler:", err.message);
     return res.status(400).send('Hubo un error cambiando el rol');
   }
 };
+
 
 const adminCreateUserHandler = async (req, res) => {
   try {
@@ -98,10 +104,21 @@ const getUserByEmailHandler = async (req, res) => {
   }
 };
 
+const getCategoriesHandler = async (req, res) => {
+  try {
+    const categories = await db.getCategories();
+    return res.status(200).json(categories);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: 'Error al obtener las categorías' });
+  }
+};
+
 export default {
   deleteUserHandler,
   changeRoleHandler,
   adminCreateUserHandler,
   getPagedUsersHandler,
-  getUserByEmailHandler
+  getUserByEmailHandler,
+  getCategoriesHandler
 };

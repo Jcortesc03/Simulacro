@@ -8,35 +8,26 @@ import Button from '../../../components/ui/Button';
 import { PlusCircle } from 'lucide-react';
 import api from '../../../api/axiosInstance.jsx';
 
-// Mapeo de URL a nombre real
-const categoryMap = {
-  'lectura-critica': 'Critical Reading',
-  'razonamiento-cuantitativo': 'Quantitative Reasoning',
-  'competencias-ciudadanas': 'Civic Competencies',
-  'comunicacion-escrita': 'Writing',
-  'ingles': 'English'
-};
-
 export default function CategoryDetailPage() {
   const { categoryPath } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
   const [questions, setQuestions] = useState([]);
   const [modal, setModal] = useState({ type: null, isOpen: false, id: null });
+  const categoryName = location.state?.categoryName;
 
   useEffect(() => {
     const fetchQuestions = async () => {
-      const categoryName = categoryMap[categoryPath];
       if (!categoryName) return;
 
       try {
-        // CORRECCIÓN: Los parámetros van directamente en el body, no dentro de params
-        const res = await api.post('/questions/getQuestions', {
-          categoryName,
-          questionNumber: 50
+        const res = await api.get('/questions/getQuestions', {
+          params: {
+            categoryName,
+            questionNumber: 50
+          }
         });
 
-        // Mapea a formato de ejemplo
         const mapped = res.data.map(q => ({
           id: q.question_id,
           enunciado: q.statement,
@@ -56,8 +47,10 @@ export default function CategoryDetailPage() {
       }
     };
 
-    fetchQuestions();
-  }, [categoryPath]);
+    if (categoryName) {
+      fetchQuestions();
+    }
+  }, [categoryName]);
 
   const handleAddQuestion = () => {
     navigate('/admin/questions/add', { state: { from: location.pathname } });

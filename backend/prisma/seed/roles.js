@@ -1,4 +1,3 @@
-// backend/prisma/seed/roles.js
 import { PrismaClient } from '../../generated/prisma/index.js';
 
 const prisma = new PrismaClient();
@@ -34,7 +33,7 @@ async function main() {
     });
   }
 
-  console.log("Roles insertados con IDs fijos (1, 2, 3) :)");
+  console.log("\nRoles insertados con IDs fijos (1, 2, 3) :)");
 }
 
 main()

@@ -27,25 +27,42 @@ const adminSaveUser = async (id, name, password, programName, email) => {
 };
 
 const changeRole = async (email, roleName) => {
-  const [rows] = await db.query(
-    `
-        select role_id
-        from roles
-        where role_name = ?
-    `,
-    [roleName]
-  );
+  // Mapeo de nombres a IDs
+  const roleMapping = {
+    estudiante: 1,
+    profesor: 2,
+    admin: 3,
+  };
+
+  const roleId = roleMapping[roleName.toLowerCase()]; // Ignora mayúsculas/minúsculas
+
+  if (!roleId) {
+    throw new Error(`Rol no reconocido: ${roleName}`);
+  }
 
   await db.query(
     `UPDATE users
-        SET role_id = ?
-        WHERE email = ?`,
-    [rows[0].role_id, email]
+      SET role_id = ?
+      WHERE email = ?`,
+    [roleId, email]
   );
 };
+
+
 
 const deleteUser = async (email) => {
   await db.query(`delete from users where email = ?`, [email]);
 };
 
-export default { getPagedUsers, adminSaveUser, changeRole, deleteUser };
+const getCategories = async () => {
+  const [categories] = await db.query("SELECT * FROM categories");
+  return categories;
+};
+
+export default {
+  getPagedUsers,
+  adminSaveUser,
+  changeRole,
+  deleteUser,
+  getCategories,
+};

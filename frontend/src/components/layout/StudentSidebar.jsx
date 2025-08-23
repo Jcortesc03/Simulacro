@@ -1,33 +1,66 @@
-// src/components/layout/StudentSidebar.jsx
+import React, { useState, useEffect } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
+import {
+  Home,
+  ClipboardList,
+  GraduationCap,
+  LogOut,
+  UserCircle,
+  ShieldAlert,
+  Menu,
+  X,
+} from "lucide-react";
+import { useSimulation } from "../../context/SimulationContext";
+import { logo } from "../../assets/backgraund-login/index";
+import api from "../../api/axiosInstance"; // 👈 importas tu api
 
-import React, { useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom'; // Añadimos useNavigate
-import { Home, ClipboardList, GraduationCap, LogOut, UserCircle, ShieldAlert } from 'lucide-react';
-import { useSimulation } from '../../context/SimulationContext';
+const NavItem = ({ to, icon, children, onClick, isCollapsed }) => {
+  const baseClasses =
+    "flex items-center w-full py-3 px-4 text-base font-medium text-white transition-all duration-300 hover:bg-blue-800/70 rounded-lg mx-2";
 
-const studentUser = {
-  fullName: "ESTUDIANTE",
-  role: "Estudiante",
-};
+  const linkClasses = ({ isActive }) =>
+    `${baseClasses} ${isActive ? "bg-blue-800 shadow-lg" : ""}`;
 
-const NavItem = ({ to, icon, children, onClick }) => {
-  const baseClasses = "flex items-center w-full py-4 text-lg font-medium text-white transition-colors md:px-4 justify-center md:justify-start";
-  const linkClasses = ({ isActive }) => 
-    `${baseClasses} ${isActive ? 'bg-blue-800' : 'hover:bg-blue-800'}`;
   return (
     <NavLink to={to} className={linkClasses} onClick={onClick}>
-      {icon}
-      <span className="ml-4 hidden md:inline">{children}</span>
+      <div className="flex items-center justify-center w-8 h-8">{icon}</div>
+      <span
+        className={`ml-3 transition-all duration-300 ${
+          isCollapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100"
+        }`}
+      >
+        {children}
+      </span>
     </NavLink>
   );
 };
 
 const StudentSidebar = () => {
-  const navigate = useNavigate(); // Hook para la navegación
+  const navigate = useNavigate();
   const { isSimulating } = useSimulation();
   const [showBlockAlert, setShowBlockAlert] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
-  // --- ¡AQUÍ ESTÁ LA FUNCIÓN QUE FALTABA! ---
+  // 👇 estados del usuario
+  const [userName, setUserName] = useState("");
+  const [userRole, setUserRole] = useState("");
+
+  // cargar datos del perfil
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await api.get("auth/profile");
+        if (response.data) {
+          setUserName(response.data.name);
+          setUserRole(response.data.role);
+        }
+      } catch (err) {
+        console.error("Error cargando perfil:", err);
+      }
+    };
+    fetchProfile();
+  }, []);
+
   const handleProtectedLinkClick = (e) => {
     if (isSimulating) {
       e.preventDefault();
@@ -36,65 +69,173 @@ const StudentSidebar = () => {
   };
 
   const handleLogout = (e) => {
-    // Primero, verificamos si estamos en un simulacro
     if (isSimulating) {
       e.preventDefault();
       setShowBlockAlert(true);
     } else {
-      // Si no, cerramos sesión
       console.log("Cerrando sesión de Estudiante...");
-      navigate('/login');
+      navigate("/login");
+    }
+  };
+
+  const toggleSidebar = () => {
+    setIsCollapsed(!isCollapsed);
+  };
+
+  // función para mostrar nombre del rol
+  const getRoleName = (role) => {
+    switch (parseInt(role)) {
+      case 1:
+        return "Estudiante";
+      case 2:
+        return "Profesor";
+      case 3:
+        return "Administrador";
+      default:
+        return "Usuario";
     }
   };
 
   return (
     <>
-      <aside className="sticky top-0 flex flex-col w-24 md:w-72 h-screen bg-blue-950 text-white shadow-2xl transition-all duration-300 ease-in-out flex-shrink-0">
-        <div className="flex flex-col flex-1 overflow-y-auto">
-          {/* Logo */}
-          <div className="flex flex-col items-center justify-center h-40 border-b-2 border-blue-900 px-2 flex-shrink-0">
-            <img src="/logo-universidad.png.png" alt="Logo Universitaria de Colombia" className="h-12 md:h-20" />
-            <p className="text-gray-300 text-sm mt-2 text-center hidden md:block">Pasión por Triunfar</p>
-          </div>
-          
-          {/* Perfil de Estudiante */}
-          <NavLink to="/student/perfil" onClick={handleProtectedLinkClick} className={({isActive}) => `flex items-center h-24 border-b-2 border-blue-900 transition-colors justify-center md:px-4 md:justify-start flex-shrink-0 ${isActive ? 'bg-blue-800' : 'hover:bg-blue-800'}`}>
-            <UserCircle className="w-10 h-10 md:w-14 md:h-14 text-white flex-shrink-0" />
-            <div className="ml-3 hidden md:block overflow-hidden">
-              <p className="font-bold text-lg leading-tight truncate">{studentUser.fullName.toUpperCase()}</p>
-              <p className="text-sm text-gray-300 truncate">{studentUser.role}</p>
-            </div>
-          </NavLink>
+      <aside
+        className={`sticky top-0 flex flex-col h-screen bg-gradient-to-b from-blue-950 to-blue-900 text-white shadow-2xl transition-all duration-300 ease-in-out flex-shrink-0 ${
+          isCollapsed ? "w-20" : "w-72"
+        }`}
+      >
+        {/* Toggle Button */}
+        <div className="flex justify-end p-4">
+          <button
+            onClick={toggleSidebar}
+            className="p-2 rounded-lg hover:bg-blue-800/50 transition-colors duration-200"
+          >
+            {isCollapsed ? (
+              <Menu className="w-6 h-6" />
+            ) : (
+              <X className="w-6 h-6" />
+            )}
+          </button>
+        </div>
 
-          {/* Navegación Principal */}
-          <nav className="flex-1 flex flex-col pt-2">
-            <NavItem to="/student/inicio" onClick={handleProtectedLinkClick} icon={<Home className="w-7 h-7 md:w-8 md:h-8" />}>INICIO</NavItem>
-            <NavItem to="/student/pruebas" onClick={handleProtectedLinkClick} icon={<ClipboardList className="w-7 h-7 md:w-8 md:h-8" />}>PRUEBAS</NavItem>
-            <NavItem to="/student/calificaciones" onClick={handleProtectedLinkClick} icon={<GraduationCap className="w-7 h-7 md:w-8 md:h-8" />}>CALIFICACIONES</NavItem>
+        <div className="flex flex-col flex-1 overflow-hidden">
+          {/* Logo Section */}
+          <div
+            className={`flex flex-col items-center justify-center border-b border-blue-800/50 pb-6 mb-4 transition-all duration-300 ${
+              isCollapsed ? "px-2" : "px-6"
+            }`}
+          >
+            <div className="relative">
+              <img
+                src={logo}
+                alt="Logo Universitaria de Colombia"
+                className={`transition-all duration-300 ${
+                  isCollapsed ? "h-10 w-10" : "h-16 w-auto"
+                }`}
+              />
+            </div>
+            {!isCollapsed && (
+              <p className="text-blue-200 text-sm mt-3 text-center font-light animate-fade-in">
+                Pasión por Triunfar
+              </p>
+            )}
+          </div>
+
+          {/* User Profile */}
+          <div
+            className={`mb-6 transition-all duration-300 ${
+              isCollapsed ? "px-2" : "px-4"
+            }`}
+          >
+            <NavLink
+              to="/student/perfil"
+              onClick={handleProtectedLinkClick}
+              className={({ isActive }) =>
+                `flex items-center p-3 rounded-xl transition-all duration-300 hover:bg-blue-800/50 ${
+                  isActive ? "bg-blue-800 shadow-lg" : ""
+                } ${isCollapsed ? "justify-center" : ""}`
+              }
+            >
+              <div className="relative">
+                <UserCircle className="w-10 h-10 text-blue-200" />
+                <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-blue-950"></div>
+              </div>
+              {!isCollapsed && (
+                <div className="ml-4 overflow-hidden">
+                  <p className="font-semibold text-sm leading-tight truncate">
+                    {userName || "Cargando..."}
+                  </p>
+                  <p className="text-xs text-blue-300 truncate">
+                    {getRoleName(userRole)}
+                  </p>
+                </div>
+              )}
+            </NavLink>
+          </div>
+
+          {/* Navigation Menu */}
+          <nav className="flex-1 space-y-2 px-2">
+            <NavItem
+              to="/student/inicio"
+              onClick={handleProtectedLinkClick}
+              icon={<Home className="w-5 h-5" />}
+              isCollapsed={isCollapsed}
+            >
+              Inicio
+            </NavItem>
+            <NavItem
+              to="/student/pruebas"
+              onClick={handleProtectedLinkClick}
+              icon={<ClipboardList className="w-5 h-5" />}
+              isCollapsed={isCollapsed}
+            >
+              Pruebas
+            </NavItem>
+            <NavItem
+              to="/student/calificaciones"
+              onClick={handleProtectedLinkClick}
+              icon={<GraduationCap className="w-5 h-5" />}
+              isCollapsed={isCollapsed}
+            >
+              Calificaciones
+            </NavItem>
           </nav>
         </div>
 
-        {/* Botón de Logout */}
-        <div className="flex justify-center items-center p-4 border-t-2 border-blue-900 flex-shrink-0">
-          <button onClick={handleLogout} className="flex items-center justify-center h-14 bg-red-500 text-white rounded-2xl hover:bg-red-700 transition-colors w-14 md:w-full md:py-3">
-            <LogOut className="w-7 h-7 md:w-8 md:h-8 md:mr-3" />
-            <span className="hidden md:block text-lg font-medium">Salir</span>
+        {/* Logout Button */}
+        <div className="p-4 border-t border-blue-800/50 transition-all duration-300">
+          <button
+            onClick={handleLogout}
+            className={`flex items-center w-full bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl hover:from-red-700 hover:to-red-800 transition-all duration-300 transform hover:scale-105 shadow-lg ${
+              isCollapsed ? "p-3 justify-center" : "p-4"
+            }`}
+          >
+            <LogOut className="w-5 h-5" />
+            {!isCollapsed && (
+              <span className="ml-3 font-medium">Cerrar Sesión</span>
+            )}
           </button>
         </div>
       </aside>
 
-      {/* Modal de Alerta */}
+      {/* Block Alert Modal */}
       {showBlockAlert && (
-        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[100]">
-          <div className="bg-white p-8 rounded-lg shadow-xl text-center w-full max-w-sm mx-4 animate-fade-in-up">
-            <ShieldAlert className="mx-auto h-16 w-16 text-yellow-500 mb-4" />
-            <h3 className="font-bold text-xl text-gray-800 mb-2">Prueba en Progreso</h3>
-            <p className="text-gray-600 mb-6">No puedes navegar a otras secciones hasta que finalices el simulacro actual.</p>
-            <button 
-              onClick={() => setShowBlockAlert(false)} 
-              className="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700"
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100] animate-fade-in">
+          <div className="bg-white p-8 rounded-2xl shadow-2xl text-center w-full max-w-md mx-4 animate-scale-in">
+            <div className="w-16 h-16 mx-auto mb-4 bg-yellow-100 rounded-full flex items-center justify-center">
+              <ShieldAlert className="w-8 h-8 text-yellow-600" />
+            </div>
+            <h3 className="font-bold text-xl text-gray-800 mb-3">
+              Prueba en Progreso
+            </h3>
+            <p className="text-gray-600 mb-6 leading-relaxed">
+              No puedes navegar a otras secciones hasta que finalices el
+              simulacro actual.
+            </p>
+            <button
+              onClick={() => setShowBlockAlert(false)}
+              className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-8 py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 transition-all duration-300 transform hover:scale-105 shadow-lg"
             >
-              Aceptar
+              Entendido
             </button>
           </div>
         </div>

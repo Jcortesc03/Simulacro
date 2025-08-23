@@ -28,9 +28,8 @@ async function main() {
     });
   }
 
-  console.log("Programas insertados correctamente :)");
 }
-
+console.log("Programas insertados correctamente :)");
 main()
   .catch((e) => {
     console.error("Error al insertar programas :(", e);

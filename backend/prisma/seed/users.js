@@ -31,7 +31,7 @@ async function main() {
       },
     });
 
-    console.log("\nUsuario admin insertado correctamente :)");
+    console.log("Usuario admin insertado correctamente :)");
 
 
     for (let i = 1; i <= 19; i++) {

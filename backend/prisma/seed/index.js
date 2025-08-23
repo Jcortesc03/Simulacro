@@ -1,20 +1,32 @@
+import { PrismaClient } from '../../generated/prisma/index.js';
+
+const prisma = new PrismaClient();
+
 function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-console.log("\nejecutando seeds");
+async function main() {
+  try {
+    await import("./roles.js");
+    await delay(3000);
 
-try {
-  await import("./roles.js");
-  console.log("\nEsperando 5 segundos antes de programas...");
-  await delay(5000);
+    await import("./programas.js");
+    await delay(3000);
 
-  await import("./programas.js");
-  console.log("\nEsperando 5 segundos antes de usuarios...");
-  await delay(5000);
+    await import("./users.js");
+    await delay(3000);
 
-  await import("./users.js");
+    await import("./categories.js");
+    await delay(7000);
 
-} catch (err) {
-  console.error("error ejecutando seeds ;( ", err);
+    await import("./questions.js");
+  } catch (err) {
+    console.error("Error ejecutando seeds:", err);
+    process.exit(1);
+  } finally {
+    await prisma.$disconnect();
+  }
 }
+
+main();

@@ -1,5 +1,3 @@
-// src/pages/student/SimulationPage.jsx
-
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import Timer from '../../components/simulation/Timer';
@@ -8,40 +6,37 @@ import Button from '../../components/ui/Button';
 import ConfirmationModal from '../../components/ui/ConfirmationModal';
 import SuccessModal from '../../components/ui/SuccessModal';
 import { useSimulation } from '../../context/SimulationContext';
+import api from '../../api/axiosInstance';
+import Card from '../../components/ui/Card';
+import QuestionResult from '../../components/simulation/QuestionResult';
+import PerformanceMeter from '../../components/simulation/PerformanceMeter';
 
-// --- DATOS DE EJEMPLO MEJORADOS ---
-const mockQuestions = {
-  'lectura-critica': [
-    { 
-      question_id: 'lc-q1', 
-      statement: '¿Cuál es la capital de Francia?', 
-      difficulty: 'low',
-      options: [ 
-        { option_id: 'lc-o1a', label: 'a', option_text: 'Londres', is_correct: false }, 
-        { option_id: 'lc-o1b', label: 'b', option_text: 'Madrid', is_correct: false }, 
-        { option_id: 'lc-o1c', label: 'c', option_text: 'París', is_correct: true }, 
-        { option_id: 'lc-o1d', label: 'd', option_text: 'Roma', is_correct: false } 
-      ]
-    },
-    { 
-      question_id: 'lc-q2', 
-      statement: '¿Qué se puede inferir del texto?', 
-      difficulty: 'medium',
-      options: [ 
-        { option_id: 'lc-o2a', label: 'a', option_text: 'Opción A', is_correct: false }, 
-        { option_id: 'lc-o2b', label: 'b', option_text: 'Opción B', is_correct: true }, 
-        { option_id: 'lc-o2c', label: 'c', option_text: 'Opción C', is_correct: false }, 
-        { option_id: 'lc-o2d', label: 'd', option_text: 'Opción D', is_correct: false } 
-      ]
-    }
-  ],
+const ResultsHeader = ({ feedback, time, score, level }) => {
+  return (
+    <Card className="flex flex-col md:flex-row divide-y md:divide-y-0 md:divide-x divide-gray-200">
+      <div className="flex-1 p-4">
+        <h2 className="text-lg font-bold text-gray-800 mb-2">Retroalimentación General</h2>
+        <p className="text-gray-600">{feedback}</p>
+      </div>
+      <div className="flex">
+        <div className="w-1/2 md:w-auto p-4 text-center">
+          <h3 className="text-sm font-semibold text-gray-500 uppercase">Tiempo</h3>
+          <p className="text-3xl font-bold text-gray-800">{time}</p>
+        </div>
+        <div className="w-1/2 md:w-auto p-4 text-center border-l border-gray-200">
+          <h3 className="text-sm font-semibold text-gray-500 uppercase">Puntaje Final</h3>
+          <p className="text-3xl font-bold text-blue-600">{score}</p>
+          <span className={`mt-1 px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800`}>{level}</span>
+        </div>
+      </div>
+    </Card>
+  );
 };
-// ----------------------------
 
 const SimulationPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { categoryPath } = useParams();
+  const { id: simulationId } = useParams();
   const { startSimulation, endSimulation } = useSimulation();
 
   const examName = location.state?.examName || 'Simulacro';
@@ -52,15 +47,40 @@ const SimulationPage = () => {
   const [answers, setAnswers] = useState({});
   const [showFinishModal, setShowFinishModal] = useState(false);
   const [showTimeUpModal, setShowTimeUpModal] = useState(false);
+  const [results, setResults] = useState(null);
   const startTimeRef = useRef(Date.now());
 
   useEffect(() => {
     startSimulation();
-    const categoryQuestions = mockQuestions[categoryPath] || []; 
-    setQuestions(categoryQuestions.slice(0, questionCount));
-    
+
+    const fetchQuestions = async () => {
+      try {
+        const response = await api.get('/questions/getQuestions', {
+          params: {
+            categoryName: examName,
+            questionNumber: questionCount,
+          },
+        });
+
+        const formattedQuestions = response.data.map(q => ({
+          ...q,
+          options: q.answers.map((a, index) => ({
+            ...a,
+            label: String.fromCharCode(97 + index), // a, b, c, d
+          })),
+        }));
+        setQuestions(formattedQuestions);
+      } catch (error) {
+        console.error("Error fetching questions:", error);
+        setQuestions([]);
+      }
+    };
+
+    fetchQuestions();
+
+    // limpiamos el estado solo si el usuario abandona la página
     return () => endSimulation();
-  }, [categoryPath, questionCount, startSimulation, endSimulation]);
+  }, [examName, questionCount, startSimulation, endSimulation]);
 
   const calculateResults = useCallback(() => {
     let puntajeObtenido = 0;
@@ -69,7 +89,7 @@ const SimulationPage = () => {
     questions.forEach(q => {
       const peso = q.difficulty === 'high' ? 3 : q.difficulty === 'medium' ? 2 : 1;
       puntajeMaximoPosible += peso;
-      
+
       const respuestaUsuario = answers[q.question_id];
       const opcionCorrecta = q.options.find(opt => opt.is_correct)?.option_id;
 
@@ -79,7 +99,7 @@ const SimulationPage = () => {
     });
 
     const puntajeFinal = puntajeMaximoPosible > 0 ? Math.round((puntajeObtenido / puntajeMaximoPosible) * 300) : 0;
-    
+
     let nivel;
     if (puntajeFinal >= 221) {
       nivel = 'Nivel 4';
@@ -91,7 +111,6 @@ const SimulationPage = () => {
       nivel = 'Nivel 1';
     }
 
-
     const endTime = Date.now();
     const timeTakenInSeconds = Math.round((endTime - startTimeRef.current) / 1000);
     const minutes = Math.floor(timeTakenInSeconds / 60);
@@ -102,20 +121,16 @@ const SimulationPage = () => {
 
   }, [answers, questions]);
 
-  // --- ¡AQUÍ ESTABA EL ERROR! --- Ahora llamamos a calculateResults
- const finishAttempt = useCallback(() => {
+  const finishAttempt = useCallback(() => {
     const { puntajeFinal, nivel, timeTakenFormatted } = calculateResults();
 
-    // --- ¡CAMBIO CLAVE! ---
-    // Preparamos el objeto completo de resultados que la siguiente página necesita
     const resultsPayload = {
       examName: examName,
-      generalFeedback: "Esta es una retroalimentación general generada por la IA basada en tu desempeño.", // Placeholder
+      generalFeedback: "Esta es una retroalimentación general generada por la IA basada en tu desempeño.",
       timeTaken: timeTakenFormatted,
       finalScore: puntajeFinal,
       level: nivel,
       questions: questions.map(q => {
-        // Para cada pregunta, creamos la estructura que necesita QuestionResult
         const userAnswerId = answers[q.question_id];
         const userAnswerObject = q.options.find(opt => opt.option_id === userAnswerId);
         const correctAnswerObject = q.options.find(opt => opt.is_correct);
@@ -137,17 +152,9 @@ const SimulationPage = () => {
     };
 
     console.log("Payload de resultados a enviar:", resultsPayload);
-    
-    const newAttemptId = `attempt-${Date.now()}`;
-    endSimulation();
-    
-    // Navegamos y pasamos el payload completo en el state
-    navigate(`/student/resultados/${newAttemptId}`, { 
-      state: { 
-        results: resultsPayload // Pasamos el objeto completo
-      } 
-    });
-  }, [answers, questions, calculateResults, examName, endSimulation, navigate]);
+    setResults(resultsPayload);
+    // ❌ ya no llamamos endSimulation aquí
+  }, [answers, questions, calculateResults, examName]);
 
   const handleConfirmFinish = () => {
     setShowFinishModal(false);
@@ -179,12 +186,60 @@ const SimulationPage = () => {
     }
   };
 
+  if (results) {
+    return (
+      <div className="space-y-8">
+        <h1 className="text-3xl font-bold text-gray-800 text-center">Resultados: {results.examName}</h1>
+
+        <ResultsHeader
+          feedback={results.generalFeedback}
+          time={results.timeTaken}
+          score={Math.round(results.finalScore)}
+          level={results.level}
+        />
+
+        <PerformanceMeter
+          score={results.finalScore}
+          level={results.level}
+        />
+
+        <Card>
+          <h2 className="text-xl font-bold text-gray-800 p-4 border-b">Revisión de Preguntas</h2>
+          <div className="divide-y divide-gray-200">
+            {results.questions.map((q, index) => (
+              <QuestionResult
+                key={q.question_id}
+                questionNumber={index + 1}
+                question={q}
+                userAnswer={q.user_answer}
+                correctAnswer={q.correct_answer}
+              />
+            ))}
+          </div>
+        </Card>
+
+        <div className="text-center">
+          <Button
+            onClick={() => {
+              endSimulation(); // 🔹 aquí recién limpiamos el contexto
+              navigate('/student/pruebas');
+            }}
+            variant='primary'
+            className="bg-slate-600 hover:bg-slate-800"
+          >
+            Volver a Pruebas
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   if (questions.length === 0) {
     return <div>Cargando preguntas para {examName}...</div>;
   }
 
   const currentQuestion = questions[currentQuestionIndex];
-  
+
   const totalMinutes = questionCount * 1.5;
 
   return (
@@ -200,12 +255,12 @@ const SimulationPage = () => {
         selectedAnswer={answers[currentQuestion.question_id]}
         onSelectAnswer={handleSelectAnswer}
       />
-      
+
       <div className="flex justify-between items-center mt-8">
         <Button variant="cancel" onClick={handlePrevious} disabled={currentQuestionIndex === 0}>
           Anterior
         </Button>
-        
+
         {currentQuestionIndex === questions.length - 1 ? (
           <Button variant="danger" className="bg-red-600 hover:bg-red-700" onClick={() => setShowFinishModal(true)}>
             Finalizar
@@ -233,7 +288,7 @@ const SimulationPage = () => {
         onClose={handleCloseTimeUpModal}
         title="¡Tiempo Agotado!"
         message="Tu prueba ha finalizado y tus respuestas han sido enviadas. A continuación verás tus resultados."
-        variant="info" 
+        variant="info"
       />
     </div>
   );

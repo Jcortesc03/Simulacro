@@ -8,40 +8,6 @@ const CategoriesPage = () => {
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
 
-useEffect(() => {
-  const fetchCategories = async () => {
-    try {
-      // ✅ Usa GET + params
-      const res = await api.get('/questions/getQuestions', {
-        params: {
-          categoryName: "English",
-          questionNumber: 1
-        }
-      });
-
-        // Extraer categorías únicas del campo sub_category_name
-        const categoryNames = [...new Set(res.data.map(q => inferCategory(q.sub_category_name)))];
-        
-        const mapped = categoryNames.map(name => {
-          const found = categoriesData.find(c => c.name === name);
-          return found || {
-            name,
-            path: name.toLowerCase().replace(/\s+/g, '-'),
-            theme: { main: '#4A90E2', light: '#DDEBFF' }
-          };
-        });
-
-        setCategories(mapped);
-      } catch (error) {
-        console.error('Error cargando categorías', error);
-        // Usa datos de respaldo
-        setCategories(categoriesData);
-      }
-    };
-
-    fetchCategories();
-  }, []);
-
   // Mapeo de subcategoría a categoría
   const inferCategory = (subcat) => {
     const map = {
@@ -52,7 +18,7 @@ useEffect(() => {
       'estadística': 'Razonamiento Cuantitativo',
       'geometría': 'Razonamiento Cuantitativo',
       'etica': 'Competencias Ciudadanas',
-      'derechos Humanos': 'Competencias Ciudadanas',
+      'derechos humanos': 'Competencias Ciudadanas',
       'argumentación': 'Competencias Ciudadanas',
       'coherencia': 'Comunicación Escrita',
       'gramática': 'Inglés',
@@ -63,6 +29,28 @@ useEffect(() => {
     return map[key] || subcat;
   };
 
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await api.get('/admin/getCategories');
+        const fetchedCategories = res.data.map(cat => {
+          const existingCategory = categoriesData.find(c => c.name === cat.name);
+          return existingCategory || {
+            name: cat.name,
+            path: cat.name.toLowerCase().replace(/\s+/g, '-'),
+            theme: { main: '#4A90E2', light: '#DDEBFF' }
+          };
+        });
+        setCategories(fetchedCategories);
+      } catch (error) {
+        console.error('Error cargando categorías', error);
+        setCategories(categoriesData); // Fallback to static data
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -71,7 +59,7 @@ useEffect(() => {
             key={cat.name}
             className="p-6 rounded-lg shadow-md cursor-pointer hover:scale-105 transition-transform border-l-4"
             style={{ backgroundColor: cat.theme.light, borderColor: cat.theme.main }}
-            onClick={() => navigate(`/admin/categories/${cat.path}`)}
+            onClick={() => navigate(`/admin/categories/${cat.path}`, { state: { categoryName: cat.name } })}
           >
             <h3 className="font-bold text-lg mb-2 break-words" style={{ color: cat.theme.main }}>
               {cat.name}

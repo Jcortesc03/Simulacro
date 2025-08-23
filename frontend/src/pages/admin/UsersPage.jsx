@@ -17,6 +17,19 @@ const UsersPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const usersPerPage = 10;
 
+  // Función para traducir roles
+  const translateRole = (role) => {
+    const roleTranslations = {
+      'admin': 'Administrador',
+      'teacher': 'Profesor',
+      'student': 'Estudiante',
+      'Administrador': 'Administrador',
+      'Profesor': 'Profesor',
+      'Estudiante': 'Estudiante'
+    };
+    return roleTranslations[role] || role;
+  };
+
   // Cargar usuarios desde el backend
   useEffect(() => {
     const fetchUsers = async () => {
@@ -32,7 +45,7 @@ const UsersPage = () => {
           setError('No se encontraron usuarios o la estructura de datos es inesperada.');
         }
 
-        // 🔥 CORRECCIÓN: Usar índice + 1 como ID de posición
+        // Usar índice + 1 como ID de posición
         const mapped = usersArray.map((user, index) => ({
           // ID de posición (empieza en 1) para navegación
           positionId: index + 1,
@@ -40,7 +53,7 @@ const UsersPage = () => {
           id: user.user_id || user.id,
           name: user.user_name || user.name || user.username || 'Sin nombre',
           email: user.email || 'Sin email',
-          role: user.roles?.role_name || user.role?.role_name || user.role_name || user.role || 'Sin rol',
+          role: translateRole(user.roles?.role_name || user.role?.role_name || user.role_name || user.role || 'Sin rol'),
           program: user.programs?.program_name || user.program?.program_name || user.program_name || user.program || 'Sin programa',
           verified: user.verified === 1 ? 'Sí' : 'No',
         }));
@@ -240,9 +253,9 @@ const UsersPage = () => {
                     <td className="p-4 text-gray-600">{user.email}</td>
                     <td className="p-4 text-gray-600">
                       <span className={`px-2 py-1 rounded-full text-xs ${
-                        user.role === 'admin' || user.role === 'Administrador'
+                        user.role === 'Administrador'
                           ? 'bg-red-100 text-red-800'
-                          : user.role === 'teacher' || user.role === 'Profesor'
+                          : user.role === 'Profesor'
                           ? 'bg-blue-100 text-blue-800'
                           : 'bg-green-100 text-green-800'
                       }`}>
@@ -290,9 +303,9 @@ const UsersPage = () => {
                     <p className="font-bold text-gray-900 truncate">{user.name}</p>
                     <p className="text-sm text-gray-500 truncate">{user.email}</p>
                     <p className={`text-xs px-2 py-0.5 rounded-full inline-block mt-1 ${
-                      user.role === 'admin' || user.role === 'Administrador'
+                      user.role === 'Administrador'
                         ? 'bg-red-100 text-red-800'
-                        : user.role === 'teacher' || user.role === 'Profesor'
+                        : user.role === 'Profesor'
                         ? 'bg-blue-100 text-blue-800'
                         : 'bg-green-100 text-green-800'
                     }`}>
@@ -328,13 +341,9 @@ const UsersPage = () => {
             ))}
           </div>
 
-          {/* Componente de Paginación */}
+          {/* Componente de Paginación - Centrado */}
           {totalPages > 1 && (
-            <div className="mt-6 flex flex-col md:flex-row items-center justify-between gap-4">
-              <div className="text-sm text-gray-600 md:hidden">
-                Página {currentPage} de {totalPages}
-              </div>
-
+            <div className="mt-6 flex items-center justify-center">
               <div className="flex items-center space-x-2">
                 <button
                   onClick={goToPreviousPage}
@@ -365,6 +374,10 @@ const UsersPage = () => {
                   ))}
                 </div>
 
+                <div className="md:hidden text-sm text-gray-600 px-3">
+                  {currentPage} / {totalPages}
+                </div>
+
                 <button
                   onClick={goToNextPage}
                   disabled={currentPage === totalPages}
@@ -377,10 +390,6 @@ const UsersPage = () => {
                   <span className="hidden md:inline">Siguiente</span>
                   <ChevronRight size={16} />
                 </button>
-              </div>
-
-              <div className="text-sm text-gray-600 hidden md:block">
-                Página {currentPage} de {totalPages}
               </div>
             </div>
           )}

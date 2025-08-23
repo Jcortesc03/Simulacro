@@ -1,70 +1,197 @@
+import React, { useState, useEffect } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import {
+  Home,
+  Users,
+  FileText,
+  LayoutGrid,
+  LogOut,
+  UserCircle,
+  Menu,
+  X,
+} from "lucide-react";
+import { logo } from "../../assets/backgraund-login/index";
+import api from "../../api/axiosInstance"; // tu cliente Axios configurado
 
-import { useTranslation } from 'react-i18next';
-import { NavLink, useNavigate } from 'react-router-dom';
-import { Home, Users, FileText, LayoutGrid, LogOut, UserCircle } from 'lucide-react';
+const NavItem = ({ to, icon, children, isCollapsed }) => {
+  const baseClasses =
+    "flex items-center w-full py-3 px-4 text-base font-medium text-white transition-all duration-300 hover:bg-blue-800/70 rounded-lg mx-2";
 
-const user = {
-  fullName: "USUARIO",
-  role: "ADMINISTRADOR",
-};
+  const linkClasses = ({ isActive }) =>
+    `${baseClasses} ${isActive ? "bg-blue-800 shadow-lg" : ""}`;
 
-const NavItem = ({ to, icon, children }) => {
-  const baseClasses = "flex items-center w-full py-4 text-lg font-medium text-white transition-colors md:px-4 justify-center md:justify-start";
-  const linkClasses = ({ isActive }) => `${baseClasses} ${isActive ? 'bg-blue-800' : 'hover:bg-blue-800'}`;
   return (
     <NavLink to={to} className={linkClasses}>
-      {icon}
-      <span className="ml-4 hidden md:inline">{children}</span>
+      <div className="flex items-center justify-center w-8 h-8">{icon}</div>
+      <span
+        className={`ml-3 transition-all duration-300 ${
+          isCollapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100"
+        }`}
+      >
+        {children}
+      </span>
     </NavLink>
   );
 };
 
-const Sidebar = () => {
+const AdminSidebar = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [user, setUser] = useState({ fullName: "", role: "" });
+
+  // 🔹 Cargar datos del perfil desde el backend
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const token = localStorage.getItem("token"); // 👈 si guardas JWT en localStorage
+        const response = await api.get("/auth/profile", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (response.data) {
+          setUser({
+            fullName: response.data.name || "Usuario",
+            role: response.data.role || "Rol",
+          });
+        }
+      } catch (err) {
+        console.error("Error cargando perfil:", err);
+      }
+    };
+
+    fetchProfile();
+  }, []);
 
   const handleLogout = () => {
-    // Aquí iría la lógica para limpiar tokens o estado de sesión
-    console.log("Cerrando sesión de Admin...");
-    navigate('/login');
+    localStorage.removeItem("token"); // 👈 limpia token
+    navigate("/login");
   };
 
+  const toggleSidebar = () => setIsCollapsed(!isCollapsed);
+
   return (
-    <aside className="sticky top-0 flex flex-col w-24 md:w-72 h-screen bg-blue-950 text-white shadow-2xl transition-all duration-300 ease-in-out flex-shrink-0">
-      <div className="flex flex-col flex-1 overflow-y-auto">
-        {/* 1. Sección del Logo */}
-        <div className="flex flex-col items-center justify-center h-40 border-b-2 border-blue-900 px-2 flex-shrink-0">
-          <img src="/logo-universidad.png.png" alt="Logo Universitaria de Colombia" className="h-12 md:h-20" />
-          <p className="text-gray-300 text-sm mt-2 text-center hidden md:block">Pasión por Triunfar</p>
+    <aside
+      className={`sticky top-0 flex flex-col h-screen bg-gradient-to-b from-blue-950 to-blue-900 text-white shadow-2xl transition-all duration-300 ease-in-out flex-shrink-0 ${
+        isCollapsed ? "w-20" : "w-72"
+      }`}
+    >
+      {/* Toggle Button */}
+      <div className="flex justify-end p-4">
+        <button
+          onClick={toggleSidebar}
+          className="p-2 rounded-lg hover:bg-blue-800/50 transition-colors duration-200"
+        >
+          {isCollapsed ? (
+            <Menu className="w-6 h-6" />
+          ) : (
+            <X className="w-6 h-6" />
+          )}
+        </button>
+      </div>
+
+      <div className="flex flex-col flex-1 overflow-hidden">
+        {/* Logo Section */}
+        <div
+          className={`flex flex-col items-center justify-center border-b border-blue-800/50 pb-6 mb-4 transition-all duration-300 ${
+            isCollapsed ? "px-2" : "px-6"
+          }`}
+        >
+          <div className="relative">
+            <img
+              src={logo}
+              alt="Logo Universitaria de Colombia"
+              className={`transition-all duration-300 ${
+                isCollapsed ? "h-10 w-10" : "h-16 w-auto"
+              }`}
+            />
+          </div>
+          {!isCollapsed && (
+            <p className="text-blue-200 text-sm mt-3 text-center font-light animate-fade-in">
+              Pasión por Triunfar
+            </p>
+          )}
         </div>
 
-        {/* 2. Sección del Perfil de Usuario */}
-        <NavLink to="/admin/perfil" className={({isActive}) => `flex items-center h-24 border-b-2 border-blue-900 transition-colors justify-center md:px-4 md:justify-start flex-shrink-0 ${isActive ? 'bg-blue-800' : 'hover:bg-blue-800'}`}>
-          <UserCircle className="w-10 h-10 md:w-14 md:h-14 text-white flex-shrink-0" />
-          <div className="ml-3 hidden md:block overflow-hidden">
-            <p className="font-bold text-lg leading-tight truncate">{user.fullName.toUpperCase()}</p>
-            <p className="text-sm text-gray-300 truncate">{user.role}</p>
-          </div>
-        </NavLink>
+        {/* User Profile */}
+        <div
+          className={`mb-6 transition-all duration-300 ${
+            isCollapsed ? "px-2" : "px-4"
+          }`}
+        >
+          <NavLink
+            to="/admin/perfil"
+            className={({ isActive }) =>
+              `flex items-center p-3 rounded-xl transition-all duration-300 hover:bg-blue-800/50 ${
+                isActive ? "bg-blue-800 shadow-lg" : ""
+              } ${isCollapsed ? "justify-center" : ""}`
+            }
+          >
+            <div className="relative">
+              <UserCircle className="w-10 h-10 text-blue-200" />
+              <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-blue-950"></div>
+            </div>
+            {!isCollapsed && (
+              <div className="ml-4 overflow-hidden">
+                <p className="font-semibold text-sm leading-tight truncate">
+                  {user.fullName}
+                </p>
+                <p className="text-xs text-blue-300 truncate">{user.role}</p>
+              </div>
+            )}
+          </NavLink>
+        </div>
 
-        {/* 3. Navegación Principal */}
-        <nav className="flex-1 flex flex-col pt-2">
-          <NavItem to="/admin/dashboard" icon={<Home className="w-7 h-7 md:w-8 md:h-8" />}>{t('Home')}</NavItem>
-          <NavItem to="/admin/users" icon={<Users className="w-7 h-7 md:w-8 md:h-8" />}>{t('Usuarios')}</NavItem>
-          <NavItem to="/admin/simulacros" icon={<FileText className="w-7 h-7 md:w-8 md:h-8" />}>{t('Simulaciones')}</NavItem>
-          <NavItem to="/admin/categories" icon={<LayoutGrid className="w-7 h-7 md:w-8 md:h-8" />}>{t('Categorias')}</NavItem>
+        {/* Navigation Menu */}
+        <nav className="flex-1 space-y-2 px-2">
+          <NavItem
+            to="/admin/dashboard"
+            icon={<Home className="w-5 h-5" />}
+            isCollapsed={isCollapsed}
+          >
+            {t("Home")}
+          </NavItem>
+          <NavItem
+            to="/admin/users"
+            icon={<Users className="w-5 h-5" />}
+            isCollapsed={isCollapsed}
+          >
+            {t("Usuarios")}
+          </NavItem>
+          <NavItem
+            to="/admin/simulacros"
+            icon={<FileText className="w-5 h-5" />}
+            isCollapsed={isCollapsed}
+          >
+            {t("Simulaciones")}
+          </NavItem>
+          <NavItem
+            to="/admin/categories"
+            icon={<LayoutGrid className="w-5 h-5" />}
+            isCollapsed={isCollapsed}
+          >
+            {t("Categorias")}
+          </NavItem>
         </nav>
       </div>
 
-      {/* 4. Botón de Logout */}
-      <div className="flex justify-center items-center p-4 border-t-2 border-blue-900 flex-shrink-0">
-        <button onClick={handleLogout} className="flex items-center justify-center h-14 bg-red-500 text-white rounded-2xl hover:bg-red-700 transition-colors w-14 md:w-full md:py-3">
-          <LogOut className="w-7 h-7 md:w-8 md:h-8 md:mr-3" />
-          <span className="hidden md:block text-lg font-medium">{t('Salir')}</span>
+      {/* Logout Button */}
+      <div className="p-4 border-t border-blue-800/50 transition-all duration-300">
+        <button
+          onClick={handleLogout}
+          className={`flex items-center w-full bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl hover:from-red-700 hover:to-red-800 transition-all duration-300 transform hover:scale-105 shadow-lg ${
+            isCollapsed ? "p-3 justify-center" : "p-4"
+          }`}
+        >
+          <LogOut className="w-5 h-5" />
+          {!isCollapsed && (
+            <span className="ml-3 font-medium">{t("Salir")}</span>
+          )}
         </button>
       </div>
     </aside>
   );
 };
 
-export default Sidebar;
+export default AdminSidebar;

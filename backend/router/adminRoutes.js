@@ -10,6 +10,7 @@ router.delete('/deleteUser', verified, verifyAdmin, adminControllers.deleteUserH
 router.patch('/changeRole', verified, verifyAdmin, adminControllers.changeRoleHandler); // Corregí el nombre
 router.post('/adminRegister', verified, verifyAdmin, adminControllers.adminCreateUserHandler);
 router.get('/getPagedUsers', verified, verifyAdmin, adminControllers.getPagedUsersHandler);
-router.get('/getUserByEmail/:email', verified, verifyAdmin, adminControllers.getUserByEmailHandler); // 🆕 Nueva ruta
+router.get('/getUserByEmail/:email', verified, verifyAdmin, adminControllers.getUserByEmailHandler); 
+router.get('/getCategories', verified, verifyAdmin, adminControllers.getCategoriesHandler);
 
 export default router;

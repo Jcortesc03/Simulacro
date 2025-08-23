@@ -59,7 +59,7 @@ function AppRoutes() {
           <Route path="simulacros" element={<SimulacrosPage />} />
           <Route path="perfil" element={<PerfilPage />} />
           <Route path="categories" element={<CategoriesPage />} />
-          <Route path="categories/:id" element={<CategoryDetailPage />} />
+          <Route path="categories/:categoryPath" element={<CategoryDetailPage />} />
           <Route path="categories/lectura-critica" element={<LecturaCriticaPage />} />
         </Route>
 
