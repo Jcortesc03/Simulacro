@@ -9,7 +9,7 @@ import React from 'react';
 const getTitleFromPathname = (pathname) => {
   const pathSegments = pathname.split('/').filter(Boolean);
   const lastSegment = pathSegments[pathSegments.length - 1];
-  
+
   const titleMap = {
     'dashboard': 'Inicio',
     'users': 'Usuarios',
@@ -34,7 +34,7 @@ const getTitleFromPathname = (pathname) => {
       return titleMap[key];
     }
   }
-  
+
   return 'Administración'; // Título por defecto
 };
 

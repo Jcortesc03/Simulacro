@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import QuestionCard from '../../../components/questions/QuestionCard';
 import ConfirmationModal from '../../../components/ui/ConfirmationModal';
 import SuccessModal from '../../../components/ui/SuccessModal';
-import AdminLayout from '../../components/layout/AdminLayout'; 
+import AdminLayout from '../../../components/layout/AdminLayout';
 
 // Datos de ejemplo
 const questionsData = [
@@ -49,7 +49,7 @@ const LecturaCriticaPage = () => {
                         <option>Analítica</option>
                     </select>
                 </div>
-                <button 
+                <button
                     onClick={() => navigate('/admin/questions/add')}
                     className="w-full md:w-auto bg-brand-blue text-black font-bold px-6 py-3 rounded-lg hover:bg-blue-700"
                 >
@@ -61,8 +61,8 @@ const LecturaCriticaPage = () => {
             <div className="space-y-6">
                 <h2 className="text-2xl font-bold text-gray-800">Preguntas</h2>
                 {questionsData.map(q => (
-                    <QuestionCard 
-                        key={q.id} 
+                    <QuestionCard
+                        key={q.id}
                         question={q}
                         onEdit={() => navigate(`/admin/questions/edit/${q.id}`)}
                         onDelete={handleDeleteClick}

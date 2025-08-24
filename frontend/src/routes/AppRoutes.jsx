@@ -1,52 +1,48 @@
-
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
+// AUTH
+import LoginPage from '../pages/auth/LoginPage';
+import RegisterPage from '../pages/auth/RegisterPage';
 
 // LAYOUTS
 import AdminLayout from '../components/layout/AdminLayout';
 import StudentLayout from '../components/layout/StudentLayout';
 import TeacherLayout from '../components/layout/TeacherLayout';
 
-// AUTH
-import LoginPage from '../pages/auth/LoginPage';
-import RegisterPage from '../pages/auth/RegisterPage';
-
-// ADMIN PAGES
-import DashboardPage from '../pages/admin/DashboardPage';
-import UsersPage from '../pages/admin/UsersPage';
-import UserFormPage from '../pages/admin/UserFormPage';
-import SimulacrosPage from '../pages/admin/SimulacrosPage';
+// PAGES
+// ADMIN
 import CategoriesPage from '../pages/admin/categories/CategoriesPage';
 import CategoryDetailPage from '../pages/admin/categories/CategoryDetailPage';
+import DashboardPage from '../pages/admin/DashboardPage';
+import LecturaCriticaPage from '../pages/admin/categories/LecturaCriticaPage';
 import PerfilPage from '../pages/admin/PerfilPage';
 import QuestionFormPage from '../pages/admin/QuestionFormPage';
+import SimulacrosPage from '../pages/admin/SimulacrosPage';
+import UserFormPage from '../pages/admin/UserFormPage';
+import UsersPage from '../pages/admin/UsersPage';
 
-// STUDENT PAGES
+// STUDENT
+import CalificacionesPage from '../pages/student/CalificacionesPage';
 import InicioPage from '../pages/student/InicioPage';
 import PruebasPage from '../pages/student/PruebasPage';
-import CalificacionesPage from '../pages/student/CalificacionesPage';
-import StudentPerfilPage from '../pages/student/PerfilPage';
-import SimulationPage from '../pages/student/SimulationPage';
+import SimulationPageWrapper from '../pages/student/SimulationPageWrapper';
 import SimulationResultsPage from '../pages/student/SimulationResultsPage';
+import StudentPerfilPage from '../pages/student/PerfilPage';
 
-// TEACHER PAGES
-import TeacherSimulacrosPage from '../pages/teacher/TeacherSimulacrosPage';
+// TEACHER
 import TeacherCategoriesPage from '../pages/teacher/TeacherCategoriesPage';
-import TeacherPerfilPage from '../pages/teacher/TeacherPerfilPage';
 import TeacherCategoryDetailPage from '../pages/teacher/categories/TeacherCategoryDetailPage';
+import TeacherPerfilPage from '../pages/teacher/TeacherPerfilPage';
 import TeacherQuestionFormPage from '../pages/teacher/TeacherQuestionFormPage';
-
-import { SimulationProvider } from '../context/SimulationContext'; // ajusta según tu proyecto
-import LecturaCriticaPage from '../pages/admin/LecturaCriticaPage'; // ajusta si está en otra carpeta
-
+import TeacherSimulacrosPage from '../pages/teacher/TeacherSimulacrosPage';
 
 function AppRoutes() {
   return (
-    <BrowserRouter>
       <Routes>
 
-          <Route index element={<LoginPage />} />
-          <Route path="login" element={<LoginPage />} />
-          <Route path="register" element={<RegisterPage />} />
+        <Route index element={<LoginPage />} />
+        <Route path="login" element={<LoginPage />} />
+        <Route path="register" element={<RegisterPage />} />
 
         {/* Admin Routes */}
         <Route path="/admin" element={<AdminLayout />}>
@@ -68,7 +64,7 @@ function AppRoutes() {
           <Route index element={<InicioPage />} />
           <Route path="inicio" element={<InicioPage />} />
           <Route path="pruebas" element={<PruebasPage />} />
-          <Route path="simulacion/:id" element={<SimulationProvider><SimulationPage /></SimulationProvider>} />
+          <Route path="simulacro/:id" element={<SimulationPageWrapper />} />
           <Route path="simulacion/:id/resultados" element={<SimulationResultsPage />} />
           <Route path="calificaciones" element={<CalificacionesPage />} />
           <Route path="perfil" element={<StudentPerfilPage />} />
@@ -87,7 +83,6 @@ function AppRoutes() {
         {/* Default/Catch-all Route */}
         <Route path="*" element={<LoginPage />} />
       </Routes>
-    </BrowserRouter>
   );
 }
 
