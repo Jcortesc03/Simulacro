@@ -114,11 +114,22 @@ const getCategoriesHandler = async (req, res) => {
   }
 };
 
+const getSubCategoriesHandler = async (req, res) => {
+  try {
+    const subCategories = await db.getSubCategories();
+    return res.status(200).json(subCategories);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: 'Error al obtener las subcategorías' });
+  }
+};
+
 export default {
   deleteUserHandler,
   changeRoleHandler,
   adminCreateUserHandler,
   getPagedUsersHandler,
   getUserByEmailHandler,
-  getCategoriesHandler
+  getCategoriesHandler,
+  getSubCategoriesHandler
 };

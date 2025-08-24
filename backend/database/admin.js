@@ -58,6 +58,21 @@ const getCategories = async () => {
   const [categories] = await db.query("SELECT * FROM categories");
   return categories;
 };
+const getSubCategories = async () => {
+  const [subCategories] = await db.query(`
+    SELECT
+      sc.sub_category_id,
+      sc.sub_category_name,
+      sc.description,
+      c.category_name,
+      c.category_id
+    FROM sub_categories sc
+    JOIN categories c ON sc.category_id = c.category_id
+    ORDER BY c.category_name, sc.sub_category_name
+  `);
+  return subCategories;
+};
+
 
 export default {
   getPagedUsers,
@@ -65,4 +80,5 @@ export default {
   changeRole,
   deleteUser,
   getCategories,
+  getSubCategories
 };

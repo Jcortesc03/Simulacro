@@ -5,5 +5,6 @@ import adminControllers from '../controllers/adminControllers.js'; // ya tiene g
 const router = express.Router();
 
 router.get('/', verified, adminControllers.getCategoriesHandler);
+router.get('/subcategories', verified, adminControllers.getSubCategoriesHandler);
 
 export default router;

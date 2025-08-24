@@ -5,7 +5,7 @@ import QuestionCard from "../../../components/questions/QuestionCard";
 import ConfirmationModal from "../../../components/ui/ConfirmationModal";
 import SuccessModal from "../../../components/ui/SuccessModal";
 import Button from "../../../components/ui/Button";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, ArrowLeft } from "lucide-react";
 import api from "../../../api/axiosInstance.jsx";
 
 export default function CategoryDetailPage() {
@@ -19,7 +19,6 @@ export default function CategoryDetailPage() {
   useEffect(() => {
     const fetchQuestions = async () => {
       if (!categoryName) return;
-
       try {
         const res = await api.get("/questions/getQuestions", {
           params: {
@@ -27,7 +26,6 @@ export default function CategoryDetailPage() {
             questionNumber: 50,
           },
         });
-
         const mapped = res.data.map((q) => ({
           id: q.question_id,
           enunciado: q.statement,
@@ -37,9 +35,8 @@ export default function CategoryDetailPage() {
           })),
           dificultad: q.difficulty,
           editadoPor: "Sistema",
-          imagePath: q.image_path || null, 
+          imagePath: q.image_path || null,
         }));
-
         setQuestions(mapped);
       } catch (error) {
         console.error("Error cargando preguntas", error);
@@ -51,6 +48,10 @@ export default function CategoryDetailPage() {
       fetchQuestions();
     }
   }, [categoryName]);
+
+  const handleBackToCategories = () => {
+    navigate("/admin/categories");
+  };
 
   const handleAddQuestion = () => {
     navigate("/admin/questions/add", { state: { from: location.pathname } });
@@ -76,6 +77,30 @@ export default function CategoryDetailPage() {
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
+      {/* Header con botón de regreso y título de categoría */}
+      <div className="mb-6">
+        <div className="flex items-center gap-4 mb-4">
+          <Button
+            onClick={handleBackToCategories}
+            variant="secondary"
+            className="flex items-center gap-2"
+          >
+            <ArrowLeft size={20} />
+            <span>Volver a Categorías</span>
+          </Button>
+        </div>
+
+        <div className="border-b border-gray-200 pb-4">
+          <h1 className="text-3xl font-bold text-gray-900">
+            Categoría: {categoryName || "Sin nombre"}
+          </h1>
+          <p className="text-gray-600 mt-1">
+            Gestiona las preguntas de esta categoría
+          </p>
+        </div>
+      </div>
+
+      {/* Botón de añadir pregunta */}
       <div className="flex justify-end mb-8">
         <Button
           onClick={handleAddQuestion}
@@ -87,6 +112,7 @@ export default function CategoryDetailPage() {
         </Button>
       </div>
 
+      {/* Lista de preguntas */}
       <div className="space-y-6">
         <h2 className="text-2xl font-bold text-gray-800">
           Preguntas Existentes
@@ -109,6 +135,7 @@ export default function CategoryDetailPage() {
         )}
       </div>
 
+      {/* Modales */}
       <ConfirmationModal
         show={modal.type === "deleteConfirm" && modal.isOpen}
         onConfirm={handleConfirmDelete}

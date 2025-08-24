@@ -11,5 +11,6 @@ router.post('/adminRegister', verified, verifyAdmin, adminControllers.adminCreat
 router.get('/getPagedUsers', verified, verifyAdmin, adminControllers.getPagedUsersHandler);
 router.get('/getUserByEmail/:email', verified, verifyAdmin, adminControllers.getUserByEmailHandler);
 router.get('/getCategories', verified, verifyAdmin, adminControllers.getCategoriesHandler);
+router.get('/subcategories', verified, adminControllers.getSubCategoriesHandler);
 
 export default router;
