@@ -11,7 +11,7 @@ const CategoriesPage = () => {
   const [loading, setLoading] = useState(true);
 
   const handleAddQuestion = () => {
-    navigate('/admin/questions/add');
+    navigate('/admin/questions');
   };
 
   // Mapeo de iconos por categoría

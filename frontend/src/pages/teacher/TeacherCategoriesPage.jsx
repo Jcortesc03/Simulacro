@@ -10,7 +10,7 @@ const TeacherCategoriesPage = () => {
   const [loading, setLoading] = useState(true);
 
   const handleAddQuestion = () => {
-    navigate('/teacher/questions/add');
+    navigate('/teacher/questions');
   };
 
   const getCategoryIcon = (categoryName) => {

@@ -91,7 +91,7 @@ export default function TeacherCategoryDetailPage() {
   };
 
   const handleAddQuestion = () => {
-    navigate('/teacher/questions/add', { state: { from: location.pathname } });
+    navigate('/teacher/questions', { state: { from: location.pathname } });
   };
 
   const handlePrevPage = () => {

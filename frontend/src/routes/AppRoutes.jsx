@@ -53,6 +53,7 @@ function AppRoutes() {
           <Route path="users/edit/:id" element={<UserFormPage />} />
           <Route path="questions" element={<QuestionFormPage />} />
           <Route path="simulacros" element={<SimulacrosPage />} />
+          <Route path="questions/edit/:id" element={<QuestionFormPage />} />
           <Route path="perfil" element={<PerfilPage />} />
           <Route path="categories" element={<CategoriesPage />} />
           <Route path="categories/:categoryPath" element={<CategoryDetailPage />} />

@@ -94,7 +94,7 @@ export default function CategoryDetailPage() {
   };
 
   const handleAddQuestion = () => {
-    navigate("/admin/questions/add", { state: { from: location.pathname } });
+    navigate("/admin/questions", { state: { from: location.pathname } });
   };
 
   const handleEditQuestion = (question) => {
