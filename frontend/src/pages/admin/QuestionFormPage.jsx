@@ -273,9 +273,9 @@ export default function QuestionFormPage() {
         (sub) => sub.sub_category_id === selectedSubCategory
       );
 
-      const categoryName = 
+      const categoryName =
         selectedCategoryData?.category_name || "Categoría General";
-      const subCategoryName = 
+      const subCategoryName =
         selectedSubCategoryData?.sub_category_name || "Subcategoría General";
 
       console.log("Generando pregunta para:", {
@@ -371,9 +371,9 @@ export default function QuestionFormPage() {
       let errorMessage = "Error al generar pregunta con IA";
 
       if (error.response) {
-        errorMessage = `Error ${error.response.status}: ${ 
-          error.response.data?.message || 
-          error.response.data || 
+        errorMessage = `Error ${error.response.status}: ${
+          error.response.data?.message ||
+          error.response.data ||
           "Error del servidor"
         }`;
       } else if (error.request) {
@@ -511,7 +511,7 @@ export default function QuestionFormPage() {
                     </h3>
                     <p className="text-sm text-gray-600 mb-4">
                       {canGenerateWithAI
-                        ? `Crear pregunta automática para ${ 
+                        ? `Crear pregunta automática para ${
                             categories.find(
                               (c) => c.category_id === selectedCategory
                             )?.category_name
@@ -522,7 +522,7 @@ export default function QuestionFormPage() {
                       type="button"
                       onClick={generateWithAI}
                       disabled={loadingAI || !canGenerateWithAI}
-                      className={`w-full px-4 py-3 bg-gradient-to-r from-purple-500 to-blue-500 text-white font-medium rounded-lg flex items-center justify-center gap-2 transition-all ${ 
+                      className={`w-full px-4 py-3 bg-gradient-to-r from-purple-500 to-blue-500 text-white font-medium rounded-lg flex items-center justify-center gap-2 transition-all ${
                         loadingAI || !canGenerateWithAI
                           ? "opacity-50 cursor-not-allowed"
                           : "hover:from-purple-600 hover:to-blue-600 transform hover:scale-105"
@@ -612,7 +612,7 @@ export default function QuestionFormPage() {
                         <button
                           type="button"
                           onClick={() => handleSetRespuestaCorrecta(index)}
-                          className={`flex-shrink-0 p-2 rounded-lg transition-all ${ 
+                          className={`flex-shrink-0 p-2 rounded-lg transition-all ${
                             opcion.esCorrecta
                               ? "bg-green-600 text-white transform scale-110"
                               : "bg-gray-200 text-gray-500 hover:bg-gray-300"
