@@ -154,4 +154,78 @@ const getCategories = async () => {
   return categories;
 };
 
-export { getLastQuestionsForAI, saveQuestion, getLastQuestions, getCategories };
+const deleteQuestion = async (questionId) => {
+  await db.query(
+    `
+      DELETE FROM answer_options
+      WHERE question_id = ?
+    `,
+    [questionId]
+  );
+
+  const [result] = await db.query(
+    `
+      DELETE FROM questions
+      WHERE question_id = ?
+    `,
+    [questionId]
+  );
+
+  return result.affectedRows > 0;
+};
+
+const updateQuestion = async (questionId, questionData) => {
+  const {
+    statement,
+    questionType,
+    imagePath,
+    difficulty,
+    justification,
+    status,
+    answers
+  } = questionData;
+
+  const [result] = await db.query(
+    `
+      UPDATE questions
+      SET
+        statement = ?,
+        question_type = ?,
+        image_path = ?,
+        difficulty = ?,
+        justification = ?,
+        status = ?
+      WHERE question_id = ?
+    `,
+    [
+      statement,
+      questionType,
+      imagePath,
+      difficulty,
+      justification,
+      status,
+      questionId
+    ]
+  );
+
+  if (result.affectedRows === 0) {
+    return { success: false };
+  }
+
+  await db.query('DELETE FROM answer_options WHERE question_id = ?', [questionId]);
+
+  for (const answer of answers) {
+    const { option_text, isCorrect } = answer;
+    await db.query(
+      `
+        INSERT INTO answer_options(option_id, question_id, option_text, is_correct)
+        VALUES (?, ?, ?, ?)
+      `,
+      [id(), questionId, option_text, isCorrect]
+    );
+  }
+
+  return { success: true };
+};
+
+export { getLastQuestionsForAI, saveQuestion, getLastQuestions, getCategories, deleteQuestion, updateQuestion };

@@ -1,4 +1,4 @@
-import { saveQuestion, getLastQuestions } from '../database/questions.js';
+import { saveQuestion, getLastQuestions, deleteQuestion, updateQuestion } from '../database/questions.js';
 
 const saveQuestionHandler = async (req, res) => {
     const {
@@ -59,4 +59,56 @@ const getLastQuestionsHandler = async (req, res) => {
     }
 };
 
-export { saveQuestionHandler, getLastQuestionsHandler };
+const deleteQuestionHandler = async (req, res) => {
+    const { id } = req.params;
+
+    if (!id) {
+        return res.status(400).send('El ID de la pregunta es requerido');
+    }
+
+    try {
+        const success = await deleteQuestion(id);
+        if (success) {
+            res.status(200).send('Pregunta eliminada correctamente');
+        } else {
+            res.status(404).send('La pregunta no fue encontrada');
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Hubo un error al eliminar la pregunta');
+    }
+};
+
+const updateQuestionHandler = async (req, res) => {
+    const { id } = req.params;
+    const questionData = req.body;
+
+    const requiredFields = [
+        'statement',
+        'questionType',
+        'difficulty',
+        'justification',
+        'status',
+        'answers'
+    ];
+
+    for (const field of requiredFields) {
+        if (questionData[field] === undefined || questionData[field] === null || questionData[field] === '') {
+            return res.status(400).send(`Falta el campo requerido: ${field}`)
+        }
+    }
+
+    try {
+        const result = await updateQuestion(id, questionData);
+        if (result.success) {
+            res.status(200).send('Pregunta actualizada correctamente');
+        } else {
+            res.status(404).send('La pregunta no fue encontrada');
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Hubo un error al actualizar la pregunta');
+    }
+};
+
+export { saveQuestionHandler, getLastQuestionsHandler, deleteQuestionHandler, updateQuestionHandler };
