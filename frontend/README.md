@@ -1,114 +1,164 @@
-# Resumen de la Aplicación Frontend
+# Simulacro Pruebas Saber Pro - Frontend
 
-¡Bienvenido a la aplicación frontend! Este documento proporciona una guía para nuevos desarrolladores para entender la estructura del proyecto, sus funcionalidades principales y cómo empezar.
+Este repositorio contiene el código fuente del frontend para la plataforma de simulacros de las pruebas Saber Pro. La aplicación está diseñada para ofrecer una experiencia interactiva y educativa a estudiantes, con herramientas de gestión para profesores y administradores.
 
-## 1. Resumen del Proyecto
+## Descripción del Proyecto
 
-Esta es una aplicación de una sola página (SPA) basada en React, construida con Vite. Sirve como la interfaz de usuario para la plataforma de simulación, proporcionando diferentes paneles y funcionalidades para los roles de administrador, estudiante y profesor.
+La plataforma permite a los estudiantes realizar simulacros de las pruebas Saber Pro en 5 áreas de conocimiento. Un sistema de IA analiza los resultados para proveer recomendaciones personalizadas y ayudar a los estudiantes a mejorar. Los profesores pueden gestionar las preguntas de las áreas, y los administradores tienen control total sobre usuarios, roles y contenido de los simulacros.
 
-## 2. Pila Tecnológica
+## Diagrama de Flujo de Usuario
 
-*   **React**: Una librería de JavaScript para construir interfaces de usuario.
-*   **React Router DOM**: Para el enrutamiento declarativo dentro de la aplicación.
-*   **Tailwind CSS**: Un framework CSS de utilidad para el estilizado.
-*   **Vite**: Una herramienta de construcción rápida que proporciona una experiencia de desarrollo ultrarrápida.
-*   **i18next**: Un framework de internacionalización para manejar múltiples idiomas.
-*   **Axios**: Un cliente HTTP basado en promesas para realizar solicitudes a la API.
+```mermaid
+graph TD
+    A[Usuario] --> B{Inicio de Sesión / Registro};
+    B --> C{Autenticado?};
+    C -- No --> B;
+    C -- Sí --> D{Rol?};
 
-## 3. Estructura del Proyecto
+    D -- Estudiante --> E[Panel de Estudiante];
+    E --> F[Iniciar Simulación];
+    F --> G[Realizar Prueba por Área];
+    G --> H[Ver Resultados];
+    H --> I[Recibir Recomendación de IA];
 
-Aquí hay una visión general de los directorios clave y sus propósitos:
+    D -- Profesor --> J[Panel de Profesor];
+    J --> K[Ver Simulacros Disponibles];
+    J --> L[Gestionar Preguntas];
+    L --> M[Añadir/Editar Preguntas en sus Áreas];
 
-*   `public/`: Contiene activos estáticos como imágenes y `locales` para la internacionalización.
-    *   `public/locales/`: Almacena archivos JSON de traducción (`en/translation.json`, `es/translation.json`).
-*   `src/`: El directorio principal del código fuente.
-    *   `src/App.jsx`: El componente raíz que ahora principalmente renderiza las rutas de la aplicación.
-    *   `src/main.jsx`: El punto de entrada de la aplicación React.
-    *   `src/index.css`: Estilos CSS globales, principalmente importaciones de Tailwind CSS.
-    *   `src/api/`: Contiene módulos para la comunicación con la API.
-        *   `src/api/axiosInstance.jsx`: Configura la instancia de Axios para las solicitudes a la API.
-    *   `src/assets/`: Para activos específicos de la aplicación como logotipos o iconos.
-    *   `src/components/`: Componentes de UI reutilizables.
-        *   `src/components/dashboard/`: Componentes específicos de las vistas del panel.
-        *   `src/components/layout/`: Componentes de diseño (por ejemplo, `AdminLayout`, `Sidebar`).
-        *   `src/components/questions/`: Componentes relacionados con la visualización y formularios de preguntas.
-        *   `src/components/simulation/`: Componentes utilizados dentro del proceso de simulación.
-        *   `src/components/ui/`: Elementos de UI genéricos y altamente reutilizables (por ejemplo, `Button`, `Modal`).
-    *   `src/context/`: Proveedores de la API de Contexto de React para la gestión del estado global.
-        *   `src/context/SimulationContext.jsx`: Gestiona el estado relacionado con el proceso de simulación.
-    *   `src/data/`: Datos estáticos utilizados dentro de la aplicación (por ejemplo, `categoriesData.js`).
-    *   `src/pages/`: Componentes de nivel superior que representan diferentes vistas o páginas de la aplicación. Organizados por rol (administrador, estudiante, profesor) y funcionalidad (autenticación).
-    *   `src/routes/`: **Crucial para el enrutamiento.** Contiene el archivo `AppRoutes.jsx` donde se definen todas las rutas de la aplicación.
-    *   `src/i18n.js`: Configuración para `i18next` para la internacionalización.
+    D -- Administrador --> N[Panel de Administrador];
+    N --> O[Gestión de Usuarios];
+    O --> P[Crear/Editar Roles y Permisos];
+    N --> Q[Gestión de Simulacros];
+    N --> R[Gestión Global de Preguntas];
+    R --> S[CRUD Completo de Preguntas];
+```
 
-## 4. Flujo de Enrutamiento
+## Características Principales
 
-La aplicación utiliza `react-router-dom` para la navegación.
+### Para Estudiantes
+- **Panel de Inicio:** Vista rápida de estadísticas y simulacros recientes.
+- **Realización de Simulacros:** Pruebas cronometradas por áreas de conocimiento.
+- **Resultados Detallados:** Visualización de respuestas correctas e incorrectas.
+- **Medidor de Desempeño:** Gráficos que muestran el rendimiento histórico.
+- **Recomendaciones con IA:** Feedback personalizado basado en el puntaje obtenido para enfocar el estudio.
 
-*   **`src/routes/AppRoutes.jsx`**: Este es el lugar central donde se definen todas las rutas de la aplicación. Utiliza los componentes `BrowserRouter`, `Routes` y `Route` para mapear URLs a componentes de página y diseños específicos. Las rutas se agrupan por funcionalidad y rol de usuario (por ejemplo, `/admin`, `/student`, `/teacher`, `/auth`).
-*   **`src/App.jsx`**: El componente principal `App` ahora simplemente importa y renderiza el componente `AppRoutes`, manteniendo `App.jsx` limpio y enfocado en el arranque del sistema de enrutamiento.
+### Para Profesores
+- **Gestión de Preguntas:** Añadir y editar preguntas dentro de las categorías asignadas.
+- **Visualización de Simulacros:** Acceso a los bancos de preguntas y simulacros existentes.
+- **Seguimiento (Futuro):** Posibilidad de ver el progreso de sus estudiantes.
 
-Esta separación facilita la gestión y comprensión de la estructura de navegación de la aplicación.
+### Para Administradores
+- **Dashboard General:** Métricas clave de la plataforma.
+- **Gestión de Usuarios:** Crear, ver, editar y eliminar cualquier usuario. Asignación de roles.
+- **Gestión de Contenido:** Control total (CRUD) sobre las preguntas, categorías y simulacros.
 
-## 5. Integración de la API
+## Stack Tecnológico
 
-Todas las solicitudes a la API se manejan a través de `src/api/axiosInstance.jsx`. Este archivo configura una instancia de Axios preconfigurada, que puede incluir URLs base, encabezados (como tokens de autorización) e interceptores para el manejo de errores o la modificación de solicitudes.
+- **Framework:** React 18+
+- **Build Tool:** Vite
+- **Estilos:** Tailwind CSS
+- **Comunicación API:** Axios (configurado en `src/api/axiosInstance.jsx`)
+- **Gestión de Estado:** React Context API (ver `src/context/SimulationContext.jsx`)
+- **Routing:** React Router DOM
+- **Linting:** ESLint
 
-Al realizar llamadas a la API desde componentes o servicios, debe importar y usar esta instancia de Axios configurada.
+## Estructura del Proyecto
 
-## 6. Gestión del Estado
+El código fuente se encuentra en el directorio `src/` y está organizado de la siguiente manera:
 
-La aplicación utiliza principalmente la API de Contexto de React para la gestión del estado global.
+```
+/src
+├───api/              # Configuración central de Axios para la comunicación con el backend.
+├───assets/           # Imágenes, logos y otros recursos estáticos.
+├───components/       # Componentes reutilizables de la UI.
+│   ├───dashboard/    # Componentes específicos del panel de control.
+│   ├───layout/       # Estructuras principales (Sidebar, Layouts por rol).
+│   ├───questions/    # Componentes para mostrar y gestionar preguntas.
+│   ├───simulation/   # Componentes para la experiencia del simulacro (Timer, etc.).
+│   └───ui/           # Componentes genéricos de UI (Botones, Modales, Cards).
+├───context/          # Contexto de React para la gestión del estado global (ej. estado del simulacro).
+├───data/             # Datos estáticos o mockups.
+├───pages/            # Vistas principales de la aplicación, organizadas por rol.
+│   ├───admin/
+│   ├───auth/
+│   ├───student/
+│   └───teacher/
+├───routes/           # Definición de las rutas de la aplicación y protección por roles.
+└───style/            # Archivos de estilos globales como index.css.
+```
 
-*   **`src/context/SimulationContext.jsx`**: Este contexto proporciona estado y funciones relacionadas con el proceso de simulación, como la pregunta actual, el temporizador y los resultados. Los componentes envueltos dentro del `SimulationProvider` pueden acceder a este estado compartido.
+## Instalación y Puesta en Marcha
 
-Para el estado local de los componentes, se utilizan los hooks `useState` y `useReducer` de React.
-
-## 7. Estilizado
-
-Tailwind CSS se utiliza para el estilizado. Esto significa que la mayor parte del estilizado se aplica directamente en el JSX utilizando clases de utilidad. Los estilos personalizados o los componentes que requieren un CSS más complejo se pueden encontrar en `src/index.css` o dentro de módulos CSS específicos de componentes si se introducen.
-
-## 8. Internacionalización (i18n)
-
-La aplicación soporta múltiples idiomas utilizando `i18next`.
-
-*   **`src/i18n.js`**: Este archivo contiene la configuración para `i18next`, incluyendo la detección de idioma, idiomas de respaldo y carga de recursos.
-*   **`public/locales/{lang}/translation.json`**: Las cadenas de traducción se almacenan en archivos JSON, separadas por idioma.
-*   **Uso**: Puede usar el hook `useTranslation` de `react-i18next` en sus componentes para acceder a las cadenas traducidas.
-
-## 9. Cómo Empezar
-
-Para configurar y ejecutar el proyecto localmente:
-
-1.  **Clonar el repositorio**:
+1.  **Clonar el repositorio:**
     ```bash
-    git clone <url-del-repositorio>
+    git clone <URL_DEL_REPOSITORIO>
     cd frontend
     ```
-2.  **Instalar dependencias**:
-    El proyecto utiliza `bun` como gestor de paquetes. Si no tiene `bun` instalado, puede instalarlo desde [bun.sh](https://bun.sh/).
+
+2.  **Instalar dependencias:**
+    Se recomienda usar `bun` por la presencia de `bun.lock`, pero `npm` también es compatible.
     ```bash
     bun install
+    # o si usas npm
+    npm install
     ```
-    Alternativamente, si prefiere `npm` o `yarn`:
+
+3.  **Configurar variables de entorno:**
+    Crea un archivo `.env` en la raíz de `/frontend` a partir del ejemplo `.env.example` (si existiera) o créalo desde cero. Debe contener la URL del backend.
+    ```
+    VITE_API_URL=http://localhost:3000/api
+    ```
+
+4.  **Ejecutar el servidor de desarrollo:**
     ```bash
-    npm install # o yarn install
+    bun run dev
+    # o si usas npm
+    npm run dev
     ```
-3.  **Ejecutar el servidor de desarrollo**:
-    ```bash
-    bun dev
-    ```
-    Esto iniciará el servidor de desarrollo de Vite, normalmente en `http://localhost:5173`.
+    La aplicación estará disponible en `http://localhost:5173` (o el puerto que indique Vite).
 
-## 10. Notas de Refactorización
+## Scripts Disponibles
 
-Al refactorizar, tenga en cuenta lo siguiente:
+-   `npm run dev`: Inicia el servidor de desarrollo con Vite.
+-   `npm run build`: Compila la aplicación para producción.
+-   `npm run lint`: Ejecuta el linter (ESLint) para revisar la calidad del código.
 
-*   **Modularidad**: Busque componentes pequeños, enfocados y reutilizables.
-*   **Consistencia**: Mantenga el estilo de codificación, las convenciones de nomenclatura y los patrones arquitectónicos existentes.
-*   **Rendimiento**: Tenga en cuenta el rendimiento de renderizado, especialmente en listas y UIs complejas.
-*   **Capacidad de prueba**: Escriba código que sea fácil de probar. Considere agregar pruebas unitarias o de integración para funcionalidades críticas.
-*   **Accesibilidad**: Asegúrese de que los cambios en la UI sean accesibles.
-*   **Documentación**: Actualice este `README.md` o agregue comentarios en línea para la lógica compleja según sea necesario.
+## Integración con el Backend
 
-¡No dude en explorar el código base. Si tiene alguna pregunta, no dude en preguntar!
+El frontend se comunica con un backend Node.js/Express a través de una API REST. La instancia de Axios preconfigurada en `src/api/axiosInstance.jsx` gestiona las peticiones, incluyendo el envío del token de autenticación en los headers.
+
+**Endpoints Principales Consumidos:**
+-   `/api/auth/login`, `/api/auth/register`: Autenticación de usuarios.
+-   `/api/users`: (Admin) Gestión de usuarios.
+-   `/api/questions`: (Admin, Profesor) CRUD de preguntas.
+-   `/api/categories`: (Admin) CRUD de categorías.
+-   `/api/tests`: (Todos) Gestión y realización de simulacros.
+-   `/api/ai/recommendation`: (Estudiante) Obtención de recomendaciones post-simulacro.
+
+## Estado Actual y Trabajo Futuro
+
+### Implementado
+
+La mayor parte de la funcionalidad principal de la aplicación ya está desarrollada y es funcional, incluyendo:
+
+-   **Flujo de Autenticación:** Registro e inicio de sesión para los tres roles (Administrador, Profesor, Estudiante).
+-   **Funcionalidad por Rol:** Todas las capacidades descritas en la sección de características para cada rol están implementadas.
+-   **Simulacros Completos:** Los estudiantes pueden realizar simulacros de principio a fin, incluyendo la selección de respuestas, el cronómetro y la finalización de la prueba.
+-   **Integración con Backend:** La comunicación con la API está establecida para todas las funcionalidades existentes.
+-   **Recomendaciones con IA:** El sistema procesa los resultados y muestra las recomendaciones generadas por la IA al estudiante.
+-   **Manejo de Estados:** La aplicación gestiona los estados de carga y error durante las interacciones.
+
+### Pendiente / Por Hacer
+
+El trabajo restante se centra en funcionalidades específicas y mejoras de calidad:
+
+-   **Historial de Calificaciones:** Implementar la página `CalificacionesPage.jsx` para que los estudiantes puedan ver un historial de los resultados de todos sus simulacros anteriores.
+-   **Recuperación de Contraseña:** Añadir un flujo para que los usuarios puedan restablecer su contraseña si la olvidan.
+-   **Pruebas y QA:** Realizar un ciclo de pruebas unitarias y de integración para asegurar la robustez y estabilidad de la aplicación antes del despliegue.
+-   **Refinamiento Final de UI/UX:** Realizar ajustes menores en la interfaz para mejorar la experiencia de usuario general.
+
+---
+## Licencia
+
+Repositorio Privado. Todos los derechos reservados.
