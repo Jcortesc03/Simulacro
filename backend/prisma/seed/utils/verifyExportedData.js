@@ -18,6 +18,6 @@ async function verifyExportedData() {
     console.log('🎯 Archivos listos para transportar')
   } catch (error) {
     console.error('❌ Error verificando archivos:', error.message)
-    console.log('💡 Ejecuta el exportador primero')
+    console.log('💡 Ejecuta el exportador primero.')
   }
 }
