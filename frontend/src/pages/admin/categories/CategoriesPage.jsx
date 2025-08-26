@@ -194,10 +194,6 @@ const CategoriesPage = () => {
                           Gestiona las preguntas y evaluaciones relacionadas con esta área académica del sistema SABER.
                         </p>
 
-                        {/* Debug info - remover en producción */}
-                        <div className="text-xs text-gray-400 mb-4 font-mono">
-                          Path: {cat.path}
-                        </div>
 
                         {/* Indicadores de estado */}
                         <div className="flex items-center justify-between">
