@@ -146,6 +146,24 @@ const getSimulationAttempts = async () => {
   return rows;
 };
 
+const getTestsByUserId = async (userId) => {
+  const [rows] = await db.query(
+    `SELECT
+        sa.attempt_id,
+        s.simulation_name,
+        sa.total_score,
+        sa.start_time,
+        sa.end_time
+     FROM simulation_attempts sa
+     JOIN simulations s ON sa.simulation_id = s.simulation_id
+     WHERE sa.user_id = ?
+     ORDER BY sa.start_time DESC;`,
+    [userId]
+  );
+
+  return rows;
+};
+
 export {
   getSimulationAttempts,
   saveSimulation,
@@ -154,4 +172,5 @@ export {
   getAnswerById,
   getSimulationByName,
   getTestsByUser,
+  getTestsByUserId,
 };

@@ -6,6 +6,7 @@ import {
   getAnswerById,
   getQuestionById,
   getTestsByUser,
+  getTestsByUserId,
 } from "../database/tests.js";
 
 import { retroalimentateTest } from "../services/geminiService.js";
@@ -158,10 +159,64 @@ const getSimulationAttemptsHandler = async (req, res) => {
   }
 };
 
+const getStudentTestsHandler = async (req, res) => {
+  try {
+    const userId = req.user?.id || req.user?.user_id;
+    if (!userId) {
+      return res.status(401).json({ message: "Usuario no autenticado." });
+    }
+
+    const attemptsData = await getTestsByUserId(userId);
+
+    if (!attemptsData || attemptsData.length === 0) {
+      return res.status(200).json({ averageScore: 0, attempts: [] });
+    }
+
+    const totalScoreSum = attemptsData.reduce((sum, attempt) => sum + (attempt.total_score || 0), 0);
+    const averageScore = attemptsData.length > 0 ? totalScoreSum / attemptsData.length : 0;
+
+    const getLevel = (score) => {
+      if (score > 200) return 'Nivel 4';
+      if (score > 150) return 'Nivel 3';
+      if (score > 100) return 'Nivel 2';
+      return 'Nivel 1';
+    };
+
+    const formatDuration = (start, end) => {
+      if (!start || !end) return 'N/A';
+      const durationMs = new Date(end) - new Date(start);
+      const hours = Math.floor(durationMs / 3600000);
+      const minutes = Math.floor((durationMs % 3600000) / 60000);
+      return `${hours}h ${minutes}m`;
+    };
+
+    const attempts = attemptsData.map(attempt => ({
+      id: attempt.attempt_id,
+      examName: attempt.simulation_name,
+      score: attempt.total_score,
+      level: getLevel(attempt.total_score),
+      time: formatDuration(attempt.start_time, attempt.end_time),
+      date: new Date(attempt.start_time).toLocaleDateString('es-ES'),
+      // Los resultados detallados se pueden cargar bajo demanda en otra ruta si es necesario
+      results: null 
+    }));
+
+    return res.status(200).json({ 
+      averageScore: Math.round(averageScore),
+      attempts 
+    });
+
+  } catch (err) {
+    console.error("Error en getStudentTestsHandler:", err);
+    return res.status(500).json({ message: "Hubo un error al obtener el historial de pruebas." });
+  }
+};
+
 export {
   saveSimulationAttemptHandler,
   saveSimulationHandler,
   saveSimulationQuestionsHandler,
   getTestsByUserHandler,
   getSimulationAttemptsHandler,
+  getStudentTestsHandler,
 };
