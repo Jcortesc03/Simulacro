@@ -14,7 +14,7 @@ import TeacherLayout from '../components/layout/TeacherLayout';
 import CategoriesPage from '../pages/admin/categories/CategoriesPage';
 import CategoryDetailPage from '../pages/admin/categories/CategoryDetailPage';
 import DashboardPage from '../pages/admin/DashboardPage';
-import LecturaCriticaPage from '../pages/admin/categories/LecturaCriticaPage';
+// import LecturaCriticaPage from '../pages/admin/categories/LecturaCriticaPage'; // NO NECESARIO
 import PerfilPage from '../pages/admin/PerfilPage';
 import QuestionFormPage from '../pages/admin/QuestionFormPage';
 import SimulacrosPage from '../pages/admin/SimulacrosPage';
@@ -56,8 +56,8 @@ function AppRoutes() {
           <Route path="questions/edit/:id" element={<QuestionFormPage />} />
           <Route path="perfil" element={<PerfilPage />} />
           <Route path="categories" element={<CategoriesPage />} />
+          {/* UNA SOLA RUTA PARA TODAS LAS CATEGORÍAS */}
           <Route path="categories/:categoryPath" element={<CategoryDetailPage />} />
-          <Route path="categories/lectura-critica" element={<LecturaCriticaPage />} />
         </Route>
 
         {/* Student Routes */}

@@ -28,52 +28,65 @@ const CategoriesPage = () => {
     return IconComponent;
   };
 
-  // Función para inferir categoría (mantenida del código original)
-  const inferCategory = (subcat) => {
-    if (!subcat) return "Sin categoría";
-    const map = {
-      'literal': 'Lectura Crítica',
-      'inferencial': 'Lectura Crítica',
-      'analítica': 'Lectura Crítica',
-      'algebra': 'Razonamiento Cuantitativo',
-      'estadística': 'Razonamiento Cuantitativo',
-      'geometría': 'Razonamiento Cuantitativo',
-      'etica': 'Competencias Ciudadanas',
-      'derechos humanos': 'Competencias Ciudadanas',
-      'argumentación': 'Competencias Ciudadanas',
-      'coherencia': 'Comunicación Escrita',
-      'gramática': 'Inglés',
-      'vocabulario': 'Inglés',
-      'comprensión': 'Inglés'
-    };
-    const key = subcat.toLowerCase().trim();
-    return map[key] || subcat;
+  // Función para generar path consistente
+  const generateCategoryPath = (categoryName) => {
+    if (!categoryName) return 'sin-nombre';
+    return categoryName
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '') // Remover acentos
+      .replace(/\s+/g, '-')
+      .replace(/[^a-z0-9-]/g, ''); // Remover caracteres especiales
   };
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         setLoading(true);
-        const res = await api.get('/admin/getCategories');
+        console.log('Fetching admin categories...');
+
+        // Intentar primero con el endpoint de admin
+        let res;
+        try {
+          res = await api.get('/admin/getCategories');
+        } catch (adminError) {
+          console.warn('Admin endpoint failed, trying teacher endpoint:', adminError);
+          res = await api.get('/categories/');
+        }
+
+        console.log('Categories response:', res.data);
+
         const fetchedCategories = res.data.map((cat, idx) => {
-          const catName = cat.name || cat.category_name;
+          const catName = cat.name || cat.category_name || cat.categoryName;
+
           if (!catName) {
+            console.warn('Category without name at index:', idx, cat);
             return categoriesData[idx] || {
               name: "Sin nombre",
               path: "sin-nombre",
               theme: { main: '#4A90E2', light: '#DDEBFF' }
             };
           }
-          const existingCategory = categoriesData.find(c => c.name === catName);
-          return existingCategory || {
+
+          // Buscar en los datos de respaldo
+          const existingCategory = categoriesData.find(c =>
+            c.name.toLowerCase() === catName.toLowerCase()
+          );
+
+          const categoryData = existingCategory || {
             name: catName,
-            path: catName.toLowerCase().replace(/\s+/g, '-'),
+            path: generateCategoryPath(catName),
             theme: { main: '#4A90E2', light: '#DDEBFF' }
           };
+
+          console.log('Processed category:', categoryData);
+          return categoryData;
         });
+
         setCategories(fetchedCategories);
       } catch (error) {
-        console.error('Error cargando categorías', error);
+        console.error('Error cargando categorías:', error);
+        console.log('Using backup categories data');
         setCategories(categoriesData);
       } finally {
         setLoading(false);
@@ -82,6 +95,20 @@ const CategoriesPage = () => {
 
     fetchCategories();
   }, []);
+
+  const handleCategoryClick = (cat) => {
+    console.log('Navigating to category:', cat);
+    const path = `/admin/categories/${cat.path}`;
+    console.log('Navigation path:', path);
+
+    navigate(path, {
+      state: {
+        categoryName: cat.name,
+        categoryPath: cat.path,
+        categoryData: cat
+      }
+    });
+  };
 
   if (loading) {
     return (
@@ -96,7 +123,6 @@ const CategoriesPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-
       {/* Contenido principal */}
       <div className="max-w-7xl mx-auto px-6 py-8">
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -131,11 +157,7 @@ const CategoriesPage = () => {
                     <div
                       key={cat.name || idx}
                       className="group relative bg-white rounded-2xl shadow-sm border-2 border-gray-100 hover:border-gray-200 cursor-pointer transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
-                      onClick={() =>
-                        navigate(`/admin/categories/${cat.path}`, {
-                          state: { categoryName: cat.name }
-                        })
-                      }
+                      onClick={() => handleCategoryClick(cat)}
                     >
                       {/* Borde superior temático */}
                       <div
@@ -171,6 +193,11 @@ const CategoriesPage = () => {
                         <p className="text-gray-600 text-sm mb-6 leading-relaxed">
                           Gestiona las preguntas y evaluaciones relacionadas con esta área académica del sistema SABER.
                         </p>
+
+                        {/* Debug info - remover en producción */}
+                        <div className="text-xs text-gray-400 mb-4 font-mono">
+                          Path: {cat.path}
+                        </div>
 
                         {/* Indicadores de estado */}
                         <div className="flex items-center justify-between">
@@ -216,7 +243,6 @@ const CategoriesPage = () => {
             )}
           </div>
         </div>
-
       </div>
     </div>
   );
