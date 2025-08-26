@@ -5,7 +5,16 @@ import QuestionCard from "../../../components/questions/QuestionCard";
 import ConfirmationModal from "../../../components/ui/ConfirmationModal";
 import SuccessModal from "../../../components/ui/SuccessModal";
 import Button from "../../../components/ui/Button";
-import { PlusCircle, ArrowLeft, BookOpen, FileText, Users, Search, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  PlusCircle,
+  ArrowLeft,
+  BookOpen,
+  FileText,
+  Users,
+  Search,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import api from "../../../api/axiosInstance.jsx";
 import { categoriesData } from "../../../data/categoriesData";
 
@@ -23,9 +32,9 @@ export default function CategoryDetailPage() {
   const questionsPerPage = 8;
 
   // Obtener el tema de la categoría
-  const categoryTheme = categoriesData.find(cat =>
-    cat.name === categoryName || cat.path === categoryPath
-  )?.theme || { main: '#4A90E2', light: '#DDEBFF' };
+  const categoryTheme = categoriesData.find(
+    (cat) => cat.name === categoryName || cat.path === categoryPath
+  )?.theme || { main: "#4A90E2", light: "#DDEBFF" };
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -68,15 +77,18 @@ export default function CategoryDetailPage() {
 
     // Filtrar por término de búsqueda
     if (searchTerm) {
-      filtered = filtered.filter(q =>
-        q.enunciado.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        q.opciones.some(opcion => opcion.texto.toLowerCase().includes(searchTerm.toLowerCase()))
+      filtered = filtered.filter(
+        (q) =>
+          q.enunciado.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          q.opciones.some((opcion) =>
+            opcion.texto.toLowerCase().includes(searchTerm.toLowerCase())
+          )
       );
     }
 
     // Filtrar por dificultad
     if (difficultyFilter !== "all") {
-      filtered = filtered.filter(q => q.dificultad === difficultyFilter);
+      filtered = filtered.filter((q) => q.dificultad === difficultyFilter);
     }
 
     setFilteredQuestions(filtered);
@@ -97,11 +109,57 @@ export default function CategoryDetailPage() {
     navigate("/admin/questions", { state: { from: location.pathname } });
   };
 
-  const handleEditQuestion = (question) => {
+ const handleEditQuestion = async (question) => {
+  try {
+    // Obtener información de categorías disponibles para mapear el categoryName actual
+    const categoriesResponse = await api.get("/admin/getCategories");
+    const categories = categoriesResponse.data || [];
+
+    // Buscar la categoría actual por nombre
+    const currentCategory = categories.find(cat => cat.category_name === categoryName);
+
+    // Obtener subcategorías
+    const subCategoriesResponse = await api.get("/admin/subcategories");
+    const subCategories = subCategoriesResponse.data || [];
+
+    // Filtrar subcategorías de la categoría actual
+    const currentSubCategories = subCategories.filter(
+      subcat => subcat.category_id === currentCategory?.category_id
+    );
+
+    // Preparar los datos completos para el formulario
+    const questionDataForEdit = {
+      ...question,
+      selectedCategory: currentCategory?.category_id,
+      selectedSubCategory: currentSubCategories.length === 1
+        ? currentSubCategories[0].sub_category_id
+        : undefined, // Si hay más de una subcategoría, el usuario deberá seleccionar
+      categoryName: categoryName, // Pasar el nombre de categoría también
+    };
+
     navigate(`/admin/questions/edit/${question.id}`, {
-      state: { questionData: question, from: location.pathname },
+      state: {
+        questionData: questionDataForEdit,
+        from: location.pathname
+      },
     });
-  };
+  } catch (error) {
+    console.error("Error obteniendo datos de categorías:", error);
+
+    // Fallback: navegar con los datos básicos y el categoryName
+    const questionDataForEdit = {
+      ...question,
+      categoryName: categoryName,
+    };
+
+    navigate(`/admin/questions/edit/${question.id}`, {
+      state: {
+        questionData: questionDataForEdit,
+        from: location.pathname
+      },
+    });
+  }
+};
 
   const handleDeleteClick = (questionId) => {
     setModal({ type: "deleteConfirm", isOpen: true, id: questionId });
@@ -128,11 +186,11 @@ export default function CategoryDetailPage() {
   };
 
   const handlePrevPage = () => {
-    setCurrentPage(prev => Math.max(prev - 1, 1));
+    setCurrentPage((prev) => Math.max(prev - 1, 1));
   };
 
   const handleNextPage = () => {
-    setCurrentPage(prev => Math.min(prev + 1, totalPages));
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   };
 
   return (
@@ -161,10 +219,7 @@ export default function CategoryDetailPage() {
               className="p-3 rounded-xl shadow-sm"
               style={{ backgroundColor: categoryTheme.light }}
             >
-              <BookOpen
-                size={32}
-                style={{ color: categoryTheme.main }}
-              />
+              <BookOpen size={32} style={{ color: categoryTheme.main }} />
             </div>
             <div>
               <h1
@@ -187,10 +242,7 @@ export default function CategoryDetailPage() {
                   className="p-2 rounded-lg"
                   style={{ backgroundColor: categoryTheme.light }}
                 >
-                  <FileText
-                    size={20}
-                    style={{ color: categoryTheme.main }}
-                  />
+                  <FileText size={20} style={{ color: categoryTheme.main }} />
                 </div>
                 <div>
                   <p className="text-2xl font-bold text-gray-800">
@@ -211,10 +263,7 @@ export default function CategoryDetailPage() {
                   className="p-2 rounded-lg"
                   style={{ backgroundColor: categoryTheme.light }}
                 >
-                  <Users
-                    size={20}
-                    style={{ color: categoryTheme.main }}
-                  />
+                  <Users size={20} style={{ color: categoryTheme.main }} />
                 </div>
                 <div>
                   <p className="text-2xl font-bold text-gray-800">Activo</p>
@@ -231,7 +280,7 @@ export default function CategoryDetailPage() {
                 style={{
                   borderColor: categoryTheme.main,
                   color: categoryTheme.main,
-                  backgroundColor: 'transparent'
+                  backgroundColor: "transparent",
                 }}
                 variant="secondary"
               >
@@ -253,10 +302,7 @@ export default function CategoryDetailPage() {
           >
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <FileText
-                  size={24}
-                  style={{ color: categoryTheme.main }}
-                />
+                <FileText size={24} style={{ color: categoryTheme.main }} />
                 <h2
                   className="text-2xl font-bold"
                   style={{ color: categoryTheme.main }}
@@ -312,10 +358,7 @@ export default function CategoryDetailPage() {
               <>
                 <div className="space-y-6">
                   {currentQuestions.map((q, index) => (
-                    <div
-                      key={q.id}
-                      className="group"
-                    >
+                    <div key={q.id} className="group">
                       <div className="flex items-start gap-4">
                         <div
                           className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white shadow-sm"
@@ -350,7 +393,9 @@ export default function CategoryDetailPage() {
 
                     <div className="flex items-center gap-2">
                       <span className="text-sm text-gray-600">
-                        Mostrando {startIndex + 1}-{Math.min(endIndex, filteredQuestions.length)} de {filteredQuestions.length}
+                        Mostrando {startIndex + 1}-
+                        {Math.min(endIndex, filteredQuestions.length)} de{" "}
+                        {filteredQuestions.length}
                       </span>
                     </div>
 
@@ -372,10 +417,7 @@ export default function CategoryDetailPage() {
                   className="mx-auto w-24 h-24 rounded-full flex items-center justify-center mb-6"
                   style={{ backgroundColor: categoryTheme.light }}
                 >
-                  <FileText
-                    size={32}
-                    style={{ color: categoryTheme.main }}
-                  />
+                  <FileText size={32} style={{ color: categoryTheme.main }} />
                 </div>
                 <h3
                   className="text-2xl font-bold mb-2"
@@ -383,14 +425,12 @@ export default function CategoryDetailPage() {
                 >
                   {questions.length === 0
                     ? "No hay preguntas disponibles"
-                    : "No se encontraron preguntas"
-                  }
+                    : "No se encontraron preguntas"}
                 </h3>
                 <p className="text-gray-600 mb-8 max-w-md mx-auto">
                   {questions.length === 0
                     ? "Esta categoría aún no tiene preguntas registradas. Comienza agregando la primera pregunta para construir el banco de evaluaciones."
-                    : "No se encontraron preguntas que coincidan con los filtros aplicados. Intenta ajustar los criterios de búsqueda."
-                  }
+                    : "No se encontraron preguntas que coincidan con los filtros aplicados. Intenta ajustar los criterios de búsqueda."}
                 </p>
                 {questions.length === 0 && (
                   <Button

@@ -110,7 +110,7 @@ const UsersPage = () => {
       isOpen: true,
       userId: userEmail, // Usar email como ID único
       userEmail,
-      userName
+      userName,
     });
   };
 
@@ -119,7 +119,7 @@ const UsersPage = () => {
       isOpen: false,
       userId: null,
       userEmail: null,
-      userName: null
+      userName: null,
     });
     setDeleting(false);
   };
@@ -160,7 +160,6 @@ const UsersPage = () => {
 
       handleCloseDeleteModal();
       console.log("Usuario eliminado exitosamente");
-
     } catch (error) {
       console.error("Error al eliminar usuario:", error);
 
@@ -305,7 +304,7 @@ const UsersPage = () => {
           />
         </div>
         <Button
-          onClick={() => navigate("/admin/users/add")}
+          onClick={() => navigate("/admin/users/new")}
           variant="primary"
           className="w-full md:w-auto bg-blue-600 flex-shrink-0"
         >
@@ -554,7 +553,9 @@ const UsersPage = () => {
         onClose={handleCloseDeleteModal}
         onConfirm={handleConfirmDelete}
         title="Confirmar Eliminación"
-        message={`¿Estás seguro de que quieres eliminar al usuario "${modalState.userName || modalState.userEmail}"? Esta acción no se puede deshacer.`}
+        message={`¿Estás seguro de que quieres eliminar al usuario "${
+          modalState.userName || modalState.userEmail
+        }"? Esta acción no se puede deshacer.`}
         confirmText={deleting ? "Eliminando..." : "Eliminar"}
         confirmDisabled={deleting}
       />
