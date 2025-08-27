@@ -28,6 +28,7 @@ import PruebasPage from '../pages/student/PruebasPage';
 import SimulationPageWrapper from '../pages/student/SimulationPageWrapper';
 import SimulationResultsPage from '../pages/student/SimulationResultsPage';
 import StudentPerfilPage from '../pages/student/PerfilPage';
+import EssayTestPage from '../pages/student/EssayTestPage';
 
 // TEACHER
 import TeacherCategoriesPage from '../pages/teacher/TeacherCategoriesPage';
@@ -69,6 +70,7 @@ function AppRoutes() {
           <Route path="simulacion/:id/resultados" element={<SimulationResultsPage />} />
           <Route path="calificaciones" element={<CalificacionesPage />} />
           <Route path="perfil" element={<StudentPerfilPage />} />
+          <Route path="essay-test" element={<EssayTestPage />} />
         </Route>
 
         {/* Teacher Routes */}

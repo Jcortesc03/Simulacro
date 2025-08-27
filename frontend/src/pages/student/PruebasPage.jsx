@@ -1,5 +1,5 @@
 // src/pages/student/PruebasPage.jsx
-import React, { useState } from 'react';
+import React, { useState,useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BookOpen, BarChart2, Users, Globe, PenSquare, Award, ChevronRight, Clock, Target, BookCheck } from 'lucide-react';
 import ConfirmationModal from '../../components/ui/ConfirmationModal';
@@ -44,14 +44,16 @@ const pruebas = [
   },
   {
     id: 'd7783d93-703a-4adb-af63-20dbe3adcf12',
-    name: 'Escritura',
+    name: 'Comunicación Escrita',
     description: 'Evalúa la capacidad para comunicar ideas de forma clara, coherente y argumentada por escrito.',
     icon: <PenSquare />,
     colorClasses: 'from-amber-600 to-amber-700',
     bgClasses: 'bg-amber-50 border-amber-200',
-    textClasses: 'text-amber-800'
+    textClasses: 'text-amber-800',
+    isEssay: true
   },
 ];
+
 
 // 📋 Card individual de prueba institucional
 const PruebaCard = ({ prueba, onStart }) => {
@@ -93,15 +95,30 @@ const PruebaCard = ({ prueba, onStart }) => {
 
               {/* Características */}
               <div className="mt-4 flex items-center space-x-4 text-xs text-gray-500">
-                <div className="flex items-center">
-                  <Target size={12} className="mr-1" />
-                  <span>5-20 preguntas</span>
-                </div>
-                <div className="flex items-center">
-                  <BookCheck size={12} className="mr-1" />
-                  <span>Retroalimentación IA</span>
-                </div>
-              </div>
+                {prueba.isEssay ? (
+                  <>
+                  <div className="flex items-center">
+                      <Target size={12} className="mr-1" />
+                      <span>1 pregunta de ensayo</span>
+                    </div>
+                    <div className="flex items-center">
+                      <BookCheck size={12} className="mr-1" />
+                      <span>Calificación con IA</span>
+                    </div>
+                  </>
+                  ) : (
+                  <>
+                  <div className="flex items-center">
+                    <Target size={12} className="mr-1" />
+                    <span>5-20 preguntas</span>
+                  </div>
+                  <div className="flex items-center">
+                    <BookCheck size={12} className="mr-1" />
+                    <span>Retroalimentación IA</span>
+                  </div>
+                  </>
+                  )}
+                  </div>
             </div>
 
             {/* Flecha indicadora */}
@@ -205,6 +222,7 @@ const GeneralSimulationCard = ({ onStart }) => {
 // 🎓 Modal de configuración institucional
 const ConfigurationModal = ({ show, onClose, onConfirm, prueba, questionCount, setQuestionCount }) => {
   const isGeneralSimulacro = prueba?.id === 'general';
+  const isEssayTest = prueba?.isEssay === true;
   const questionCountOptions = [5, 10, 15, 20];
 
   return (
@@ -214,7 +232,9 @@ const ConfigurationModal = ({ show, onClose, onConfirm, prueba, questionCount, s
       onConfirm={onConfirm}
       title={`Configurar Evaluación`}
       message={
-        isGeneralSimulacro
+        isEssayTest // Si es la prueba de ensayo...
+          ? 'Esta prueba consta de una única pregunta donde deberás redactar un ensayo. Tendrás 40 minutos para completarla.'
+        :isGeneralSimulacro
           ? 'Esta evaluación integral incluye preguntas de las cinco competencias académicas fundamentales, proporcionando una experiencia completa de preparación.'
           : 'Configure los parámetros de su sesión de práctica. Puede realizar múltiples intentos para fortalecer sus competencias.'
       }
@@ -248,7 +268,7 @@ const ConfigurationModal = ({ show, onClose, onConfirm, prueba, questionCount, s
       </div>
 
       {/* Configuración de preguntas solo para pruebas individuales */}
-      {!isGeneralSimulacro && (
+      {!isGeneralSimulacro && !isEssayTest &&(
         <div className="mb-4">
           <label htmlFor="questionCount" className="block text-sm font-semibold text-gray-700 mb-3">
             Configuración de la Sesión:
@@ -289,11 +309,25 @@ const ConfigurationModal = ({ show, onClose, onConfirm, prueba, questionCount, s
                 </div>
                 <div>
                   <p className="text-blue-800 text-xs font-medium">Información de la práctica</p>
-                  <p className="text-blue-700 text-xs mt-1">
-                    • Tiempo estimado: {questionCount * 1.5} minutos<br/>
-                    • Retroalimentación personalizada con IA<br/>
-                    • Análisis detallado de respuestas
-                  </p>
+                  {isEssayTest ? (
+                    <p className="text-blue-700 text-xs mt-1">
+                      • Tiempo fijo: 40 minutos<br/>
+                      • Calificación y retroalimentación con IA<br/>
+                      • Evalúa tu capacidad argumentativa
+                    </p>
+                    ) : isGeneralSimulacro ? (
+                      <p className="text-blue-700 text-xs mt-1">
+                        • Preguntas fijas: 41 (incluye ensayo)<br/>
+                        • Tiempo estimado: 1 hora y 40 minutos<br/>
+                        • Cubre todas las competencias evaluadas
+                      </p>
+                  ) : (
+                      <p className="text-blue-700 text-xs mt-1">
+                        • Tiempo estimado: {questionCount * 1.5} minutos<br/>
+                        • Retroalimentación personalizada con IA<br/>
+                        • Análisis detallado de respuestas
+                      </p>
+                  )}
                 </div>
               </div>
             </div>
@@ -313,6 +347,34 @@ const PruebasPage = () => {
     questionCount: 10
   });
 
+
+  //Este bloque pertenece al scroll automatico de pruebas
+  const [showScrollButton, setShowScrollButton] = useState(false);
+  const generalSimulacroRef = useRef(null);
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!generalSimulacroRef.current) return;
+
+      const topOfGeneralSim = generalSimulacroRef.current.getBoundingClientRect().top;
+      const scrollPosition = window.scrollY;
+      
+      // Muestra el botón si hemos bajado un poco Y la sección del simulacro aún no es visible
+      const isVisible = scrollPosition > 150 && topOfGeneralSim > window.innerHeight * 0.8;
+      setShowScrollButton(isVisible);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll); // Limpieza importante
+  }, []);
+  const handleScrollClick = () => {
+    generalSimulacroRef.current?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
+  };
+  //
+
+
   const handleStartAttempt = (prueba) => {
     setModalState({ isOpen: true, prueba: prueba, questionCount: 10 });
   };
@@ -320,19 +382,32 @@ const PruebasPage = () => {
   const handleConfirmStart = () => {
     if (!modalState.prueba) return;
 
-    const { id, name } = modalState.prueba;
+    const { id, name, isEssay } = modalState.prueba;
     const questionCount = modalState.questionCount;
 
     console.log(`Navegando a /student/simulacro/${id} con ${questionCount} preguntas.`);
 
     setModalState({ isOpen: false, prueba: null, questionCount: 10 });
 
+    if (isEssay) {
+      navigate('/student/essay-test'); // Esta página la crearemos a continuación
+    } else if (id === 'general') {
+    // Si es el simulacro general, navegamos a una ruta especial
+    // y FIJAMOS el número de preguntas en 41.
+    navigate(`/student/simulacro/general`, {
+      state: {
+        examName: name,
+        questionCount: 41, // ¡Importante! Número de preguntas fijo.
+      },
+    });
+  } else {
     navigate(`/student/simulacro/${id}`, {
       state: {
         examName: name,
         questionCount: questionCount,
       },
     });
+  }
   };
 
   const handleCloseModal = () => {
@@ -357,11 +432,12 @@ const PruebasPage = () => {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 py-12">
+      <div className="max-w-6xl mx-auto px-4 py-12 space-y-16">
         {/* Sección de competencias individuales */}
-        <div className="mb-16">
+  
           <div className="text-center mb-10">
-
+            <h2 className="text-3xl font-bold text-gray-800">Prácticas por Competencia</h2>
+            <p className="text-gray-500 mt-2">Fortalece tus habilidades en áreas específicas.</p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -373,9 +449,16 @@ const PruebasPage = () => {
               />
             ))}
           </div>
-        </div>
 
-       
+        {/* --- SECCIÓN NUEVA: SIMULACRO GENERAL --- */}
+        <div>
+          <div ref={generalSimulacroRef}>
+          <div className="text-center mb-10">
+            <h2 className="text-3xl font-bold text-gray-800">Simulacro General</h2>
+            <p className="text-gray-500 mt-2">Pon a prueba todos tus conocimientos en una simulación integral.</p>
+          </div>
+          <GeneralSimulationCard onStart={handleStartAttempt} />
+        </div>
       </div>
 
       {/* Modal de configuración */}
@@ -388,7 +471,25 @@ const PruebasPage = () => {
         setQuestionCount={handleSetQuestionCount}
       />
     </div>
+    <ScrollToGeneralButton 
+        isVisible={showScrollButton}
+        onClick={handleScrollClick}
+      />
+    </div>
   );
 };
-
+const ScrollToGeneralButton = ({ isVisible, onClick }) => {
+  return (
+    <button
+      onClick={onClick}
+      className={`fixed bottom-8 right-8 z-30 flex items-center gap-3 px-4 py-3 bg-white rounded-full shadow-2xl border-2 border-gray-200 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl
+      ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'}`}
+    >
+      <span className="font-bold text-gray-800">Ver Simulacro General</span>
+      <div className="p-1 bg-blue-600 rounded-full text-white">
+        <ChevronRight size={20} className="transform rotate-90" />
+      </div>
+    </button>
+  );
+};
 export default PruebasPage;
