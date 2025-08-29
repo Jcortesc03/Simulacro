@@ -149,6 +149,54 @@ const getLastQuestions = async (categoryName, questionNumber) => {
   return enrichedQuestions;
 };
 
+const getAllCategoriesQuestions = async () => {
+  const enrichedQuestions = [];
+
+  const categoriesConfig = [
+    { name: "Lectura Crítica", amount: 35 },
+    { name: "Razonamiento Cuantitativo", amount: 35 },
+    { name: "Competencias Ciudadanas", amount: 35 },
+    { name: "Inglés", amount: 35 },
+  ];
+  
+  for (const { name, amount } of categoriesConfig) {
+    if (isNaN(amount) || amount <= 0) {
+      throw new Error(`Número de preguntas inválido para la categoría ${name}`);
+    }
+
+    const [questions] = await db.query(
+      `
+        SELECT q.question_id, q.statement, q.difficulty, q.image_path, sc.sub_category_name, c.category_name
+        FROM questions q
+        JOIN sub_categories sc ON q.sub_category_id = sc.sub_category_id
+        JOIN categories c ON sc.category_id = c.category_id
+        WHERE c.category_name = ?
+        ORDER BY RAND()
+        LIMIT ?;
+      `,
+      [name, amount]
+    );
+
+    for (const question of questions) {
+      const [answers] = await db.query(
+        `
+          SELECT option_id, option_text, is_correct
+          FROM answer_options
+          WHERE question_id = ?
+        `,
+        [question.question_id]
+      );
+
+      enrichedQuestions.push({
+        ...question,
+        answers
+      });
+    }
+  }
+
+  return enrichedQuestions;
+};
+
 const getCategories = async () => {
   const [categories] = await db.query("SELECT * FROM categories");
   return categories;
@@ -228,4 +276,4 @@ const updateQuestion = async (questionId, questionData) => {
   return { success: true };
 };
 
-export { getLastQuestionsForAI, saveQuestion, getLastQuestions, getCategories, deleteQuestion, updateQuestion };
+export { getLastQuestionsForAI, saveQuestion, getLastQuestions, getCategories, deleteQuestion, updateQuestion, getAllCategoriesQuestions };

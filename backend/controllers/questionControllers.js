@@ -1,4 +1,6 @@
-import { saveQuestion, getLastQuestions, deleteQuestion, updateQuestion } from '../database/questions.js';
+import { saveQuestion, getLastQuestions, deleteQuestion, updateQuestion, getAllCategoriesQuestions } from '../database/questions.js';
+
+//------------------------------------------------------------------------------------------------------------------------------
 
 const saveQuestionHandler = async (req, res) => {
     const {
@@ -33,23 +35,25 @@ const saveQuestionHandler = async (req, res) => {
         const result = await saveQuestion(subCategoryId, statement, questionType, imagePath,
         creationDate, aiGenerated, difficulty, justification, status, answers);
         res.status(201).send('Pregunta creada correctamente');
-
+        
     }catch(err){
         console.log(err);
         res.status(500).send('Hubo un error')
     }
-
-
+    
+    
 }
+
+//------------------------------------------------------------------------------------------------------------------------------
 
 const getLastQuestionsHandler = async (req, res) => {
     const { categoryName, questionNumber } = req.query; 
-
+    
     const numQuestions = parseInt(questionNumber, 10);
-
+    
     if (!categoryName || isNaN(numQuestions) || numQuestions <= 0)
         return res.status(400).send('Faltan parámetros: categoryName y questionNumber (número válido)');
-
+    
     try {
         const result = await getLastQuestions(categoryName, numQuestions);
         res.status(200).json(result);
@@ -59,13 +63,30 @@ const getLastQuestionsHandler = async (req, res) => {
     }
 };
 
+//------------------------------------------------------------------------------------------------------------------------------
+
+const getAllCategoriesQuestionsHandler = async (req, res) =>{
+    try{
+        const questions = await getAllCategoriesQuestions();
+        return res.status(200).send({
+            multipleOptionQuestions: questions
+        });
+
+    }catch(err){
+        console.log(err);
+        return res.status(500).send('Hubo un error obteniendo todas las preguntas');
+    }
+};
+
+//------------------------------------------------------------------------------------------------------------------------------
+
 const deleteQuestionHandler = async (req, res) => {
     const { id } = req.params;
-
+    
     if (!id) {
         return res.status(400).send('El ID de la pregunta es requerido');
     }
-
+    
     try {
         const success = await deleteQuestion(id);
         if (success) {
@@ -79,10 +100,12 @@ const deleteQuestionHandler = async (req, res) => {
     }
 };
 
+//------------------------------------------------------------------------------------------------------------------------------
+
 const updateQuestionHandler = async (req, res) => {
     const { id } = req.params;
     const questionData = req.body;
-
+    
     const requiredFields = [
         'statement',
         'questionType',
@@ -111,4 +134,5 @@ const updateQuestionHandler = async (req, res) => {
     }
 };
 
-export { saveQuestionHandler, getLastQuestionsHandler, deleteQuestionHandler, updateQuestionHandler };
+
+export { saveQuestionHandler, getLastQuestionsHandler, deleteQuestionHandler, updateQuestionHandler, getAllCategoriesQuestionsHandler };
