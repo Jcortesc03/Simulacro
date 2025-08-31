@@ -40,9 +40,7 @@ const getLastQuestionsForAI = async () => {
     });
   });
 
-  // Solo queremos las últimas 5 preguntas
   const questions = Array.from(questionsMap.values()).slice(0, 5);
-
   return questions;
 };
 
@@ -58,12 +56,7 @@ const saveQuestion = async (
   status,
   answers
 ) => {
-  //La estructura es question_id, sub_category_id, statement, question_type, image_path,
-  //creation_date, ai_generated, difficulty, justification, status.
-  //La tabla de preguntas se llama questions
-
   const questionId = id();
-
   await db.query(
     `
     INSERT INTO questions(
@@ -93,23 +86,40 @@ const saveQuestion = async (
     ]
   );
 
-
-  for (const answer of answers) {
-    const { option_text, isCorrect } = answer;
-
-    await db.query(
-      `
-        INSERT INTO answer_options(option_id, question_id, option_text, is_correct)
-        VALUES (?, ?, ?, ?)
-      `,
-      [id(), questionId, option_text, isCorrect]
-    );
+  if (answers && answers.length > 0) {
+    for (const answer of answers) {
+      const { option_text, isCorrect } = answer;
+      await db.query(
+        `
+          INSERT INTO answer_options(option_id, question_id, option_text, is_correct)
+          VALUES (?, ?, ?, ?)
+        `,
+        [id(), questionId, option_text, isCorrect]
+      );
+    }
   }
 
   return { success: true, questionId };
 };
 
 const getLastQuestions = async (categoryName, questionNumber) => {
+  
+  if (categoryName === 'Escritura') {
+    const [questions] = await db.query(
+      `
+        SELECT q.question_id, q.statement
+        FROM questions q
+        JOIN sub_categories sc ON q.sub_category_id = sc.sub_category_id
+        JOIN categories c ON sc.category_id = c.category_id
+        WHERE c.category_name = ?
+        ORDER BY RAND()
+        LIMIT 1;
+      `,
+      [categoryName]
+    );
+    return questions;
+  }
+  
   const limit = Number(questionNumber);
   if (isNaN(limit) || limit <= 0) {
     throw new Error('Número de preguntas inválido');
@@ -125,11 +135,10 @@ const getLastQuestions = async (categoryName, questionNumber) => {
       ORDER BY RAND()
       LIMIT ?;
     `,
-    [categoryName, questionNumber]
+    [categoryName, limit]
   );
 
   const enrichedQuestions = [];
-
   for (const question of questions) {
     const [answers] = await db.query(
       `
@@ -139,19 +148,15 @@ const getLastQuestions = async (categoryName, questionNumber) => {
       `,
       [question.question_id]
     );
-
-    enrichedQuestions.push({
-      ...question,
-      answers
-    });
+    enrichedQuestions.push({ ...question, answers });
   }
 
   return enrichedQuestions;
 };
 
+// --- FUNCIÓN RESTAURADA ---
 const getAllCategoriesQuestions = async () => {
   const enrichedQuestions = [];
-
   const categoriesConfig = [
     { name: "Lectura Crítica", amount: 35 },
     { name: "Razonamiento Cuantitativo", amount: 35 },
@@ -186,11 +191,7 @@ const getAllCategoriesQuestions = async () => {
         `,
         [question.question_id]
       );
-
-      enrichedQuestions.push({
-        ...question,
-        answers
-      });
+      enrichedQuestions.push({ ...question, answers });
     }
   }
 
@@ -262,15 +263,17 @@ const updateQuestion = async (questionId, questionData) => {
 
   await db.query('DELETE FROM answer_options WHERE question_id = ?', [questionId]);
 
-  for (const answer of answers) {
-    const { option_text, isCorrect } = answer;
-    await db.query(
-      `
-        INSERT INTO answer_options(option_id, question_id, option_text, is_correct)
-        VALUES (?, ?, ?, ?)
-      `,
-      [id(), questionId, option_text, isCorrect]
-    );
+  if (answers && answers.length > 0) {
+    for (const answer of answers) {
+      const { option_text, isCorrect } = answer;
+      await db.query(
+        `
+          INSERT INTO answer_options(option_id, question_id, option_text, is_correct)
+          VALUES (?, ?, ?, ?)
+        `,
+        [id(), questionId, option_text, isCorrect]
+      );
+    }
   }
 
   return { success: true };
