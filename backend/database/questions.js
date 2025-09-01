@@ -154,48 +154,80 @@ const getLastQuestions = async (categoryName, questionNumber) => {
   return enrichedQuestions;
 };
 
-// --- FUNCIÓN RESTAURADA ---
+// --- FUNCIÓN CORREGIDA ---
 const getAllCategoriesQuestions = async () => {
-  const enrichedQuestions = [];
-  const categoriesConfig = [
-    { name: "Lectura Crítica", amount: 35 },
-    { name: "Razonamiento Cuantitativo", amount: 35 },
-    { name: "Competencias Ciudadanas", amount: 35 },
-    { name: "Inglés", amount: 35 },
-  ];
-  
-  for (const { name, amount } of categoriesConfig) {
-    if (isNaN(amount) || amount <= 0) {
-      throw new Error(`Número de preguntas inválido para la categoría ${name}`);
-    }
+  console.log("\n--- INICIO: BÚSQUEDA DE PREGUNTAS GENERALES (VERSIÓN OPTIMIZADA) ---");
+  const allQuestions = [];
 
-    const [questions] = await db.query(
+  try {
+    // 1. OBTENER PREGUNTA DE ENSAYO (esto ya estaba bien)
+    console.log("1. Buscando pregunta de Ensayo...");
+    const [essayQuestions] = await db.query(
       `
-        SELECT q.question_id, q.statement, q.difficulty, q.image_path, sc.sub_category_name, c.category_name
+        SELECT q.question_id, q.statement, 'Escritura' as category_name
         FROM questions q
         JOIN sub_categories sc ON q.sub_category_id = sc.sub_category_id
         JOIN categories c ON sc.category_id = c.category_id
-        WHERE c.category_name = ?
+        WHERE c.category_name = 'Escritura'
         ORDER BY RAND()
-        LIMIT ?;
-      `,
-      [name, amount]
+        LIMIT 1;
+      `
     );
 
-    for (const question of questions) {
-      const [answers] = await db.query(
-        `
-          SELECT option_id, option_text, is_correct
-          FROM answer_options
-          WHERE question_id = ?
-        `,
-        [question.question_id]
-      );
-      enrichedQuestions.push({ ...question, answers });
+    if (essayQuestions && essayQuestions.length > 0) {
+      essayQuestions[0].isEssay = true;
+      allQuestions.push(essayQuestions[0]);
+      console.log("-> Pregunta de Ensayo encontrada:", essayQuestions[0].question_id);
+    } else {
+      console.warn("-> ADVERTENCIA: No se encontró pregunta de Ensayo.");
     }
-  }
 
-  return enrichedQuestions;
+    // 2. OBTENER TODAS LAS PREGUNTAS DE OPCIÓN MÚLTIPLE EN UNA SOLA CONSULTA
+    console.log("2. Buscando 10 preguntas para cada categoría de Opción Múltiple...");
+    const mcCategoriesNames = ["Lectura Crítica", "Razonamiento Cuantitativo", "Competencias Ciudadanas", "Inglés"];
+    
+    // Esta consulta es más compleja pero mucho más eficiente.
+    // Usa 'UNION ALL' para combinar los resultados de 4 consultas en una sola.
+    const query = `
+      (SELECT q.*, c.category_name, sc.sub_category_name FROM questions q JOIN sub_categories sc ON q.sub_category_id = sc.sub_category_id JOIN categories c ON sc.category_id = c.category_id WHERE c.category_name = ? ORDER BY RAND() LIMIT 10)
+      UNION ALL
+      (SELECT q.*, c.category_name, sc.sub_category_name FROM questions q JOIN sub_categories sc ON q.sub_category_id = sc.sub_category_id JOIN categories c ON sc.category_id = c.category_id WHERE c.category_name = ? ORDER BY RAND() LIMIT 10)
+      UNION ALL
+      (SELECT q.*, c.category_name, sc.sub_category_name FROM questions q JOIN sub_categories sc ON q.sub_category_id = sc.sub_category_id JOIN categories c ON sc.category_id = c.category_id WHERE c.category_name = ? ORDER BY RAND() LIMIT 10)
+      UNION ALL
+      (SELECT q.*, c.category_name, sc.sub_category_name FROM questions q JOIN sub_categories sc ON q.sub_category_id = sc.sub_category_id JOIN categories c ON sc.category_id = c.category_id WHERE c.category_name = ? ORDER BY RAND() LIMIT 10)
+    `;
+    
+    const [mcQuestions] = await db.query(query, [...mcCategoriesNames]);
+    console.log(`-> Se encontraron ${mcQuestions.length} preguntas de opción múltiple en total.`);
+
+    // 3. OBTENER TODAS LAS OPCIONES DE RESPUESTA EN UNA SOLA CONSULTA
+    const questionIds = mcQuestions.map(q => q.question_id);
+    if (questionIds.length > 0) {
+        console.log("3. Buscando todas las opciones de respuesta necesarias...");
+        const [allOptions] = await db.query(
+            `SELECT * FROM answer_options WHERE question_id IN (?)`,
+            [questionIds]
+        );
+        console.log(`-> Se encontraron ${allOptions.length} opciones en total.`);
+
+        // 4. Unir las preguntas con sus opciones en JavaScript
+        const mcQuestionsWithOptions = mcQuestions.map(question => ({
+            ...question,
+            answers: allOptions.filter(option => option.question_id === question.question_id)
+        }));
+        allQuestions.push(...mcQuestionsWithOptions);
+    }
+    
+    console.log(`4. Búsqueda finalizada. Total de preguntas a devolver: ${allQuestions.length}`);
+    console.log("--- FIN: BÚSQUEDA DE PREGUNTAS GENERALES ---");
+    return allQuestions;
+
+  } catch (error) {
+    console.error("!!! ERROR DURANTE LA BÚSQUEDA GENERAL:", error);
+    console.log("--- FIN CON ERROR ---");
+    return [];
+  }
 };
 
 const getCategories = async () => {

@@ -67,13 +67,13 @@ const getLastQuestionsHandler = async (req, res) => {
 
 const getAllCategoriesQuestionsHandler = async (req, res) =>{
     try{
+        console.log("-> Handler getAllCategoriesQuestionsHandler FUE ALCANZADO.");
         const questions = await getAllCategoriesQuestions();
-        return res.status(200).send({
-            multipleOptionQuestions: questions
-        });
+        console.log(`-> La función de BD devolvió ${questions.length} preguntas.`);
+        return res.status(200).json(questions); 
 
     }catch(err){
-        console.log(err);
+        console.error("!!! ERROR en getAllCategoriesQuestionsHandler:", err);
         return res.status(500).send('Hubo un error obteniendo todas las preguntas');
     }
 };

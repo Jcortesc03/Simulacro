@@ -29,7 +29,7 @@ import SimulationPageWrapper from '../pages/student/SimulationPageWrapper';
 import SimulationResultsPage from '../pages/student/SimulationResultsPage';
 import StudentPerfilPage from '../pages/student/PerfilPage';
 import EssayTestPage from '../pages/student/EssayTestPage';
-
+import GeneralSimulationPage from '../pages/student/GeneralSimulationPage';
 // TEACHER
 import TeacherCategoriesPage from '../pages/teacher/TeacherCategoriesPage';
 import TeacherCategoryDetailPage from '../pages/teacher/categories/TeacherCategoryDetailPage';
@@ -66,6 +66,7 @@ function AppRoutes() {
           <Route index element={<InicioPage />} />
           <Route path="inicio" element={<InicioPage />} />
           <Route path="pruebas" element={<PruebasPage />} />
+          <Route path="simulacro-general" element={<GeneralSimulationPage />} />
           <Route path="simulacro/:id" element={<SimulationPageWrapper />} />
           <Route path="simulacion/:id/resultados" element={<SimulationResultsPage />} />
           <Route path="calificaciones" element={<CalificacionesPage />} />

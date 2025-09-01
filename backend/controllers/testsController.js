@@ -26,9 +26,6 @@ const saveSimulationHandler = async (req, res) => {
 
 const saveSimulationAttemptHandler = async (req, res) => {
   try {
-    console.log("\n--- INICIO: GUARDAR INTENTO DE SIMULACIÓN ---");
-    console.log("1. Recibiendo payload del frontend:", JSON.stringify(req.body, null, 2));
-
     const {
       user_answers, simulation_id, start_time, end_time, status,
     } = req.body;
@@ -43,24 +40,20 @@ const saveSimulationAttemptHandler = async (req, res) => {
       return new Date(isoString).toISOString().slice(0, 19).replace("T", " ");
     };
     
-    // Esta es la condición clave y robusta para detectar un ensayo.
-    const isWrittenTest = Array.isArray(user_answers) && user_answers.length === 1 && user_answers[0] && typeof user_answers[0].answer_text === 'string';
-    console.log(`2. ¿Es una prueba de escritura? -> ${isWrittenTest}`);
+    // Nombres de variables consistentes, como pediste
+    const isWrittenTest = Array.isArray(user_answers) && user_answers.length === 1 && user_answers[0]?.answer_text;
+    const isGeneralTest = Array.isArray(user_answers) && user_answers.length > 1 && user_answers.some(a => a.answer_text);
 
     if (isWrittenTest) {
-      // --- CAMINO 1: LÓGICA PARA COMUNICACIÓN ESCRITA ---
-      console.log("3. Entrando en la lógica correcta para Comunicación Escrita.");
+      // --- LÓGICA PARA PRUEBA DE ESCRITURA ---
       const essayText = user_answers[0].answer_text;
-      
       const evaluation = await evaluateWrittenCommunication(essayText);
       const finalScore = parseInt(evaluation.score, 10);
       const retroalimentation = evaluation.feedback;
 
       if (isNaN(finalScore)) {
-        throw new Error("La IA no devolvió un puntaje numérico válido. Respuesta recibida: " + JSON.stringify(evaluation));
+        throw new Error("La IA no devolvió un puntaje numérico válido.");
       }
-      
-      console.log(`4. IA evaluó el ensayo con puntaje: ${finalScore}`);
 
       const attempt_id = id();
       await saveSimulationAttempt(
@@ -68,18 +61,54 @@ const saveSimulationAttemptHandler = async (req, res) => {
         formatDate(end_time), finalScore, status
       );
       
-      console.log(`5. Intento de ensayo guardado en DB con ID: ${attempt_id}`);
-      console.log("--- FIN: INTENTO GUARDADO CON ÉXITO ---");
-      
       return res.status(200).json({
-        message: "Prueba de comunicación escrita evaluada con éxito",
+        message: "Prueba de escritura evaluada con éxito",
         retroalimentation: retroalimentation,
         score: finalScore
       });
 
+    } else if (isGeneralTest) {
+      // --- NUEVA LÓGICA PARA LA PRUEBA GENERAL ---
+      console.log("📝 Entrando en la lógica para Prueba General Mixta.");
+      
+      const essayAnswer = user_answers.find(a => a.answer_text);
+      const mcAnswers = user_answers.filter(a => !a.answer_text);
+
+      const evaluation = await evaluateWrittenCommunication(essayAnswer.answer_text);
+      const essayScore = parseInt(evaluation.score, 10);
+      const essayFeedback = evaluation.feedback;
+      if (isNaN(essayScore)) throw new Error("La IA de ensayo no devolvió un puntaje válido.");
+      
+      // El frontend ya nos envía el puntaje de las preguntas de opción múltiple
+      // Necesitaremos que el frontend calcule y envíe este valor en el body
+      const { total_score_mc } = req.body; 
+      
+      // Combinamos los puntajes. Ejemplo: 80% opción múltiple, 20% ensayo
+      // Asumimos que total_score_mc viene en escala 0-300
+      const finalScore = (total_score_mc * 0.8) + (essayScore * 0.2);
+
+      const mcAnswersForIA = mcAnswers.map(ans => ({
+        question_id: ans.question_id,
+        selected_option_id: ans.selected_option_id,
+        is_correct: ans.is_correct
+      }));
+      const mcFeedback = await retroalimentateTest(JSON.stringify(mcAnswersForIA, null, 2));
+      const unifiedFeedback = `--- Retroalimentación de Escritura ---\n${essayFeedback}\n\n--- Retroalimentación General ---\n${mcFeedback}`;
+
+      const attempt_id = id();
+      await saveSimulationAttempt(
+        attempt_id, user_id, simulation_id, formatDate(start_time),
+        formatDate(end_time), Math.round(finalScore), status
+      );
+      
+      return res.status(200).json({
+        message: "Prueba General evaluada con éxito",
+        retroalimentation: unifiedFeedback,
+        score: Math.round(finalScore)
+      });
+
     } else {
-      // --- CAMINO 2: LÓGICA PARA PRUEBAS DE OPCIÓN MÚLTIPLE ---
-      console.log("3. Entrando en la lógica para Opción Múltiple (esto es incorrecto para un ensayo).");
+      // --- LÓGICA PARA PRUEBAS DE OPCIÓN MÚLTIPLE ---
       const { total_score } = req.body;
       await saveSimulationAttempt(
         id(), user_id, simulation_id, formatDate(start_time),
@@ -90,27 +119,20 @@ const saveSimulationAttemptHandler = async (req, res) => {
       for (const i of user_answers) {
         const answerStatement = await getAnswerById(i.selected_option_id);
         const questionStatement = await getQuestionById(i.question_id);
-        const answerText = answerStatement?.option_text || "No respondida";
-        const questionText = questionStatement?.statement || "Pregunta no encontrada";
         answers.push({
-          questionStatement: questionText,
-          answerStatement: answerText,
+          questionStatement: questionStatement?.statement || "Pregunta no encontrada",
+          answerStatement: answerStatement?.option_text || "No respondida",
           isCorrect: i.is_correct,
           questionScore: i.question_score,
         });
       }
-      console.log("📋 Answers para IA (procesadas):", answers);
 
-      let retroalimentation = "No se pudo generar retroalimentación debido a respuestas incompletas.";
+      let retroalimentation = "No se pudo generar retroalimentación.";
       const validAnswers = answers.filter(a => a.answerStatement !== "No respondida");
       
       if (validAnswers.length > 0) {
         retroalimentation = await retroalimentateTest(JSON.stringify(validAnswers, null, 2));
-      } else {
-         console.log("⚠️ No hay respuestas válidas para generar retroalimentación");
       }
-      console.log("🤖 Retroalimentación final:", retroalimentation);
-      console.log("--- FIN: INTENTO GUARDADO CON ÉXITO (Opción Múltiple) ---");
 
       return res.status(200).json({
         message: "Prueba realizada con éxito",
@@ -121,7 +143,6 @@ const saveSimulationAttemptHandler = async (req, res) => {
 
   } catch (err) {
     console.error("❌ Error en saveSimulationAttemptHandler:", err);
-    console.log("--- FIN CON ERROR ---");
     return res.status(500).json({
       message: "Hubo un error en el servidor al procesar la prueba.",
       error: err.message,
@@ -131,7 +152,6 @@ const saveSimulationAttemptHandler = async (req, res) => {
   }
 };
 
-// (El resto de las funciones del archivo se mantienen exactamente igual)
 const saveSimulationQuestionsHandler = async (req, res) => {
     const {
     simulationQuestionId,

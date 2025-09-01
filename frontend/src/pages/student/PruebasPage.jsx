@@ -176,7 +176,7 @@ const ConfigurationModal = ({ show, onClose, onConfirm, prueba, questionCount, s
                 <div className="text-blue-600 mr-2 mt-0.5"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
                 <div>
                   <p className="text-blue-800 text-xs font-medium">Información de la práctica</p>
-                  {isEssayTest ? (<p className="text-blue-700 text-xs mt-1">• Tiempo fijo: 40 minutos<br/>• Calificación y retroalimentación con IA<br/>• Evalúa tu capacidad argumentativa</p>) : isGeneralSimulacro ? (<p className="text-blue-700 text-xs mt-1">• Preguntas fijas: 41 (incluye ensayo)<br/>• Tiempo estimado: 1 hora y 40 minutos<br/>• Cubre todas las competencias evaluadas</p>) : (<p className="text-blue-700 text-xs mt-1">• Tiempo estimado: {questionCount * 1.5} minutos<br/>• Retroalimentación personalizada con IA<br/>• Análisis detallado de respuestas</p>)}
+                  {isEssayTest ? (<p className="text-blue-700 text-xs mt-1">• Tiempo fijo: 90 minutos<br/>• Calificación y retroalimentación con IA<br/>• Evalúa tu capacidad argumentativa</p>) : isGeneralSimulacro ? (<p className="text-blue-700 text-xs mt-1">• Preguntas fijas: 41 (incluye ensayo)<br/>• Tiempo estimado: 1 hora y 40 minutos<br/>• Cubre todas las competencias evaluadas</p>) : (<p className="text-blue-700 text-xs mt-1">• Tiempo estimado: {questionCount * 1.5} minutos<br/>• Retroalimentación personalizada con IA<br/>• Análisis detallado de respuestas</p>)}
                 </div>
               </div>
             </div>
@@ -222,7 +222,7 @@ const PruebasPage = () => {
     if (isEssay) {
       navigate('/student/essay-test', { state: { examName: name, simulationId: id } });
     } else if (id === 'general') {
-      navigate(`/student/simulacro/general`, { state: { examName: name, questionCount: 41 } });
+      navigate(`/student/simulacro-general`, { state: { examName: name, questionCount: 41 } });
     } else {
       navigate(`/student/simulacro/${id}`, { state: { examName: name, questionCount: questionCount } });
     }
