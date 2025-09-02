@@ -40,12 +40,45 @@ const saveSimulationAttemptHandler = async (req, res) => {
       return new Date(isoString).toISOString().slice(0, 19).replace("T", " ");
     };
     
-    // Nombres de variables consistentes, como pediste
-    const isWrittenTest = Array.isArray(user_answers) && user_answers.length === 1 && user_answers[0]?.answer_text;
-    const isGeneralTest = Array.isArray(user_answers) && user_answers.length > 1 && user_answers.some(a => a.answer_text);
+    // Lógica de detección robusta y explícita
+    const isGeneralTest = Array.isArray(user_answers) && user_answers.length > 1 && user_answers.some(a => typeof a.answer_text === 'string');
+    const isWrittenTest = Array.isArray(user_answers) && user_answers.length === 1 && typeof user_answers[0]?.answer_text === 'string';
 
-    if (isWrittenTest) {
-      // --- LÓGICA PARA PRUEBA DE ESCRITURA ---
+    if (isGeneralTest) {
+      // --- CAMINO 1: LÓGICA PARA LA PRUEBA GENERAL (LA MÁS ESPECÍFICA PRIMERO) ---
+      console.log("📝 Entrando en la lógica para Prueba General Mixta.");
+      
+      const essayAnswer = user_answers.find(a => typeof a.answer_text === 'string');
+      const mcAnswers = user_answers.filter(a => typeof a.answer_text !== 'string');
+
+      const evaluation = await evaluateWrittenCommunication(essayAnswer.answer_text);
+      const essayScore = parseInt(evaluation.score, 10);
+      const essayFeedback = evaluation.feedback;
+      if (isNaN(essayScore)) throw new Error("La IA de ensayo no devolvió un puntaje válido.");
+      
+      const { total_score_mc } = req.body; 
+      
+      // Combinamos los puntajes: 80% opción múltiple, 20% ensayo (puedes ajustar estos pesos)
+      const finalScore = (total_score_mc * 0.8) + (essayScore * 0.2);
+
+      const mcFeedback = await retroalimentateTest(JSON.stringify(mcAnswers, null, 2));
+      const unifiedFeedback = `--- Retroalimentación de Escritura ---\n${essayFeedback}\n\n--- Retroalimentación General ---\n${mcFeedback}`;
+
+      const attempt_id = id();
+      await saveSimulationAttempt(
+        attempt_id, user_id, simulation_id, formatDate(start_time),
+        formatDate(end_time), Math.round(finalScore), status
+      );
+      
+      return res.status(200).json({
+        message: "Prueba General evaluada con éxito",
+        retroalimentation: unifiedFeedback,
+        score: Math.round(finalScore)
+      });
+
+    } else if (isWrittenTest) {
+      // --- CAMINO 2: LÓGICA PARA PRUEBA DE ESCRITURA INDIVIDUAL ---
+      console.log("📝 Entrando en la lógica correcta para Prueba de Escritura Individual.");
       const essayText = user_answers[0].answer_text;
       const evaluation = await evaluateWrittenCommunication(essayText);
       const finalScore = parseInt(evaluation.score, 10);
@@ -67,48 +100,9 @@ const saveSimulationAttemptHandler = async (req, res) => {
         score: finalScore
       });
 
-    } else if (isGeneralTest) {
-      // --- NUEVA LÓGICA PARA LA PRUEBA GENERAL ---
-      console.log("📝 Entrando en la lógica para Prueba General Mixta.");
-      
-      const essayAnswer = user_answers.find(a => a.answer_text);
-      const mcAnswers = user_answers.filter(a => !a.answer_text);
-
-      const evaluation = await evaluateWrittenCommunication(essayAnswer.answer_text);
-      const essayScore = parseInt(evaluation.score, 10);
-      const essayFeedback = evaluation.feedback;
-      if (isNaN(essayScore)) throw new Error("La IA de ensayo no devolvió un puntaje válido.");
-      
-      // El frontend ya nos envía el puntaje de las preguntas de opción múltiple
-      // Necesitaremos que el frontend calcule y envíe este valor en el body
-      const { total_score_mc } = req.body; 
-      
-      // Combinamos los puntajes. Ejemplo: 80% opción múltiple, 20% ensayo
-      // Asumimos que total_score_mc viene en escala 0-300
-      const finalScore = (total_score_mc * 0.8) + (essayScore * 0.2);
-
-      const mcAnswersForIA = mcAnswers.map(ans => ({
-        question_id: ans.question_id,
-        selected_option_id: ans.selected_option_id,
-        is_correct: ans.is_correct
-      }));
-      const mcFeedback = await retroalimentateTest(JSON.stringify(mcAnswersForIA, null, 2));
-      const unifiedFeedback = `--- Retroalimentación de Escritura ---\n${essayFeedback}\n\n--- Retroalimentación General ---\n${mcFeedback}`;
-
-      const attempt_id = id();
-      await saveSimulationAttempt(
-        attempt_id, user_id, simulation_id, formatDate(start_time),
-        formatDate(end_time), Math.round(finalScore), status
-      );
-      
-      return res.status(200).json({
-        message: "Prueba General evaluada con éxito",
-        retroalimentation: unifiedFeedback,
-        score: Math.round(finalScore)
-      });
-
     } else {
-      // --- LÓGICA PARA PRUEBAS DE OPCIÓN MÚLTIPLE ---
+      // --- CAMINO 3: LÓGICA PARA PRUEBAS DE OPCIÓN MÚLTIPLE ---
+      console.log("✅ Entrando en la lógica para Prueba de Opción Múltiple.");
       const { total_score } = req.body;
       await saveSimulationAttempt(
         id(), user_id, simulation_id, formatDate(start_time),
@@ -180,7 +174,8 @@ const getTestsByUserHandler = async (req, res) => {
     return res
       .status(200)
       .send({ message: "Tests recuperados con éxito", tests });
-  } catch (err) {
+  } catch (err)
+ {
     console.error(err);
     return res.status(400).send("Hubo un error");
   }
