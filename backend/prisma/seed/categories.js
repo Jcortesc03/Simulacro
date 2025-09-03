@@ -28,7 +28,12 @@ async function main() {
       category_id: "07fe1b19-5688-11f0-8239-0897989b7c9d",
       category_name: "Escritura",
       description: "Competencia para producir textos escritos coherentes y bien argumentados."
-    }
+    },
+    {
+      category_id: "07fe1a6b-5688-11f0-8239-0897989b7c9e",
+      category_name: "General",
+      description: "Simulacro general"
+    },
   ];
 
   await prisma.categories.createMany({
@@ -37,6 +42,12 @@ async function main() {
   });
 
   const subcategorias = [
+    {
+      sub_category_id: "1258afca-5688-11f0-8239-0897989b7c9e",
+      category_id: "07fe1a6b-5688-11f0-8239-0897989b7c9e",
+      sub_category_name: "general",
+      description: "Simulacro general"
+    },
     {
       sub_category_id: "1258afca-5688-11f0-8239-0897989b7c9d",
       category_id: "07fce3a1-5688-11f0-8239-0897989b7c9d",

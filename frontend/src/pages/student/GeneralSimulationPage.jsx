@@ -133,7 +133,7 @@ const GeneralSimulationPage = () => {
         : 0;
 
       const finalPayload = {
-        simulation_id: 'general-simulation-id', // Puedes usar un ID fijo o dinámico
+        simulation_id: 'd7783d93-703a-4adb-af63-20dbe3adcf13', // Puedes usar un ID fijo o dinámico
         start_time: startTimeRef.current.toISOString(),
         end_time: new Date().toISOString(),
         status: 'completed',

@@ -29,6 +29,11 @@ async function main() {
       simulation_name: "Escritura",
       description: "Competencia para producir textos escritos coherentes y bien argumentados.",
     },
+    {
+      simulation_id: "d7783d93-703a-4adb-af63-20dbe3adcf13",
+      simulation_name: "General",
+      description: "Simulacro general",
+    },
   ];
 
   for (const sim of simulations) {
