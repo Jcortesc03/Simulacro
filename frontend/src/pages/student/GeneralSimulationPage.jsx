@@ -114,6 +114,7 @@ const GeneralSimulationPage = () => {
     setIsSubmitting(true);
 
     try {
+      const simulationId = location.state?.simulationId || 'd7783d93-703a-4adb-af63-20dbe3adcf13';
       let puntajeObtenidoMC = 0;
       let puntajeMaximoPosibleMC = 0;
       const mcQuestions = questions.filter(q => !q.isEssay);
@@ -133,16 +134,15 @@ const GeneralSimulationPage = () => {
         : 0;
 
       const finalPayload = {
-        simulation_id: 'd7783d93-703a-4adb-af63-20dbe3adcf13', // Puedes usar un ID fijo o dinámico
-        start_time: startTimeRef.current.toISOString(),
-        end_time: new Date().toISOString(),
+        simulation_id: simulationId, 
+        start_time: startTimeRef.current.toISOString(), // <-- AÑADIDO
+        end_time: new Date().toISOString(),             // <-- AÑADIDO
         status: 'completed',
         total_score_mc: total_score_mc,
         user_answers: questions.map(q => {
           const userAnswerData = answers[q.question_id] || {};
           const correctOption = q.options.find(opt => opt.is_correct);
           const isCorrect = userAnswerData.selected_option_id === correctOption?.option_id;
-
           return {
             question_id: q.question_id,
             answer_text: userAnswerData.answer_text || null,
@@ -169,16 +169,44 @@ const GeneralSimulationPage = () => {
       else if (score >= 145) level = "Nivel 2";
       else level = "Nivel 1";
 
-      navigate(`/student/simulacion/general/resultados`, {
+      
+      const resultsPayload = {
+        examName: examName,
+        generalFeedback: retroalimentation,
+        timeTaken: timeTakenFormatted,
+        finalScore: score,
+        level: level,
+        questions: questions.map(q => {
+            if (q.isEssay) {
+                return { 
+                  question_id: q.question_id, 
+                  statement: q.statement, 
+                  is_essay: true, 
+                  user_answer: { optionText: answers[q.question_id]?.answer_text || "No respondida" },
+                  correct_answer: { optionText: "Revisión manual por IA" }
+                };
+            }
+            const userAnswerId = answers[q.question_id]?.selected_option_id;
+            const userAnswerObject = q.options.find(opt => opt.option_id === userAnswerId);
+            const correctAnswerObject = q.options.find(opt => opt.is_correct);
+            return { 
+              question_id: q.question_id, 
+              statement: q.statement,
+              user_answer: {
+                selectedOption: userAnswerId,
+                optionText: userAnswerObject ? `${userAnswerObject.label}) ${userAnswerObject.option_text}` : "No respondida"
+              },
+              correct_answer: {
+                optionId: correctAnswerObject.option_id,
+                optionText: `${correctAnswerObject.label}) ${correctAnswerObject.option_text}`
+              }
+            };
+        })
+      };
+
+      navigate(`/student/simulacion/${simulationId}/resultados`, {
         state: {
-          results: {
-            examName: examName,
-            generalFeedback: retroalimentation,
-            timeTaken: timeTakenFormatted,
-            finalScore: score,
-            level: level,
-            questions: [] // La revisión detallada para la prueba general es más compleja y se puede añadir después
-          }
+            results: resultsPayload
         },
       });
 

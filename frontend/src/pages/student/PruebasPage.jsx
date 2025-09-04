@@ -101,7 +101,7 @@ const PruebaCard = ({ prueba, onStart }) => {
 };
 
 const GeneralSimulationCard = ({ onStart }) => {
-  const generalSimData = { id: 'general', name: 'Simulacro Integral' };
+  const generalSimData = { id: 'general', name: 'Simulacro Integral', simulationId: 'd7783d93-703a-4adb-af63-20dbe3adcf13' };
   return (
     <div className="relative bg-gradient-to-br from-slate-800 via-slate-700 to-slate-900 rounded-xl shadow-xl overflow-hidden">
       <div className="absolute inset-0 opacity-10">
@@ -215,14 +215,14 @@ const PruebasPage = () => {
 
   const handleConfirmStart = () => {
     if (!modalState.prueba) return;
-    const { id, name, isEssay } = modalState.prueba;
+    const { id, name, isEssay, simulationId } = modalState.prueba;
     const questionCount = modalState.questionCount;
     setModalState({ isOpen: false, prueba: null, questionCount: 10 });
 
     if (isEssay) {
       navigate('/student/essay-test', { state: { examName: name, simulationId: id } });
     } else if (id === 'general') {
-      navigate(`/student/simulacro-general`, { state: { examName: name, questionCount: 41 } });
+      navigate(`/student/simulacro-general`, { state: { examName: name, questionCount: 41, simulationId: simulationId } });
     } else {
       navigate(`/student/simulacro/${id}`, { state: { examName: name, questionCount: questionCount } });
     }
