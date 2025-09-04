@@ -29,11 +29,27 @@ const NivelBadge = ({ level }) => {
 
 // Helper para formatear fechas
 const formatDate = (dateString) => {
-  const date = new Date(dateString);
+  if (!dateString || typeof dateString !== 'string') return 'N/A';
+
+  const match = dateString.match(/^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2}):(\d{2})/);
+  if (!match) {
+    console.error("Formato de fecha inesperado:", dateString);
+    return 'Fecha inválida';
+  }
+
+  const year = parseInt(match[1], 10);
+  const month = parseInt(match[2], 10) - 1; // Mes es 0-indexado
+  const day = parseInt(match[3], 10);
+  
+  const date = new Date(Date.UTC(year, month, day));
+
+  if (isNaN(date.getTime())) return 'Fecha inválida';
+
   return date.toLocaleDateString('es-CO', {
     year: 'numeric',
     month: 'short',
-    day: '2-digit'
+    day: '2-digit',
+    timeZone: 'UTC'
   });
 };
 
@@ -303,6 +319,7 @@ const ChartsSection = ({ filteredAttempts }) => {
 
 const CalificacionesPage = () => {
   const navigate = useNavigate();
+  const [detailsLoading, setDetailsLoading] = useState(null);
   const [calificacionesData, setCalificacionesData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -324,11 +341,17 @@ const CalificacionesPage = () => {
         // Normalizamos los datos
         const normalized = {
           ...response.data,
-          attempts: response.data.attempts.map((a) => ({
-            ...a,
-            score: Number(a.score) || 0,
-            date: a.date || a.createdAt
-          }))
+          attempts: response.data.attempts.map((a) => {
+            
+            // --- ¡AÑADE ESTA LÍNEA DE DIAGNÓSTICO AQUÍ! ---
+            console.log('Fecha recibida del backend:', a.start_time);
+
+            return {
+              ...a,
+              score: Number(a.score) || 0,
+              date: a.start_time
+            };
+          })
         };
 
         setCalificacionesData(normalized);
@@ -412,8 +435,24 @@ const CalificacionesPage = () => {
     setCurrentPage(1);
   }, [filters]);
 
-  const navigateToDetails = (attempt) => {
-    alert('La vista de detalles aún no está implementada.');
+  const navigateToDetails = async (attempt) => {
+    setDetailsLoading(attempt.id);
+    try {
+      const response = await axiosInstance.get(`/tests/attempt-details/${attempt.id}`);
+      const detailedResults = response.data;
+
+      navigate(`/student/simulacion/${attempt.id}/resultados`, {
+        state: {
+          results: detailedResults,
+          from: '/student/calificaciones' // Para que el botón "Volver" regrese aquí
+        },
+      });
+    } catch (err) {
+      console.error("Error al cargar detalles:", err);
+      alert("No se pudieron cargar los detalles de esta prueba.");
+    } finally {
+      setDetailsLoading(null);
+    }
   };
 
   if (loading) {
@@ -621,8 +660,9 @@ const CalificacionesPage = () => {
                           onClick={() => navigateToDetails(item)}
                           variant="primary"
                           className="bg-slate-600 hover:bg-slate-800 text-white font-bold py-2 px-5 rounded-lg"
+                          disabled={detailsLoading === item.id}
                         >
-                          Detalles
+                          {detailsLoading === item.id ? 'Cargando...' : 'Detalles'}
                         </Button>
                       </td>
                     </tr>
@@ -653,8 +693,9 @@ const CalificacionesPage = () => {
                         onClick={() => navigateToDetails(item)}
                         variant="primary"
                         className="w-full bg-slate-600 hover:bg-slate-800 text-white font-bold py-2 rounded-lg"
+                        disabled={detailsLoading === item.id}
                       >
-                        Ver Detalles
+                        {detailsLoading === item.id ? 'Cargando...' : 'Ver Detalles'}
                       </Button>
                     </div>
                   </div>

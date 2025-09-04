@@ -1,4 +1,5 @@
 import db from "./config.js";
+import id from '../utils/uuid.js';
 
 export const saveSimulationAttempt = async (
   attemptId,
@@ -7,7 +8,8 @@ export const saveSimulationAttempt = async (
   startTime,
   endTime,
   totalScore,
-  status
+  status,
+  feedback // El nuevo parámetro para el feedback
 ) => {
   const params = [
     attemptId,
@@ -17,12 +19,13 @@ export const saveSimulationAttempt = async (
     endTime,
     totalScore,
     status,
-  ].map((v) => (v === undefined ? null : v)); // evita undefined
+    feedback, // Se incluye en los parámetros
+  ].map((v) => (v === undefined ? null : v));
 
   const [rows] = await db.execute(
     `INSERT INTO simulation_attempts
-      (attempt_id, user_id, simulation_id, start_time, end_time, total_score, status)
-     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      (attempt_id, user_id, simulation_id, start_time, end_time, total_score, status, feedback)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`, // Se añade la columna y el valor
     params
   );
 
@@ -163,7 +166,60 @@ const getTestsByUserId = async (userId) => {
 
   return rows;
 };
+const getAttemptById = async (attemptId) => {
+  const [rows] = await db.query(
+    `SELECT
+        sa.attempt_id,
+        sa.total_score,
+        sa.start_time,
+        sa.end_time,
+        sa.feedback,
+        s.simulation_name
+     FROM simulation_attempts sa
+     JOIN simulations s ON sa.simulation_id = s.simulation_id
+     WHERE sa.attempt_id = ?;`,
+    [attemptId]
+  );
+  return rows[0];
+};
 
+const getUserAnswersByAttemptId = async (attemptId) => {
+  const [rows] = await db.query(
+    `SELECT
+        ua.question_id,
+        q.statement,
+        q.image_path,
+        ua.answer_text,
+        ua.selected_option_id,
+        (SELECT JSON_ARRAYAGG(JSON_OBJECT('option_id', option_id, 'option_text', option_text, 'is_correct', is_correct)) FROM answer_options WHERE answer_options.question_id = q.question_id) as options
+     FROM user_answers ua
+     JOIN questions q ON ua.question_id = q.question_id
+     WHERE ua.attempt_id = ?;`,
+    [attemptId]
+  );
+  return rows.map(row => ({
+      ...row,
+      // La base de datos MySQL 8+ puede devolver esto ya como un array. 
+      // Si recibes un string, descomenta la siguiente línea:
+      // options: typeof row.options === 'string' ? JSON.parse(row.options) : row.options || []
+  }));
+};
+const saveUserAnswer = async (attemptId, answer) => {
+  const userAnswerId = id(); 
+  await db.execute(
+     `INSERT INTO user_answers (user_answer_id, attempt_id, question_id, selected_option_id, answer_text, is_correct, question_score)
+     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    [
+      userAnswerId,
+      attemptId,
+      answer.question_id,
+      answer.selected_option_id || null,
+      answer.answer_text || null,
+      answer.is_correct,
+      answer.question_score 
+    ]
+  );
+};
 export {
   getSimulationAttempts,
   saveSimulation,
@@ -173,4 +229,7 @@ export {
   getSimulationByName,
   getTestsByUser,
   getTestsByUserId,
+  getUserAnswersByAttemptId,
+  getAttemptById,
+  saveUserAnswer
 };

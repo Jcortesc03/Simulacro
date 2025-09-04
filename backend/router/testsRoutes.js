@@ -1,5 +1,5 @@
 import express from "express";
-import {saveSimulationAttemptHandler, saveSimulationHandler, saveSimulationQuestionsHandler, getTestsByUserHandler, getSimulationAttemptsHandler, getStudentTestsHandler} from "../controllers/testsController.js";
+import {saveSimulationAttemptHandler, saveSimulationHandler, saveSimulationQuestionsHandler, getTestsByUserHandler, getSimulationAttemptsHandler, getStudentTestsHandler, getAttemptDetailsHandler} from "../controllers/testsController.js";
 import verified from '../middlewares/verifyToken.js'
 import { verifyAdmin, verifyTeacher } from "../middlewares/verifyRole.js";
 
@@ -11,6 +11,6 @@ router.post('/saveSimulationQuestion', verified, verifyAdmin, saveSimulationQues
 router.post('/getSimulations', verified, getTestsByUserHandler);
 router.get('/allSimulations', getSimulationAttemptsHandler);
 router.get('/student-history', verified, getStudentTestsHandler);
-
+router.get('/attempt-details/:id', verified, getAttemptDetailsHandler);
 
 export default router;

@@ -69,6 +69,7 @@ model simulation_attempts {
   users         users          @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "simulation_attempts_ibfk_1")
   simulations   simulations    @relation(fields: [simulation_id], references: [simulation_id], onDelete: Cascade, onUpdate: NoAction, map: "simulation_attempts_ibfk_2")
   user_answers  user_answers[]
+  feedback      String         @db.Text       
 
   @@index([simulation_id], map: "simulation_id")
   @@index([user_id], map: "user_id")

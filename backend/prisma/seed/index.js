@@ -20,8 +20,8 @@ async function main() {
     await import("./simulations.js")
     await delay(3000)
 
-    await import("./simulations.students.js")
-    await delay(3000)
+    //await import("./simulations.students.js")
+    //await delay(3000)
 
     await import("./categories.js");
     await delay(7000);
