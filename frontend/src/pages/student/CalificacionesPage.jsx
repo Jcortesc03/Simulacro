@@ -29,29 +29,25 @@ const NivelBadge = ({ level }) => {
 
 // Helper para formatear fechas
 const formatDate = (dateString) => {
-  if (!dateString || typeof dateString !== 'string') return 'N/A';
-
-  const match = dateString.match(/^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2}):(\d{2})/);
-  if (!match) {
-    console.error("Formato de fecha inesperado:", dateString);
-    return 'Fecha inválida';
+  if (!dateString || typeof dateString !== 'string') {
+    return 'N/A';
   }
+  const date = new Date(dateString);
 
-  const year = parseInt(match[1], 10);
-  const month = parseInt(match[2], 10) - 1; // Mes es 0-indexado
-  const day = parseInt(match[3], 10);
-  
-  const date = new Date(Date.UTC(year, month, day));
+    if (isNaN(date.getTime())) {
+      return 'Fecha inválida';
+    }
 
-  if (isNaN(date.getTime())) return 'Fecha inválida';
-
-  return date.toLocaleDateString('es-CO', {
-    year: 'numeric',
-    month: 'short',
-    day: '2-digit',
-    timeZone: 'UTC'
-  });
-};
+    // 3. ¡LA CLAVE! Al no especificar un timeZone, toLocaleDateString
+    //    USA AUTOMÁTICAMENTE LA ZONA HORARIA DEL NAVEGADOR DEL USUARIO.
+    //    Tomará la fecha UTC de la BD y le restará las horas necesarias
+    //    para mostrar la hora local correcta.
+    return date.toLocaleDateString('es-CO', {
+      year: 'numeric',
+      month: 'short',
+      day: '2-digit',
+    });
+  };
 
 // Helper para asegurar que el score siempre sea número
 const formatScore = (score) => {

@@ -35,8 +35,8 @@ const saveSimulationAttemptHandler = async (req, res) => {
     const user_id = req.user?.id || req.user?.user_id;
     if (!user_id) return res.status(401).json({ message: "No se pudo obtener el usuario del token" });
 
-    const formatDate = (isoString) => isoString ? new Date(isoString).toISOString().slice(0, 19).replace("T", " ") : null;
-    
+    const formatDate = (isoString) => isoString ? new Date(isoString) : null;
+
     const isGeneralTest = user_answers.length > 1 && user_answers.some(a => typeof a.answer_text === 'string');
     const isWrittenTest = user_answers.length === 1 && typeof user_answers[0]?.answer_text === 'string';
 
