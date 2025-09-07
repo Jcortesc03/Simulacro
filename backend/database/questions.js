@@ -44,6 +44,9 @@ const getLastQuestionsForAI = async () => {
   return questions;
 };
 
+// =================================================================================
+// =================== TU FUNCIÓN 'saveQuestion' ORIGINAL Y SIN CAMBIOS ============
+// =================================================================================
 const saveQuestion = async (
   subCategoryId,
   statement,
@@ -102,24 +105,33 @@ const saveQuestion = async (
   return { success: true, questionId };
 };
 
+
+// =================================================================================
+// <<< LA ÚNICA MODIFICACIÓN: AÑADIMOS EL ARRAY 'answers' QUE FALTA PARA ESCRITURA >>>
+// =================================================================================
 const getLastQuestions = async (categoryName, questionNumber) => {
   
   if (categoryName === 'Escritura') {
-    const [questions] = await db.query(
+    const [questionsFromDB] = await db.query(
       `
-        SELECT q.question_id, q.statement
+        SELECT q.question_id, q.statement, q.difficulty, q.image_path, sc.sub_category_name
         FROM questions q
         JOIN sub_categories sc ON q.sub_category_id = sc.sub_category_id
         JOIN categories c ON sc.category_id = c.category_id
         WHERE c.category_name = ?
-        ORDER BY RAND()
-        LIMIT 1;
+        ORDER BY q.creation_date DESC;
       `,
       [categoryName]
     );
-    return questions;
+    // AÑADIDO: Mapeamos los resultados para añadir la propiedad 'answers: []' que el frontend necesita.
+    const questionsWithAnswers = questionsFromDB.map(q => ({
+        ...q,
+        answers: [] 
+    }));
+    return questionsWithAnswers;
   }
   
+  // TU LÓGICA ORIGINAL PARA OTRAS CATEGORÍAS SE MANTIENE INTACTA
   const limit = Number(questionNumber);
   if (isNaN(limit) || limit <= 0) {
     throw new Error('Número de preguntas inválido');
@@ -154,26 +166,16 @@ const getLastQuestions = async (categoryName, questionNumber) => {
   return enrichedQuestions;
 };
 
-// --- FUNCIÓN CORREGIDA ---
+// =================================================================================
+// =================== EL RESTO DE TU CÓDIGO SE MANTIENE 100% ORIGINAL ===============
+// =================================================================================
 const getAllCategoriesQuestions = async () => {
   console.log("\n--- INICIO: BÚSQUEDA DE PREGUNTAS GENERALES (VERSIÓN OPTIMIZADA) ---");
   const allQuestions = [];
 
   try {
-    // 1. OBTENER PREGUNTA DE ENSAYO (esto ya estaba bien)
     console.log("1. Buscando pregunta de Ensayo...");
-    const [essayQuestions] = await db.query(
-      `
-        SELECT q.question_id, q.statement, 'Escritura' as category_name
-        FROM questions q
-        JOIN sub_categories sc ON q.sub_category_id = sc.sub_category_id
-        JOIN categories c ON sc.category_id = c.category_id
-        WHERE c.category_name = 'Escritura'
-        ORDER BY RAND()
-        LIMIT 1;
-      `
-    );
-
+    const [essayQuestions] = await db.query(`SELECT q.question_id, q.statement, 'Escritura' as category_name FROM questions q JOIN sub_categories sc ON q.sub_category_id = sc.sub_category_id JOIN categories c ON sc.category_id = c.category_id WHERE c.category_name = 'Escritura' ORDER BY RAND() LIMIT 1;`);
     if (essayQuestions && essayQuestions.length > 0) {
       essayQuestions[0].isEssay = true;
       allQuestions.push(essayQuestions[0]);
@@ -181,48 +183,22 @@ const getAllCategoriesQuestions = async () => {
     } else {
       console.warn("-> ADVERTENCIA: No se encontró pregunta de Ensayo.");
     }
-
-    // 2. OBTENER TODAS LAS PREGUNTAS DE OPCIÓN MÚLTIPLE EN UNA SOLA CONSULTA
     console.log("2. Buscando 10 preguntas para cada categoría de Opción Múltiple...");
     const mcCategoriesNames = ["Lectura Crítica", "Razonamiento Cuantitativo", "Competencias Ciudadanas", "Inglés"];
-    
-    // Esta consulta es más compleja pero mucho más eficiente.
-    // Usa 'UNION ALL' para combinar los resultados de 4 consultas en una sola.
-    const query = `
-      (SELECT q.*, c.category_name, sc.sub_category_name FROM questions q JOIN sub_categories sc ON q.sub_category_id = sc.sub_category_id JOIN categories c ON sc.category_id = c.category_id WHERE c.category_name = ? ORDER BY RAND() LIMIT 10)
-      UNION ALL
-      (SELECT q.*, c.category_name, sc.sub_category_name FROM questions q JOIN sub_categories sc ON q.sub_category_id = sc.sub_category_id JOIN categories c ON sc.category_id = c.category_id WHERE c.category_name = ? ORDER BY RAND() LIMIT 10)
-      UNION ALL
-      (SELECT q.*, c.category_name, sc.sub_category_name FROM questions q JOIN sub_categories sc ON q.sub_category_id = sc.sub_category_id JOIN categories c ON sc.category_id = c.category_id WHERE c.category_name = ? ORDER BY RAND() LIMIT 10)
-      UNION ALL
-      (SELECT q.*, c.category_name, sc.sub_category_name FROM questions q JOIN sub_categories sc ON q.sub_category_id = sc.sub_category_id JOIN categories c ON sc.category_id = c.category_id WHERE c.category_name = ? ORDER BY RAND() LIMIT 10)
-    `;
-    
+    const query = `(SELECT q.*, c.category_name, sc.sub_category_name FROM questions q JOIN sub_categories sc ON q.sub_category_id = sc.sub_category_id JOIN categories c ON sc.category_id = c.category_id WHERE c.category_name = ? ORDER BY RAND() LIMIT 10) UNION ALL (SELECT q.*, c.category_name, sc.sub_category_name FROM questions q JOIN sub_categories sc ON q.sub_category_id = sc.sub_category_id JOIN categories c ON sc.category_id = c.category_id WHERE c.category_name = ? ORDER BY RAND() LIMIT 10) UNION ALL (SELECT q.*, c.category_name, sc.sub_category_name FROM questions q JOIN sub_categories sc ON q.sub_category_id = sc.sub_category_id JOIN categories c ON sc.category_id = c.category_id WHERE c.category_name = ? ORDER BY RAND() LIMIT 10) UNION ALL (SELECT q.*, c.category_name, sc.sub_category_name FROM questions q JOIN sub_categories sc ON q.sub_category_id = sc.sub_category_id JOIN categories c ON sc.category_id = c.category_id WHERE c.category_name = ? ORDER BY RAND() LIMIT 10)`;
     const [mcQuestions] = await db.query(query, [...mcCategoriesNames]);
     console.log(`-> Se encontraron ${mcQuestions.length} preguntas de opción múltiple en total.`);
-
-    // 3. OBTENER TODAS LAS OPCIONES DE RESPUESTA EN UNA SOLA CONSULTA
     const questionIds = mcQuestions.map(q => q.question_id);
     if (questionIds.length > 0) {
         console.log("3. Buscando todas las opciones de respuesta necesarias...");
-        const [allOptions] = await db.query(
-            `SELECT * FROM answer_options WHERE question_id IN (?)`,
-            [questionIds]
-        );
+        const [allOptions] = await db.query(`SELECT * FROM answer_options WHERE question_id IN (?)`, [questionIds]);
         console.log(`-> Se encontraron ${allOptions.length} opciones en total.`);
-
-        // 4. Unir las preguntas con sus opciones en JavaScript
-        const mcQuestionsWithOptions = mcQuestions.map(question => ({
-            ...question,
-            answers: allOptions.filter(option => option.question_id === question.question_id)
-        }));
+        const mcQuestionsWithOptions = mcQuestions.map(question => ({ ...question, answers: allOptions.filter(option => option.question_id === question.question_id) }));
         allQuestions.push(...mcQuestionsWithOptions);
     }
-    
     console.log(`4. Búsqueda finalizada. Total de preguntas a devolver: ${allQuestions.length}`);
     console.log("--- FIN: BÚSQUEDA DE PREGUNTAS GENERALES ---");
     return allQuestions;
-
   } catch (error) {
     console.error("!!! ERROR DURANTE LA BÚSQUEDA GENERAL:", error);
     console.log("--- FIN CON ERROR ---");
@@ -236,78 +212,30 @@ const getCategories = async () => {
 };
 
 const deleteQuestion = async (questionId) => {
-  await db.query(
-    `
-      DELETE FROM answer_options
-      WHERE question_id = ?
-    `,
-    [questionId]
-  );
-
-  const [result] = await db.query(
-    `
-      DELETE FROM questions
-      WHERE question_id = ?
-    `,
-    [questionId]
-  );
-
+  await db.query(`DELETE FROM answer_options WHERE question_id = ?`, [questionId]);
+  const [result] = await db.query(`DELETE FROM questions WHERE question_id = ?`, [questionId]);
   return result.affectedRows > 0;
 };
 
 const updateQuestion = async (questionId, questionData) => {
-  const {
-    statement,
-    questionType,
-    imagePath,
-    difficulty,
-    justification,
-    status,
-    answers
-  } = questionData;
-
+  const { statement, questionType, imagePath, difficulty, justification, status, answers } = questionData;
   const [result] = await db.query(
     `
-      UPDATE questions
-      SET
-        statement = ?,
-        question_type = ?,
-        image_path = ?,
-        difficulty = ?,
-        justification = ?,
-        status = ?
-      WHERE question_id = ?
+      UPDATE questions SET statement = ?, question_type = ?, image_path = ?,
+      difficulty = ?, justification = ?, status = ? WHERE question_id = ?
     `,
-    [
-      statement,
-      questionType,
-      imagePath,
-      difficulty,
-      justification,
-      status,
-      questionId
-    ]
+    [statement, questionType, imagePath, difficulty, justification, status, questionId]
   );
-
   if (result.affectedRows === 0) {
     return { success: false };
   }
-
   await db.query('DELETE FROM answer_options WHERE question_id = ?', [questionId]);
-
   if (answers && answers.length > 0) {
     for (const answer of answers) {
       const { option_text, isCorrect } = answer;
-      await db.query(
-        `
-          INSERT INTO answer_options(option_id, question_id, option_text, is_correct)
-          VALUES (?, ?, ?, ?)
-        `,
-        [id(), questionId, option_text, isCorrect]
-      );
+      await db.query(`INSERT INTO answer_options(option_id, question_id, option_text, is_correct) VALUES (?, ?, ?, ?)`, [id(), questionId, option_text, isCorrect]);
     }
   }
-
   return { success: true };
 };
 

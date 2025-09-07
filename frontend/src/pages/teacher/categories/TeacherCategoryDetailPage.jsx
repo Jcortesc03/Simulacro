@@ -37,7 +37,7 @@ export default function TeacherCategoryDetailPage() {
         const mapped = res.data.map((q) => ({
           id: q.question_id,
           enunciado: q.statement,
-          opciones: q.answers.map((a) => ({
+          opciones: (q.answers || []).map((a) => ({
             texto: a.option_text,
             esCorrecta: a.is_correct,
           })),

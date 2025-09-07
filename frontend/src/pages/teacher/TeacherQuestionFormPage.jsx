@@ -1,4 +1,3 @@
-// src/pages/teacher/TeacherQuestionFormPage.jsx
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { Sparkles, Check, AlertCircle, ArrowLeft } from "lucide-react";
@@ -24,9 +23,9 @@ export default function TeacherQuestionFormPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const isEditing = Boolean(questionId);
-
+  
   const initialData = isEditing ? location.state?.questionData : null;
-  const returnPath = location.state?.from || "/teacher/categories";
+  const returnPath = location.state?.from || "/teacher/categories/escritura";
 
   const [formData, setFormData] = useState(defaultFormState);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -38,6 +37,21 @@ export default function TeacherQuestionFormPage() {
   const [filteredSubCategories, setFilteredSubCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedSubCategory, setSelectedSubCategory] = useState("");
+  const [isWritingCategory,  setIsWritingCategory] = useState(false);
+  
+  // Efecto para detectar si la categoría seleccionada es "Escritura".
+  useEffect(() => {
+    if (selectedCategory && categories.length > 0) {
+      const category = categories.find(cat => cat.category_id === selectedCategory);
+      if (category && category.category_name.trim().toLowerCase() === 'escritura') {
+        setIsWritingCategory(true);
+      } else {
+        setIsWritingCategory(false);
+      }
+    } else {
+      setIsWritingCategory(false);
+    }
+  }, [selectedCategory, categories]);
 
   // Efecto para filtrar subcategorías cuando cambia la categoría seleccionada
   useEffect(() => {
@@ -65,18 +79,23 @@ export default function TeacherQuestionFormPage() {
     setSelectedCategory(categoryId);
   };
 
-  // Función para regresar a la página anterior
   const handleGoBack = () => {
-    navigate("/teacher/categories");
+    navigate("/teacher/categories/escritura");
   };
 
-  const handleCloseModalAndReturn = () => {
-    setShowSuccessModal(false);
-    navigate("/teacher/categories");
-  };
+const handleCloseModalAndReturn = () => {
+  setShowSuccessModal(false);
+  
+  // Ahora usamos la ruta dinámica 'returnPath' para volver EXACTAMENTE
+  // a la página de la lista de preguntas de "Escritura".
+  // También le enviamos la señal 'refresh: true' que implementamos antes.
+  navigate(returnPath, { 
+    state: { refresh: true },
+    replace: true 
+  });
+};
 
   useEffect(() => {
-    // Cargar categorías y subcategorías disponibles
     const loadCategoriesAndSubCategories = async () => {
       try {
         console.log("Cargando categorías y subcategorías...");
@@ -95,9 +114,7 @@ export default function TeacherQuestionFormPage() {
         setAiError("Error al cargar categorías y subcategorías");
       }
     };
-
     loadCategoriesAndSubCategories();
-
     if (isEditing && initialData) {
       console.log("Modo edición - datos iniciales:", initialData);
 
@@ -106,7 +123,6 @@ export default function TeacherQuestionFormPage() {
       while (opcionesNormalizadas.length < 4) {
         opcionesNormalizadas.push({ texto: "", esCorrecta: false });
       }
-
       const fullStatement = initialData.enunciado || "";
       let enunciado = "";
       let pregunta = "";
@@ -199,53 +215,64 @@ export default function TeacherQuestionFormPage() {
         }
       }
 
-      // Validar que hay al menos una respuesta correcta
-      const hasCorrectAnswer = formData.opciones.some((opcion) => opcion.esCorrecta);
-      if (!hasCorrectAnswer) {
-        setAiError("Debe seleccionar al menos una respuesta correcta");
-        return;
-      }
-
-      // Validar que no hay opciones vacías
-      const hasEmptyOptions = formData.opciones.some((opcion) => !opcion.texto.trim());
-      if (hasEmptyOptions) {
-        setAiError("Todas las opciones deben tener texto");
-        return;
-      }
-
-      // Validar pregunta
-      if (!formData.pregunta.trim()) {
-        setAiError("La pregunta es obligatoria");
-        return;
-      }
-
       setLoadingSave(true);
       setAiError("");
 
-      // Construir el statement
-      const statement = formData.enunciado
-        ? `${formData.enunciado}\n\n${formData.pregunta}`
-        : formData.pregunta;
+      // Construir la información para la pregunta.
 
-      // Construir las respuestas
-      const answers = formData.opciones.map((opcion, index) => ({
-        option_text: opcion.texto.trim(),
-        isCorrect: opcion.esCorrecta,
-        order: index + 1,
-      }));
+      let questionData;
+      //let fullQuestionData;
 
-      console.log("Statement construido:", statement);
-      console.log("Answers construidas:", answers);
+      if (isWritingCategory) {
+        // --- Lógica para preguntas de Escritura (essay) ---
+        const statement = `${formData.enunciado}\n\n${formData.pregunta}`;
+        questionData = {
+          statement: statement,
+          questionType: "essay", // Tipo de pregunta abierta (sin opciones)
+          imagePath: formData.imagePath,
+          difficulty: "medium",
+          justification: "Pregunta de escritura creada por profesor",
+          status: "draft",
+        };
+      } else {
 
-      const questionData = {
-        statement: statement,
-        questionType: "multiple_choice",
-        imagePath: formData.imagePath,
-        difficulty: "medium",
-        justification: "Pregunta creada por profesor",
-        status: "draft",
-        answers: answers,
-      };
+        // --- Lógica para preguntas de Opción Múltiple (multiple-choice) ---
+        // Validar que hay al menos una respuesta correcta
+        const hasCorrectAnswer = formData.opciones.some((opcion) => opcion.esCorrecta);
+        if (!hasCorrectAnswer) {
+          setAiError("Debe seleccionar al menos una respuesta correcta");
+          setLoadingSave(false);
+          return;
+        }
+
+        // Validar que no hay opciones vacías
+        const hasEmptyOptions = formData.opciones.some((opcion) => !opcion.texto.trim());
+        if (hasEmptyOptions) {
+          setAiError("Todas las opciones deben tener texto");
+          setLoadingSave(false);
+          return;
+        }
+
+        const statement = formData.enunciado
+          ? `${formData.enunciado}\n\n${formData.pregunta}`
+          : formData.pregunta;
+
+        const answers = formData.opciones.map((opcion, index) => ({
+          option_text: opcion.texto.trim(),
+          isCorrect: opcion.esCorrecta,
+          order: index + 1,
+        }));
+
+        questionData = {
+          statement: statement,
+          questionType: "multiple_choice",
+          imagePath: formData.imagePath,
+          difficulty: "medium",
+          justification: "Pregunta creada por profesor",
+          status: "draft",
+          answers: answers,
+        };
+      }
 
       console.log("Question Data para enviar:", questionData);
 
@@ -448,9 +475,9 @@ export default function TeacherQuestionFormPage() {
   const canGenerateWithAI = selectedCategory && selectedSubCategory;
 
   // Obtener el nombre de la categoría seleccionada para mostrar en el título
-  const selectedCategoryName = categories.find(
-    (cat) => cat.category_id === selectedCategory
-  )?.category_name;
+  //const selectedCategoryName = categories.find(
+   // (cat) => cat.category_id === selectedCategory
+//  )?.category_name;
 
   // Función para renderizar el contenido de manera segura
   const renderContent = () => {
@@ -547,11 +574,6 @@ export default function TeacherQuestionFormPage() {
                             </option>
                           ))}
                         </select>
-                        {!selectedCategory && (
-                          <p className="text-xs text-gray-500 mt-1">
-                            Selecciona una categoría para ver las subcategorías
-                          </p>
-                        )}
                       </div>
                     </div>
                   </div>
@@ -568,7 +590,7 @@ export default function TeacherQuestionFormPage() {
                         </h3>
                         <p className="text-sm text-gray-600 mb-4">
                           {canGenerateWithAI
-                            ? `Crear pregunta automática para ${
+                            ? `Crear pregunta para ${
                                 categories.find(
                                   (c) => c.category_id === selectedCategory
                                 )?.category_name || "la categoría seleccionada"
@@ -609,10 +631,12 @@ export default function TeacherQuestionFormPage() {
                     <div className="space-y-4">
                       <div>
                         <label className="block font-medium text-gray-700 mb-2">
-                          Enunciado{" "}
-                          <span className="text-gray-400 font-normal">
-                            (Opcional)
-                          </span>
+                          {isWritingCategory ? 'Texto Base *' : 'Enunciado'}
+                          {!isWritingCategory && (
+                            <span className="text-gray-400 font-normal">
+                              {" "}(Opcional)
+                            </span>
+                          )}
                         </label>
                         <textarea
                           name="enunciado"
@@ -620,13 +644,14 @@ export default function TeacherQuestionFormPage() {
                           onChange={handleChange}
                           rows="4"
                           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent resize-vertical"
-                          placeholder="El joven explorador, Marco, fue enviado..."
+                          placeholder={isWritingCategory ? "Escribe aquí el texto que el estudiante deberá analizar..." : "El joven explorador, Marco, fue enviado..."}
+                          required={isWritingCategory}
                         />
                       </div>
 
                       <div>
                         <label className="block font-medium text-gray-700 mb-2">
-                          Pregunta *
+                          {isWritingCategory ? 'Consigna de Escritura *' : 'Pregunta *'}
                         </label>
                         <input
                           name="pregunta"
@@ -634,70 +659,71 @@ export default function TeacherQuestionFormPage() {
                           onChange={handleChange}
                           type="text"
                           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                          placeholder="En el texto, ¿cuál de las siguientes opciones...?"
+                          placeholder={isWritingCategory ? "Ej: Escribe un ensayo de 500 palabras sobre..." : "En el texto, ¿cuál de las siguientes opciones...?"}
                           required
                         />
                       </div>
                     </div>
                   </div>
 
-                  {/* Opciones de respuesta */}
-                  <div className="bg-white rounded-lg shadow-sm p-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                      Opciones de Respuesta
-                    </h3>
+                  {!isWritingCategory && (
+                    <div className="bg-white rounded-lg shadow-sm p-6">
+                      <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                        Opciones de Respuesta
+                      </h3>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {formData.opciones && formData.opciones.map((opcion, index) => (
-                        <div key={index} className="relative">
-                          <div className="flex items-center gap-3">
-                            <span className="flex-shrink-0 w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-sm font-medium text-gray-600">
-                              {String.fromCharCode(65 + index)}
-                            </span>
-                            <input
-                              type="text"
-                              value={opcion?.texto || ""}
-                              onChange={(e) =>
-                                handleOpcionChange(index, e.target.value)
-                              }
-                              className="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                              placeholder={`Opción ${String.fromCharCode(
-                                65 + index
-                              )}`}
-                              required
-                            />
-                            <button
-                              type="button"
-                              onClick={() => handleSetRespuestaCorrecta(index)}
-                              className={`flex-shrink-0 p-2 rounded-lg transition-all ${
-                                opcion?.esCorrecta
-                                  ? "bg-green-600 text-white transform scale-110"
-                                  : "bg-gray-200 text-gray-500 hover:bg-gray-300"
-                              }`}
-                              title={
-                                opcion?.esCorrecta
-                                  ? "Respuesta correcta"
-                                  : "Marcar como correcta"
-                              }
-                            >
-                              <Check size={18} />
-                            </button>
-                          </div>
-                          {opcion?.esCorrecta && (
-                            <div className="absolute -top-1 -right-1">
-                              <span className="inline-block w-3 h-3 bg-green-500 rounded-full animate-pulse"></span>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {formData.opciones && formData.opciones.map((opcion, index) => (
+                          <div key={index} className="relative">
+                            <div className="flex items-center gap-3">
+                              <span className="flex-shrink-0 w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-sm font-medium text-gray-600">
+                                {String.fromCharCode(65 + index)}
+                              </span>
+                              <input
+                                type="text"
+                                value={opcion?.texto || ""}
+                                onChange={(e) =>
+                                  handleOpcionChange(index, e.target.value)
+                                }
+                                className="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                placeholder={`Opción ${String.fromCharCode(
+                                  65 + index
+                                )}`}
+                                required
+                              />
+                              <button
+                                type="button"
+                                onClick={() => handleSetRespuestaCorrecta(index)}
+                                className={`flex-shrink-0 p-2 rounded-lg transition-all ${
+                                  opcion?.esCorrecta
+                                    ? "bg-green-600 text-white transform scale-110"
+                                    : "bg-gray-200 text-gray-500 hover:bg-gray-300"
+                                }`}
+                                title={
+                                  opcion?.esCorrecta
+                                    ? "Respuesta correcta"
+                                    : "Marcar como correcta"
+                                }
+                              >
+                                <Check size={18} />
+                              </button>
                             </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
+                            {opcion?.esCorrecta && (
+                              <div className="absolute -top-1 -right-1">
+                                <span className="inline-block w-3 h-3 bg-green-500 rounded-full animate-pulse"></span>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
 
-                    <div className="text-sm text-gray-500 mt-4 text-center flex items-center justify-center gap-1">
-                      <span>Haz clic en el botón</span>
-                      <Check size={14} className="inline" />
-                      <span>para marcar la respuesta correcta</span>
+                      <div className="text-sm text-gray-500 mt-4 text-center flex items-center justify-center gap-1">
+                        <span>Haz clic en el botón</span>
+                        <Check size={14} className="inline" />
+                        <span>para marcar la respuesta correcta</span>
+                      </div>
                     </div>
-                  </div>
+                  )}
 
                   {/* Botones de acción */}
                   <div className="bg-white rounded-lg shadow-sm p-6">
@@ -719,8 +745,8 @@ export default function TeacherQuestionFormPage() {
                         {loadingSave
                           ? "Guardando..."
                           : isEditing
-                          ? "Guardar Cambios"
-                          : "Agregar Pregunta"}
+                            ? "Guardar Cambios"
+                            : "Agregar Pregunta"}
                       </Button>
                     </div>
                   </div>
@@ -747,18 +773,10 @@ export default function TeacherQuestionFormPage() {
       console.error("Error renderizando componente:", error);
       return (
         <div className="min-h-screen bg-gray-50 p-6">
-          <div className="max-w-4xl mx-auto">
-            <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-              <h2 className="text-lg font-semibold text-red-800 mb-2">
-                Error en la aplicación
-              </h2>
-              <p className="text-red-600">
-                Ha ocurrido un error inesperado. Por favor, recarga la página.
-              </p>
-              <p className="text-red-600 text-sm mt-2">
-                Error: {error.message}
-              </p>
-            </div>
+          <div className="max-w-4xl mx-auto bg-red-50 border border-red-200 rounded-lg p-6">
+            <h2 className="text-lg font-semibold text-red-800 mb-2">Error en la aplicación</h2>
+            <p className="text-red-600">Ha ocurrido un error inesperado. Por favor, recarga la página.</p>
+            <p className="text-red-600 text-sm mt-2">Error: {error.message}</p>
           </div>
         </div>
       );

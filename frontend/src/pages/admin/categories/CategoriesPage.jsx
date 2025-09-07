@@ -83,7 +83,13 @@ const CategoriesPage = () => {
           return categoryData;
         });
 
-        setCategories(fetchedCategories);
+        // Filtramos para quitar la categoría "General" antes de guardarla en el estado.
+        const filteredCategories = fetchedCategories.filter(
+          (cat) => cat.name.trim().toLowerCase() !== 'general'
+        );
+        setCategories(filteredCategories);
+        
+
       } catch (error) {
         console.error('Error cargando categorías:', error);
         console.log('Using backup categories data');
