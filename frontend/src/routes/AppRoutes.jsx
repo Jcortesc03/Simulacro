@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import ProtectedRoute from "../context/ProtectedRoute";
 
 // AUTH
 import LoginPage from '../pages/auth/LoginPage';
@@ -46,7 +47,7 @@ function AppRoutes() {
         <Route path="register" element={<RegisterPage />} />
 
         {/* Admin Routes */}
-        <Route path="/admin" element={<AdminLayout />}>
+        <Route path="/admin" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout /></ProtectedRoute>}>
           <Route index element={<DashboardPage />} />
           <Route path="dashboard" element={<DashboardPage />} />
           <Route path="users" element={<UsersPage />} />
@@ -62,7 +63,7 @@ function AppRoutes() {
         </Route>
 
         {/* Student Routes */}
-        <Route path="/student" element={<StudentLayout />}>
+        <Route path="/student" element={<ProtectedRoute allowedRoles={['student']}><StudentLayout /></ProtectedRoute>}>
           <Route index element={<InicioPage />} />
           <Route path="inicio" element={<InicioPage />} />
           <Route path="pruebas" element={<PruebasPage />} />
@@ -75,7 +76,7 @@ function AppRoutes() {
         </Route>
 
         {/* Teacher Routes */}
-        <Route path="/teacher" element={<TeacherLayout />}>
+        <Route path="/teacher" element={<ProtectedRoute allowedRoles={['teacher']}><TeacherLayout /></ProtectedRoute>}>
           <Route index element={<TeacherCategoriesPage />} />
           <Route path="categories" element={<TeacherCategoriesPage />} />
           <Route path="categories/:id" element={<TeacherCategoryDetailPage />} />

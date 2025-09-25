@@ -4,47 +4,80 @@ import AuthLayout from './AuthLayout';
 import { User, Lock, Eye, EyeOff } from 'lucide-react';
 import api from '../../api/axiosInstance';
 import { jwtDecode } from 'jwt-decode';
+import { useAuth } from "../../context/useAuth";
 
 const LoginPage = () => {
+  const { setUser } = useAuth();
   const navigate = useNavigate();
-  const [username, setUsername] = useState('');
+  const [username, setUsername] = useState(''); // Se usa como email
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+ // const decodedUser = jwtDecode(token);
+
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
+    setLoading(true);
 
-    if (password.length < 6) {
-      setError('La contraseña debe tener al menos 6 caracteres');
-      return;
-    }
-
+    
     try {
       const response = await api.post('/auth/login', {
         email: username,
         password: password,
       });
 
-      const userData = response.data;
-      localStorage.setItem('user', JSON.stringify(userData));
-
       const { token } = response.data;
-      localStorage.setItem('token', token);
 
-      const decoded = jwtDecode(token);
-      const role = decoded.role;
+      if (token) {
+        localStorage.setItem('token', token);
+        api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
-      if (role === '3') {
-        navigate('/admin/dashboard');
-      } else if (role === '2') {
-        navigate('/teacher/simulacros');
+        const decodedUser = jwtDecode(token);
+        
+      
+        // Guardamos el usuario en el estado global. Es importante que el objeto
+        // que guardamos aquí tenga una propiedad 'role' con el valor correcto.
+        setUser({
+          id: decodedUser.user_id,
+          name: decodedUser.name,
+          email: decodedUser.email,
+          role: decodedUser.role 
+        });
+        
+        // --- LÓGICA DE REDIRECCIÓN CORREGIDA ---
+        // Convertimos el rol a string para manejar ambos casos (número o texto).
+        const userRole = String(decodedUser.role);
+
+        switch (userRole) {
+          case '3': // Rol de Admin
+          case 'admin':
+            navigate('/admin/dashboard');
+            break;
+          case '2': // Rol de Teacher
+          case 'teacher':
+            navigate('/teacher/categories');
+            break;
+          case '1': // Rol de Student
+          case 'student':
+            navigate('/student/inicio');
+            break;
+          default:
+            // Si el rol no es reconocido, limpiamos todo para seguridad.
+            setError("Rol de usuario no reconocido. Contacte al administrador.");
+            localStorage.removeItem('token');
+            setUser(null);
+        }
       } else {
-        navigate('/student/inicio');
+        setError("El servidor no devolvió un token de autenticación.");
       }
     } catch (err) {
-      setError(err.response?.data || 'Credenciales inválidas');
+      const errorMessage = err.response?.data?.message || err.response?.data || 'Credenciales inválidas.';
+      setError(errorMessage);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -72,6 +105,7 @@ const LoginPage = () => {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
+            autoComplete="email"
           />
         </div>
 
@@ -80,32 +114,27 @@ const LoginPage = () => {
             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             <input
               type={showPassword ? "text" : "password"}
-              placeholder="Contraseña (mínimo 6 caracteres)"
+              placeholder="Contraseña"
               className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               minLength="6"
               required
+              autoComplete="current-password"
             />
             <button
               type="button"
               onClick={togglePasswordVisibility}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
+              aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
             >
               {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
           </div>
-
-          {/* Validación simple de longitud */}
-          {password.length > 0 && password.length < 6 && (
-            <div className="text-red-500 text-xs flex items-center">
-              <span>La contraseña debe tener al menos 6 caracteres</span>
-            </div>
-          )}
         </div>
 
         {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg text-sm">
             {error}
           </div>
         )}
@@ -113,7 +142,7 @@ const LoginPage = () => {
         <div className="flex flex-col items-center space-y-4 text-sm sm:flex-row sm:justify-between sm:space-y-0">
           <label className="flex items-center space-x-2 text-gray-600 cursor-pointer">
             <input type="checkbox" className="rounded border-gray-300" />
-            <span>Recordar contraseña</span>
+            <span>Recordarme</span>
           </label>
           <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
             ¿Olvidaste la contraseña?
@@ -123,10 +152,10 @@ const LoginPage = () => {
         <div>
           <button
             type="submit"
-            disabled={password.length < 6}
+            disabled={loading}
             className="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition-colors disabled:bg-blue-300 disabled:cursor-not-allowed"
           >
-            INGRESAR
+            {loading ? 'Ingresando...' : 'INGRESAR'}
           </button>
         </div>
 

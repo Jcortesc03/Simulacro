@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import {
   Home,
   ClipboardList,
@@ -13,6 +13,7 @@ import {
 import { useSimulation } from "../../context/SimulationContext";
 import { logo } from "../../assets/backgraund-login/index";
 import api from "../../api/axiosInstance"; // 👈 importas tu api
+import { useAuth } from "../../context/useAuth";
 
 const NavItem = ({ to, icon, children, onClick, isCollapsed }) => {
   const baseClasses =
@@ -36,7 +37,7 @@ const NavItem = ({ to, icon, children, onClick, isCollapsed }) => {
 };
 
 const StudentSidebar = () => {
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
   const { isSimulating } = useSimulation();
   const [showBlockAlert, setShowBlockAlert] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -44,6 +45,8 @@ const StudentSidebar = () => {
   // 👇 estados del usuario
   const [userName, setUserName] = useState("");
   const [userRole, setUserRole] = useState("");
+  const {  logout } = useAuth();
+
 
   // cargar datos del perfil
   useEffect(() => {
@@ -74,7 +77,7 @@ const StudentSidebar = () => {
       setShowBlockAlert(true);
     } else {
       console.log("Cerrando sesión de Estudiante...");
-      navigate("/login");
+      logout();
     }
   };
 

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import React, { useState } from "react"; // <--- Eliminado 'useEffect'
+import { NavLink } from "react-router-dom";    // <--- Eliminado 'useNavigate'
 import {
   FileText,
   LayoutGrid,
@@ -9,7 +9,8 @@ import {
   X,
 } from "lucide-react";
 import { logo } from "../../assets/backgraund-login/index";
-import api from "../../api/axiosInstance";
+// import api from "../../api/axiosInstance"; // <--- Eliminado 'api'
+import { useAuth } from "../../context/useAuth"; 
 
 const NavItem = ({ to, icon, children, isCollapsed }) => {
   const baseClasses =
@@ -35,37 +36,9 @@ const NavItem = ({ to, icon, children, isCollapsed }) => {
 };
 
 const TeacherSidebar = () => {
-  const navigate = useNavigate();
+  // La variable 'navigate' ha sido eliminada.
   const [isCollapsed, setIsCollapsed] = useState(false);
-
-  // 🔹 Estado del usuario cargado desde API
-  const [teacherUser, setTeacherUser] = useState({
-    fullName: "",
-    role: "",
-  });
-
-  // 🔹 Cargar perfil al montar
-  useEffect(() => {
-    const fetchTeacherProfile = async () => {
-      try {
-        const response = await api.get("auth/profile"); // ajusta a tu endpoint real
-        if (response.data) {
-          setTeacherUser({
-            fullName: response.data.name
-          });
-        }
-      } catch (err) {
-        console.error("Error cargando perfil del profesor:", err);
-      }
-    };
-
-    fetchTeacherProfile();
-  }, []);
-
-  const handleLogout = () => {
-    console.log("Cerrando sesión de Profesor...");
-    navigate("/login");
-  };
+  const { user, logout } = useAuth();
 
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
@@ -135,7 +108,7 @@ const TeacherSidebar = () => {
             {!isCollapsed && (
               <div className="ml-4 overflow-hidden">
                 <p className="font-semibold text-sm leading-tight truncate">
-                  {teacherUser.fullName}
+                  {user ? user.name : "Usuario"}
                 </p>
                 <p className="text-xs text-blue-300 truncate">
                   Profesor
@@ -167,7 +140,7 @@ const TeacherSidebar = () => {
       {/* Logout Button */}
       <div className="p-4 border-t border-blue-800/50 transition-all duration-300">
         <button
-          onClick={handleLogout}
+          onClick={logout}
           className={`flex items-center w-full bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl hover:from-red-700 hover:to-red-800 transition-all duration-300 transform hover:scale-105 shadow-lg ${
             isCollapsed ? "p-3 justify-center" : "p-4"
           }`}

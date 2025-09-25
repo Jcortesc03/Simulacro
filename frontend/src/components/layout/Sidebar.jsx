@@ -186,7 +186,7 @@ const AdminSidebar = () => {
         >
           <LogOut className="w-5 h-5" />
           {!isCollapsed && (
-            <span className="ml-3 font-medium">{t("Salir")}</span>
+            <span className="ml-3 font-medium">{t("Cerrar Sesión")}</span>
           )}
         </button>
       </div>
