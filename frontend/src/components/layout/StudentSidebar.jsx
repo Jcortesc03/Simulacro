@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import {
   Home,
@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 import { useSimulation } from "../../context/SimulationContext";
 import { logo } from "../../assets/backgraund-login/index";
-import api from "../../api/axiosInstance"; // 👈 importas tu api
 import { useAuth } from "../../context/useAuth";
 
 const NavItem = ({ to, icon, children, onClick, isCollapsed }) => {
@@ -37,32 +36,14 @@ const NavItem = ({ to, icon, children, onClick, isCollapsed }) => {
 };
 
 const StudentSidebar = () => {
-  //const navigate = useNavigate();
   const { isSimulating } = useSimulation();
   const [showBlockAlert, setShowBlockAlert] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  
+  // --- CAMBIO 1: Se obtiene el usuario y la función de logout del contexto ---
+  const { user, logout } = useAuth();
 
-  // 👇 estados del usuario
-  const [userName, setUserName] = useState("");
-  const [userRole, setUserRole] = useState("");
-  const {  logout } = useAuth();
-
-
-  // cargar datos del perfil
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const response = await api.get("auth/profile");
-        if (response.data) {
-          setUserName(response.data.name);
-          setUserRole(response.data.role);
-        }
-      } catch (err) {
-        console.error("Error cargando perfil:", err);
-      }
-    };
-    fetchProfile();
-  }, []);
+  // --- CAMBIO 2: El useEffect que buscaba el perfil se elimina por completo ---
 
   const handleProtectedLinkClick = (e) => {
     if (isSimulating) {
@@ -71,6 +52,7 @@ const StudentSidebar = () => {
     }
   };
 
+  // --- CAMBIO 3: La función de logout ahora llama a la función central del contexto ---
   const handleLogout = (e) => {
     if (isSimulating) {
       e.preventDefault();
@@ -84,18 +66,14 @@ const StudentSidebar = () => {
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
   };
-
-  // función para mostrar nombre del rol
-  const getRoleName = (role) => {
-    switch (parseInt(role)) {
-      case 1:
-        return "Estudiante";
-      case 2:
-        return "Profesor";
-      case 3:
-        return "Administrador";
-      default:
-        return "Usuario";
+  
+  // --- CAMBIO 4: Esta función ahora puede usar directamente 'user.role' ---
+  const getRoleName = (roleId) => {
+    switch (String(roleId)) { // Convertimos a String para seguridad
+      case '1': return "Estudiante";
+      case '2': return "Profesor";
+      case '3': return "Administrador";
+      default: return "Usuario";
     }
   };
 
@@ -165,10 +143,10 @@ const StudentSidebar = () => {
               {!isCollapsed && (
                 <div className="ml-4 overflow-hidden">
                   <p className="font-semibold text-sm leading-tight truncate">
-                    {userName || "Cargando..."}
+                    {user ? user.name : "Estudiante"}
                   </p>
                   <p className="text-xs text-blue-300 truncate">
-                    {getRoleName(userRole)}
+                    {user ? getRoleName(user.role) : "Cargando..."}
                   </p>
                 </div>
               )}

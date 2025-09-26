@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import React, { useState } from "react"; // <-- ¡LA LÍNEA QUE FALTABA!
+import { NavLink } from "react-router-dom"; // Necesaria para el componente NavItem
 import {
   Home,
   Users,
@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { logo } from "../../assets/backgraund-login/index";
 import api from "../../api/axiosInstance"; // tu cliente Axios configurado
+import { useAuth } from "../../context/useAuth"
 
 const NavItem = ({ to, icon, children, isCollapsed }) => {
   const baseClasses =
@@ -37,36 +38,18 @@ const NavItem = ({ to, icon, children, isCollapsed }) => {
 
 const AdminSidebar = () => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [user, setUser] = useState({ fullName: "", role: "" });
+  
+  // --- CAMBIO 1: Se obtiene el usuario y la función de logout directamente del contexto ---
+  const { user, logout } = useAuth();
 
-  // 🔹 Cargar datos del perfil desde el backend
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await api.get("/auth/profile", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (response.data) {
-          setUser({
-            fullName: response.data.name || "Usuario",
-            role: response.data.role || "Rol",
-          });
-        }
-      } catch (err) {
-        console.error("Error cargando perfil:", err);
-      }
-    };
-
-    fetchProfile();
-  }, []);
-
+  // --- CAMBIO 2: El useEffect que buscaba el perfil se elimina por completo ---
+  // AuthProvider ya se encargó de verificar la sesión al cargar la app.
+  
+  // --- CAMBIO 3: La función de logout ahora llama a la función central del contexto ---
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
+    console.log("Cerrando sesión de Administrador...");
+    logout();
   };
 
   const toggleSidebar = () => setIsCollapsed(!isCollapsed);
@@ -135,7 +118,7 @@ const AdminSidebar = () => {
             {!isCollapsed && (
               <div className="ml-4 overflow-hidden">
                 <p className="font-semibold text-sm leading-tight truncate">
-                  {user.fullName}
+                  {user ? user.name : "Administrador"}
                 </p>
                 <p className="text-xs text-blue-300 truncate">Administrador</p>
               </div>

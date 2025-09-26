@@ -5,6 +5,7 @@ import {
   verifyEmail,
   changePasswordHandler,
   getProfile,
+  logoutUser, // Importar la nueva función de logout
 } from "../controllers/authControllers.js";
 import authMiddleware from "../middlewares/authMiddleware.js";
 
@@ -15,5 +16,6 @@ router.post("/register", registerUser);
 router.get("/verify/:token", verifyEmail);
 router.patch("/changePassword", authMiddleware, changePasswordHandler);
 router.get("/profile", authMiddleware, getProfile);
+router.post("/logout", logoutUser); // Nueva ruta para cerrar sesión
 
 export default router;

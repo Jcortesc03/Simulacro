@@ -17,61 +17,47 @@ const LoginPage = () => {
  // const decodedUser = jwtDecode(token);
 
 
-  const handleLogin = async (e) => {
+const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
-    
     try {
       const response = await api.post('/auth/login', {
         email: username,
         password: password,
       });
 
-      const { token } = response.data;
+      // --- CAMBIO CLAVE AQUÍ ---
+      // El backend ya no envía un token en el cuerpo.
+      // En su lugar, envía los datos del usuario.
+      const { user } = response.data;
 
-      if (token) {
-        localStorage.setItem('token', token);
-        api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-
-        const decodedUser = jwtDecode(token);
+      if (user && user.role) {
+        // 1. Guardamos el usuario en el estado global.
+        // El AuthProvider se encargará de distribuirlo al resto de la app.
+        setUser(user);
         
-      
-        // Guardamos el usuario en el estado global. Es importante que el objeto
-        // que guardamos aquí tenga una propiedad 'role' con el valor correcto.
-        setUser({
-          id: decodedUser.user_id,
-          name: decodedUser.name,
-          email: decodedUser.email,
-          role: decodedUser.role 
-        });
-        
-        // --- LÓGICA DE REDIRECCIÓN CORREGIDA ---
-        // Convertimos el rol a string para manejar ambos casos (número o texto).
-        const userRole = String(decodedUser.role);
+        // 2. Lógica de redirección basada en el rol que nos dio el backend.
+        const userRole = String(user.role);
 
         switch (userRole) {
-          case '3': // Rol de Admin
-          case 'admin':
+          case '3':
             navigate('/admin/dashboard');
             break;
-          case '2': // Rol de Teacher
-          case 'teacher':
+          case '2':
             navigate('/teacher/categories');
             break;
-          case '1': // Rol de Student
-          case 'student':
+          case '1':
             navigate('/student/inicio');
             break;
           default:
-            // Si el rol no es reconocido, limpiamos todo para seguridad.
             setError("Rol de usuario no reconocido. Contacte al administrador.");
-            localStorage.removeItem('token');
-            setUser(null);
+            // No establecemos el usuario si el rol no es válido.
+            setUser(null); 
         }
       } else {
-        setError("El servidor no devolvió un token de autenticación.");
+        setError("La respuesta del servidor no incluyó datos del usuario.");
       }
     } catch (err) {
       const errorMessage = err.response?.data?.message || err.response?.data || 'Credenciales inválidas.';

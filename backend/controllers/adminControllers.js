@@ -124,6 +124,23 @@ const getSubCategoriesHandler = async (req, res) => {
   }
 };
 
+const getDashboardStatsHandler = async (req, res) => {
+  try {
+    const totalUsers = await db.getTotalUsers();
+    const totalSimulations = await db.getTotalSimulations();
+    const averageScores = await db.getAverageScoresBySubject();
+    
+    res.status(200).json({
+      totalUsers,
+      totalSimulations,
+      averageScores,
+    });
+  } catch (err) {
+    console.error("Error en getDashboardStatsHandler:", err);
+    return res.status(500).send('Hubo un error obteniendo las estadísticas');
+  }
+};
+
 export default {
   deleteUserHandler,
   changeRoleHandler,
@@ -131,5 +148,6 @@ export default {
   getPagedUsersHandler,
   getUserByEmailHandler,
   getCategoriesHandler,
-  getSubCategoriesHandler
+  getSubCategoriesHandler,
+  getDashboardStatsHandler
 };

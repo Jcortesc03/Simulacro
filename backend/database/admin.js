@@ -73,6 +73,33 @@ const getSubCategories = async () => {
   return subCategories;
 };
 
+const getTotalUsers = async () => {
+  const [[{ total }]] = await db.query(
+    `SELECT COUNT(*) AS total FROM users`
+  );
+  return total;
+};
+
+const getTotalSimulations = async () => {
+  const [[{ total }]] = await db.query(
+    `SELECT COUNT(*) AS total FROM simulation_attempts`
+  );
+  return total;
+};
+
+const getAverageScoresBySubject = async () => {
+  const [rows] = await db.query(`
+    SELECT 
+      s.simulation_name AS subject,
+      ROUND(AVG(sa.total_score)) AS averageScore
+    FROM simulation_attempts sa
+    JOIN simulations s ON sa.simulation_id = s.simulation_id
+    GROUP BY s.simulation_name
+    ORDER BY averageScore DESC
+  `);
+  return rows;
+};
+
 
 export default {
   getPagedUsers,
@@ -80,5 +107,8 @@ export default {
   changeRole,
   deleteUser,
   getCategories,
-  getSubCategories
+  getSubCategories,
+  getTotalUsers, 
+  getTotalSimulations,
+  getAverageScoresBySubject
 };

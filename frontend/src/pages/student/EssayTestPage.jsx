@@ -6,7 +6,6 @@ import Button from '../../components/ui/Button';
 import Card from '../../components/ui/Card';
 import ConfirmationModal from '../../components/ui/ConfirmationModal';
 import { PenSquare, Send } from 'lucide-react';
-import { jwtDecode } from 'jwt-decode';
 
 const AILoadingModal = ({ show, message }) => {
   if (!show) return null;
@@ -88,12 +87,8 @@ const EssayTestPage = () => {
     const endTime = new Date();
 
     try {
-      const token = localStorage.getItem('token');
-      if (!token) throw new Error("Token no encontrado.");
-      
-      const decodedToken = jwtDecode(token);
-      const userId = decodedToken.user_id;
-      if (!userId) throw new Error("ID de usuario no válido.");
+      // YA NO NECESITAMOS MANEJAR EL TOKEN AQUÍ.
+      // El backend identificará al usuario a través de la cookie 'jwt'.
       
       const attemptPayload = {
         simulation_id: simulationId,
@@ -104,13 +99,14 @@ const EssayTestPage = () => {
           question_id: question.question_id,
           answer_text: essayText,
           selected_option_id: null,
-          is_correct: false,
-          question_score: 0
+          is_correct: false, // El backend podría manejar esto
+          question_score: 0 // El backend calculará esto
         }]
       };
       
       console.log("📤 Payload que se envía:", JSON.stringify(attemptPayload, null, 2));
       
+      // La instancia 'api' ya está configurada con withCredentials: true
       const response = await api.post('/tests/saveSimulationAttempt', attemptPayload);
       const { retroalimentation, score } = response.data;
       
@@ -140,9 +136,17 @@ const EssayTestPage = () => {
 
     } catch (err) {
       console.error("Error al finalizar la prueba de ensayo:", err);
-      alert("Hubo un problema al guardar tu ensayo: " + (err.response?.data?.message || err.message));
+      let errorMessage = "Hubo un problema al guardar tu ensayo.";
+      if (err.response) {
+        errorMessage = err.response.data?.message || err.response.data || errorMessage;
+        if (err.response.status === 401) {
+            alert("Tu sesión ha expirado. Serás redirigido al inicio de sesión.");
+            navigate('/login');
+            return;
+        }
+      }
+      alert(errorMessage);
       setIsSubmitting(false);
-      if (err.response?.status === 401) navigate('/login');
     }
   };
 

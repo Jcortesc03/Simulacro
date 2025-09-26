@@ -1,10 +1,10 @@
 import express from 'express';
-import verified from '../middlewares/verifyToken.js';
-import adminControllers from '../controllers/adminControllers.js'; // ya tiene getCategoriesHandler
+import authMiddleware from '../middlewares/authMiddleware.js'; // <- CAMBIO AQUÍ
+import adminControllers from '../controllers/adminControllers.js';
 
 const router = express.Router();
 
-router.get('/', verified, adminControllers.getCategoriesHandler);
-router.get('/subcategories', verified, adminControllers.getSubCategoriesHandler);
+router.get('/', authMiddleware, adminControllers.getCategoriesHandler); // <- CAMBIO AQUÍ
+router.get('/subcategories', authMiddleware, adminControllers.getSubCategoriesHandler); // <- CAMBIO AQUÍ
 
 export default router;

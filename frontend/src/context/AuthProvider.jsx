@@ -1,7 +1,6 @@
 // context/AuthProvider.jsx
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { AuthContext } from "./AuthContext.jsx";
-import { jwtDecode } from "jwt-decode";
 import api from "../api/axiosInstance.jsx";
 import { useNavigate } from "react-router-dom"; 
 
@@ -10,69 +9,64 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true); // Para saber si estamos verificando el token
     const navigate = useNavigate(); 
 
+ // --- LÓGICA DE VERIFICACIÓN DE SESIÓN ACTUALIZADA ---
   useEffect(() => {
-    // Esta función se ejecuta solo una vez, cuando la aplicación carga.
-    const token = localStorage.getItem("token");
-    if (token) {
+    // Al cargar la app, intentamos obtener el perfil del usuario.
+    // Si el navegador tiene la cookie 'jwt', esta petición tendrá éxito.
+    // Si no, fallará con un 401 y sabremos que no hay sesión.
+    const verifyUserSession = async () => {
       try {
-        const decodedUser = jwtDecode(token);
-        // Validar si el token ha expirado (opcional pero recomendado)
-        if (decodedUser.exp * 1000 > Date.now()) {
-          // Si el token es válido, actualizamos el estado del usuario y Axios
-          setUser({
-            id: decodedUser.id,
-            name: decodedUser.name,
-            email: decodedUser.email,
-            role: decodedUser.role,
-          });
-          api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-        } else {
-          // Si el token expiró, lo limpiamos
-          localStorage.removeItem("token");
-        }
+        console.log("Verificando sesión existente...");
+        const response = await api.get('/auth/profile'); // Llama a una ruta protegida
+        console.log("Sesión válida, usuario:", response.data);
+        setUser(response.data); // El backend nos devuelve los datos del usuario
       } catch (error) {
-        console.error("Token inválido:", error);
-        localStorage.removeItem("token");
+        console.log("No hay sesión activa o el token expiró.", error.response?.data?.message);
+        setUser(null); // Nos aseguramos de que no haya un usuario en el estado
+      } finally {
+        setLoading(false); // Terminamos de cargar
       }
+    };
+
+    verifyUserSession();
+  }, []); // El array vacío asegura que esto solo se ejecute una vez al montar el componente
+
+
+  // --- FUNCIÓN DE LOGOUT ACTUALIZADA ---
+  const logout = useCallback(async () => {
+    console.log('[AuthProvider] Iniciando cierre de sesión...');
+    try {
+      // 1. Llama al endpoint del backend para que invalide la cookie
+      await api.post('/auth/logout');
+      console.log('[AuthProvider] Cookie invalidada en el servidor.');
+    } catch (error) {
+      console.error('Error durante el logout en el servidor:', error);
+      // Aunque falle, continuamos limpiando el frontend para que el usuario vea que cerró sesión.
+    } finally {
+      // 2. Limpia el estado del usuario en la aplicación
+      setUser(null);
+      // 3. Redirige al usuario a la página de login
+      navigate("/login", { replace: true });
+      console.log('[AuthProvider] Sesión cerrada en el frontend.');
     }
-    setLoading(false); // Terminamos de cargar
-  }, []);
-
-
-
-  // Creamos una función de logout para limpiar todo
-  const logout = useCallback(() => {
-      console.log('[AuthProvider] Iniciando cierre de sesión...');
-    
-    // 1. Limpia el estado del usuario en la aplicación
-    console.log('[AuthProvider] Estableciendo usuario a null.');
-    setUser(null);
-    
-    // 2. Elimina el token del almacenamiento del navegador
-    console.log('[AuthProvider] Borrando token de localStorage.');
-    localStorage.removeItem("token");
-    
-    // 3. Elimina el encabezado de autorización de futuras peticiones
-    console.log('[AuthProvider] Borrando cabecera de Axios.');
-    delete api.defaults.headers.common['Authorization'];
-    
-    // 4. Redirige al usuario a la página de login
-    console.log('[AuthProvider] Redirigiendo a /login.');
-    navigate("/login", { replace: true });
-    // --- FIN DE LA DEPURACIÓN DE LOGOUT ---
   }, [navigate]);
   
-  // Usamos useMemo para evitar que el valor del contexto se recalcule innecesariamente
   const value = useMemo(() => ({
     user,
     setUser,
     loading,
     logout
   }), [user, loading, logout]);
+  
 
   // No renderizamos nada hasta que terminemos de verificar si hay un token
-  if (loading) {
-    return <div>Cargando...</div>;
+ if (loading) {
+    // Puedes poner un spinner de carga más elaborado aquí
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        Cargando sesión...
+      </div>
+    );
   }
 
   return (

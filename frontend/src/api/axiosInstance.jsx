@@ -1,26 +1,19 @@
 import axios from 'axios';
 
-// 2. Crea la instancia
+// 1. Crea la instancia de Axios
 const api = axios.create({
-  baseURL: 'http://localhost:3000/', 
+  baseURL: 'http://localhost:3000', // URL de tu backend. Asegúrate que coincida con la del .env
   headers: {
     'Content-Type': 'application/json',
   },
+  // --- CAMBIO CLAVE AQUÍ ---
+  // 2. Habilita el envío de credenciales (cookies) en todas las peticiones
+  withCredentials: true, 
 });
 
-// 3. Interceptor para agregar el token en cada petición
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+// 3. ¡El interceptor para el token de sesión ya NO es necesario!
+//    El navegador adjuntará la cookie 'jwt' automáticamente en cada petición a 'http://localhost:3000'.
+//    Puedes eliminar el interceptor completamente.
 
-// 4. Exporta por defecto
+// 4. Exporta la instancia configurada
 export default api;

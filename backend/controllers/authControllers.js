@@ -27,10 +27,31 @@ export const loginUser = async (req, res) => {
     }
 
     if (isMatch) {
-      return res.status(200).send({
-        message: "Usuario verificado con éxito",
-        token: generateToken(user.user_id, user.email, user.user_name, user.role_id),
+      // --- MODIFICACIONES AQUÍ ---
+      const token = generateToken(user.user_id, user.email, user.user_name, user.role_id); // Genera el token
+
+      // Establecer la cookie HttpOnly y Secure
+      res.cookie('jwt', token, {
+        httpOnly: true, // No accesible por JavaScript del lado del cliente
+        secure: process.env.NODE_ENV === 'production', // Solo HTTPS en producción
+        sameSite: 'Lax', // Protección CSRF. 'Strict' es más seguro pero puede ser restrictivo. 'Lax' es un buen equilibrio.
+        maxAge: 3600000, // 1 hora en milisegundos (coincide con expiresIn del token)
+        path: '/', // La cookie es válida para toda la aplicación
       });
+
+      return res.status(200).json({
+        message: "Inicio de sesión exitoso",
+        // Ya no enviamos el token en el body de la respuesta.
+        // Podemos enviar datos del usuario no sensibles si el frontend los necesita.
+        user: {
+          id: user.user_id,
+          email: user.email,
+          name: user.user_name,
+          role: user.role_id, // Puedes mapear el ID del rol a su nombre si prefieres.
+        }
+      });
+      // --- FIN MODIFICACIONES ---
+
     }
 
     return res.status(400).send("Credenciales inválidas");
@@ -39,6 +60,20 @@ export const loginUser = async (req, res) => {
     return res.status(500).send(`Ocurrió un error: ${err.message}`);
   }
 };
+
+// --- FUNCIÓN DE LOGOUT AÑADIDA ---
+// Es importante tener una ruta de logout para invalidar la cookie
+export const logoutUser = (req, res) => {
+  res.cookie('jwt', 'loggedout', { // Sobreescribe la cookie con un valor que no sea un token válido
+    httpOnly: true,
+    expires: new Date(Date.now() + 10 * 1000), // Expira en 10 segundos
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'Lax',
+    path: '/',
+  });
+  res.status(200).json({ message: 'Sesión cerrada exitosamente' });
+};
+
 
 // REGISTER
 export const registerUser = async (req, res) => {
@@ -87,7 +122,8 @@ export const verifyEmail = async (req, res) => {
 export const changePasswordHandler = async (req, res) => {
   try {
     const { newPassword } = req.body;
-    const userId = req.user.id; // viene del middleware
+    // req.user.id viene del middleware actualizado que decodifica el token de la cookie
+    const userId = req.user.user_id; // Asegúrate de que el JWT tenga 'user_id'
 
     if (!newPassword || newPassword.length < 6) {
       return res
@@ -121,12 +157,14 @@ export const getSubjects = async (req, res) => {
 // GET PROFILE
 export const getProfile = async (req, res) => {
   try {
+    // req.user ya contendrá los datos decodificados del token de la cookie
     res.json({
       name: req.user.name,
       email: req.user.email,
-      role: req.user.role,
+      role: req.user.role, // Esto será el ID del rol, puedes mapearlo a nombre si es necesario
     });
   } catch (error) {
     res.status(500).json({ message: "Error obteniendo perfil" });
   }
 };
+

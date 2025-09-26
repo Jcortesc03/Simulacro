@@ -1,7 +1,7 @@
 import genAI from '../config/gemini.js';
 
 const generateQuestion = async (topic, subtopic, difficulty, pastQuestions, questionNumbers) => {
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  const model = genAI.getGenerativeModel({ model: "gemini-2.5-pro" });
 
   const prompt = `
   Eres una IA especializada en crear preguntas tipo prueba Saber PRO, el examen que se realiza a universitarios en Colombia para evaluar su nivel académico.
@@ -27,7 +27,7 @@ const generateQuestion = async (topic, subtopic, difficulty, pastQuestions, ques
 };
 
 const evaluateQuestion = async (subject, question, answer) =>  {
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  const model = genAI.getGenerativeModel({ model: "gemini-2.5-pro" });
 
   const prompt = `Eres una IA especializada en evaluar respuestas de un simulacro saber PRO, el exámen realizado a universitarios en Colombia para conocer su nivel académico.
   Tu tarea es evaluar la respuesta de un estudiante, la materia es :${subject} y la pregunta es: ${question}
@@ -44,7 +44,7 @@ const evaluateQuestion = async (subject, question, answer) =>  {
 };
 
 const retroalimentateTest = async (test) => {
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  const model = genAI.getGenerativeModel({ model: "gemini-2.5-pro" });
 
   const prompt = `
   Eres una inteligencia artificial especializada en evaluar respuestas de simulacros del examen Saber PRO, una prueba estandarizada aplicada a universitarios en Colombia para medir competencias genéricas y específicas.
@@ -62,7 +62,7 @@ const retroalimentateTest = async (test) => {
 
 // --- FUNCIÓN NUEVA Y NECESARIA ---
 const evaluateWrittenCommunication = async (studentText) => {
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  const model = genAI.getGenerativeModel({ model: "gemini-2.5-pro" });
 
   const prompt = `
   Eres un experto evaluador de ensayos para la prueba Saber PRO de Colombia, especializado en el módulo de Comunicación Escrita.

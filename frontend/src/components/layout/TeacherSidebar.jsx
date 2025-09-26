@@ -1,5 +1,5 @@
-import React, { useState } from "react"; // <--- Eliminado 'useEffect'
-import { NavLink } from "react-router-dom";    // <--- Eliminado 'useNavigate'
+import React, { useState } from "react";
+import { NavLink } from "react-router-dom";
 import {
   FileText,
   LayoutGrid,
@@ -9,8 +9,8 @@ import {
   X,
 } from "lucide-react";
 import { logo } from "../../assets/backgraund-login/index";
-// import api from "../../api/axiosInstance"; // <--- Eliminado 'api'
-import { useAuth } from "../../context/useAuth"; 
+import { useAuth } from "../../context/useAuth"; // <-- Se usa el hook de autenticación
+
 
 const NavItem = ({ to, icon, children, isCollapsed }) => {
   const baseClasses =
@@ -36,14 +36,15 @@ const NavItem = ({ to, icon, children, isCollapsed }) => {
 };
 
 const TeacherSidebar = () => {
-  // La variable 'navigate' ha sido eliminada.
   const [isCollapsed, setIsCollapsed] = useState(false);
+  
+  // --- CAMBIO 1: Se obtiene el usuario y la función de logout del contexto ---
   const { user, logout } = useAuth();
 
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
   };
-
+  
   return (
     <aside
       className={`sticky top-0 flex flex-col h-screen bg-gradient-to-b from-blue-950 to-blue-900 text-white shadow-2xl transition-all duration-300 ease-in-out flex-shrink-0 ${
