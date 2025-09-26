@@ -2108,40 +2108,6 @@
     ]
   },
   {
-    "question_id": "5cefeb86-585c-11f0-8415-0897989b7c9d",
-    "statement": "Hay aire y sol, hay nubes. Allá arriba un cielo azul, detrás de él tal vez haya canciones; tal vez mejores voces... Hay esperanza, en suma. Hay esperanza para nosotros, contra nuestro pesar. Pero no para ti, Miguel Páramo, que has muerto sin perdón y no alcanzarás ninguna gracia. El padre Rentería dio vuelta al cuerpo y entregó la misa al pasado... [Texto completo de Pedro Páramo] ...Por mí condénalo, Señor.\n\nLa oración “Allá arriba un cielo azul, detrás de él tal vez haya canciones” presenta la imagen:",
-    "question_type": "multiple_choice",
-    "image_path": null,
-    "creation_date": "2025-07-03T22:23:36.000Z",
-    "ai_generated": 0,
-    "difficulty": "medium",
-    "justification": "Interprets the symbolic meaning of a poetic image (\"songs behind the blue sky\") as a representation of hope or illusion.",
-    "status": "approved",
-    "sub_category_id": "1258ca77-5688-11f0-8239-0897989b7c9d",
-    "answers": [
-      {
-        "option_id": "5cf1a0b5-585c-11f0-8415-0897989b7c9d",
-        "option_text": "Melomanía.",
-        "is_correct": 0
-      },
-      {
-        "option_id": "5cf1cd97-585c-11f0-8415-0897989b7c9d",
-        "option_text": "Recuerdos.",
-        "is_correct": 0
-      },
-      {
-        "option_id": "5cf1ceaf-585c-11f0-8415-0897989b7c9d",
-        "option_text": "Ilusión.",
-        "is_correct": 1
-      },
-      {
-        "option_id": "5cf1cf1f-585c-11f0-8415-0897989b7c9d",
-        "option_text": "Muerte.",
-        "is_correct": 0
-      }
-    ]
-  },
-  {
     "question_id": "5e7aeb75-5759-11f0-87f3-0897989b7c9d",
     "statement": "Mafalda le da a la tortuga el nombre “Burocracia” con el propósito de destacar que la burocracia es:",
     "question_type": "multiple_choice",
@@ -6657,24 +6623,11 @@
         "is_correct": 1
       },
       {
-        "option_id": "c94f55d8-5698-11f0-8239-0897989b7c9d",
+        "option_id": "c94f55d8-569-11f0-8239-0897989b7c9d",
         "option_text": "las empresas y el Estado.",
         "is_correct": 0
       }
     ]
-  },
-  {
-    "question_id": "cbcf0ece-569e-11f0-8239-0897989b7c9d",
-    "statement": "De acuerdo con un analista, actualmente en Colombia es imposible afirmar que existen partidos políticos porque estos no representan ni promueven intereses y valores sociales, sino que son organizaciones que defienden los intereses de particulares o de grupos reducidos de la sociedad. Según este analista, los partidos políticos son utilizados para llevar a cargos públicos a personas que terminan defraudando a sus electores. De acuerdo con el analista, puede afirmarse que la importancia que tienen los partidos políticos para la democracia radica en que son organizaciones:",
-    "question_type": "multiple_choice",
-    "image_path": null,
-    "creation_date": "2025-07-01T17:14:06.000Z",
-    "ai_generated": 0,
-    "difficulty": "medium",
-    "justification": "Political parties, in a democracy, should act as mediators between society and the State, representing citizens' interests.",
-    "status": "approved",
-    "sub_category_id": "17e55c04-5688-11f0-8239-0897989b7c9d",
-    "answers": []
   },
   {
     "question_id": "cd812b37-5698-11f0-8239-0897989b7c9d",
@@ -6709,19 +6662,6 @@
         "is_correct": 0
       }
     ]
-  },
-  {
-    "question_id": "d84b8054-569e-11f0-8239-0897989b7c9d",
-    "statement": "De acuerdo con un analista, actualmente en Colombia es imposible afirmar que existen partidos políticos porque estos no representan ni promueven intereses y valores sociales, sino que son organizaciones que defienden los intereses de particulares o de grupos reducidos de la sociedad. Según este analista, los partidos políticos son utilizados para llevar a cargos públicos a personas que terminan defraudando a sus electores. De acuerdo con el analista, puede afirmarse que la importancia que tienen los partidos políticos para la democracia radica en que son organizaciones:",
-    "question_type": "multiple_choice",
-    "image_path": null,
-    "creation_date": "2025-07-01T17:14:27.000Z",
-    "ai_generated": 0,
-    "difficulty": "medium",
-    "justification": "Political parties, in a democracy, should act as mediators between society and the State, representing citizens' interests.",
-    "status": "approved",
-    "sub_category_id": "17e55c04-5688-11f0-8239-0897989b7c9d",
-    "answers": []
   },
   {
     "question_id": "f9f52635-5693-11f0-8239-0897989b7c9d",
@@ -8058,180 +7998,6 @@
     ]
   },
   {
-    "question_id": "7d4ffcb7-6281-11f0-b69d-0897989b7c9d",
-    "statement": "A SOCIAL EXPERIMENT IN ONEIDA, NEW YORK\n\n[Texto completo de Oneida]...\n\nNowadays Oneida is:",
-    "question_type": "multiple_choice",
-    "image_path": null,
-    "creation_date": "2025-07-16T20:14:34.000Z",
-    "ai_generated": 0,
-    "difficulty": "low",
-    "justification": null,
-    "status": "approved",
-    "sub_category_id": "1b463749-5688-11f0-8239-0897989b7c9d",
-    "answers": [
-      {
-        "option_id": "7d525ccb-6281-11f0-b69d-0897989b7c9d",
-        "option_text": "a hotel.",
-        "is_correct": 1
-      },
-      {
-        "option_id": "7d528570-6281-11f0-b69d-0897989b7c9d",
-        "option_text": "a display.",
-        "is_correct": 0
-      },
-      {
-        "option_id": "7d5286f9-6281-11f0-b69d-0897989b7c9d",
-        "option_text": "a school.",
-        "is_correct": 0
-      }
-    ]
-  },
-  {
-    "question_id": "8433a4a6-6281-11f0-b69d-0897989b7c9d",
-    "statement": "A SOCIAL EXPERIMENT IN ONEIDA, NEW YORK\n\n[Texto completo de Oneida]...\n\nThe writer visited the place because he:",
-    "question_type": "multiple_choice",
-    "image_path": null,
-    "creation_date": "2025-07-16T20:14:45.000Z",
-    "ai_generated": 0,
-    "difficulty": "low",
-    "justification": null,
-    "status": "approved",
-    "sub_category_id": "1b463749-5688-11f0-8239-0897989b7c9d",
-    "answers": [
-      {
-        "option_id": "84379bf5-6281-11f0-b69d-0897989b7c9d",
-        "option_text": "had particular social beliefs.",
-        "is_correct": 0
-      },
-      {
-        "option_id": "8437ba20-6281-11f0-b69d-0897989b7c9d",
-        "option_text": "had family who had lived there.",
-        "is_correct": 1
-      },
-      {
-        "option_id": "8437bbab-6281-11f0-b69d-0897989b7c9d",
-        "option_text": "had interest in historical buildings.",
-        "is_correct": 0
-      }
-    ]
-  },
-  {
-    "question_id": "8b396206-6281-11f0-b69d-0897989b7c9d",
-    "statement": "A SOCIAL EXPERIMENT IN ONEIDA, NEW YORK\n\n[Texto completo de Oneida]...\n\nIf you want to see the building,:",
-    "question_type": "multiple_choice",
-    "image_path": null,
-    "creation_date": "2025-07-16T20:14:57.000Z",
-    "ai_generated": 0,
-    "difficulty": "low",
-    "justification": null,
-    "status": "approved",
-    "sub_category_id": "1b463749-5688-11f0-8239-0897989b7c9d",
-    "answers": [
-      {
-        "option_id": "8b3c347a-6281-11f0-b69d-0897989b7c9d",
-        "option_text": "you need to pay to have a guided visit.",
-        "is_correct": 0
-      },
-      {
-        "option_id": "8b3c5523-6281-11f0-b69d-0897989b7c9d",
-        "option_text": "you can join a small group of people.",
-        "is_correct": 0
-      },
-      {
-        "option_id": "8b3d91f0-6281-11f0-b69d-0897989b7c9d",
-        "option_text": "you will have your own guide included.",
-        "is_correct": 1
-      }
-    ]
-  },
-  {
-    "question_id": "8f5708b2-6281-11f0-b69d-0897989b7c9d",
-    "statement": "A SOCIAL EXPERIMENT IN ONEIDA, NEW YORK\n\n[Texto completo de Oneida]...\n\nAll visitors to the Oneida historical site:",
-    "question_type": "multiple_choice",
-    "image_path": null,
-    "creation_date": "2025-07-16T20:15:04.000Z",
-    "ai_generated": 0,
-    "difficulty": "low",
-    "justification": null,
-    "status": "approved",
-    "sub_category_id": "1b463749-5688-11f0-8239-0897989b7c9d",
-    "answers": [
-      {
-        "option_id": "8f5cb9d6-6281-11f0-b69d-0897989b7c9d",
-        "option_text": "have access to most parts of the house.",
-        "is_correct": 1
-      },
-      {
-        "option_id": "8f5d3d42-6281-11f0-b69d-0897989b7c9d",
-        "option_text": "have to go to the 19th century library.",
-        "is_correct": 0
-      },
-      {
-        "option_id": "8f5d3edc-6281-11f0-b69d-0897989b7c9d",
-        "option_text": "are not allowed to see certain places.",
-        "is_correct": 0
-      }
-    ]
-  },
-  {
-    "question_id": "933a6e57-6281-11f0-b69d-0897989b7c9d",
-    "statement": "A SOCIAL EXPERIMENT IN ONEIDA, NEW YORK\n\n[Texto completo de Oneida]...\n\nThe old library:",
-    "question_type": "multiple_choice",
-    "image_path": null,
-    "creation_date": "2025-07-16T20:15:10.000Z",
-    "ai_generated": 0,
-    "difficulty": "low",
-    "justification": null,
-    "status": "approved",
-    "sub_category_id": "1b463749-5688-11f0-8239-0897989b7c9d",
-    "answers": [
-      {
-        "option_id": "933dd47a-6281-11f0-b69d-0897989b7c9d",
-        "option_text": "has changed a little.",
-        "is_correct": 0
-      },
-      {
-        "option_id": "933e0f22-6281-11f0-b69d-0897989b7c9d",
-        "option_text": "has remained the same.",
-        "is_correct": 1
-      },
-      {
-        "option_id": "933e106f-6281-11f0-b69d-0897989b7c9d",
-        "option_text": "has been damaged.",
-        "is_correct": 0
-      }
-    ]
-  },
-  {
-    "question_id": "97aff2b8-6281-11f0-b69d-0897989b7c9d",
-    "statement": "A SOCIAL EXPERIMENT IN ONEIDA, NEW YORK\n\n[Texto completo de Oneida]...\n\nPeople at Oneida studied:",
-    "question_type": "multiple_choice",
-    "image_path": null,
-    "creation_date": "2025-07-16T20:15:18.000Z",
-    "ai_generated": 0,
-    "difficulty": "low",
-    "justification": null,
-    "status": "approved",
-    "sub_category_id": "1b463749-5688-11f0-8239-0897989b7c9d",
-    "answers": [
-      {
-        "option_id": "97b20581-6281-11f0-b69d-0897989b7c9d",
-        "option_text": "languages.",
-        "is_correct": 1
-      },
-      {
-        "option_id": "97b22bb4-6281-11f0-b69d-0897989b7c9d",
-        "option_text": "politics.",
-        "is_correct": 0
-      },
-      {
-        "option_id": "97b22d00-6281-11f0-b69d-0897989b7c9d",
-        "option_text": "anatomy.",
-        "is_correct": 0
-      }
-    ]
-  },
-  {
     "question_id": "01e5d3bf-6281-11f0-b69d-0897989b7c9d",
     "statement": "Read the text and choose the correct word for space (15).\n\nGREEK AND ROMAN CULTURES",
     "question_type": "multiple_choice",
@@ -9129,31 +8895,5 @@
         "is_correct": 0
       }
     ]
-  },
-  {
-    "question_id": "c0a366f6-6348-11f0-86f3-0897989b7c9d",
-    "statement": "A continuación se presenta una situación problemática y una pregunta. Para responder esta pregunta, escriba un texto argumentativo con introducción, desarrollo y conclusión en el que justifique su posición.\n\nSITUACIÓN: Actualmente es permitido que los menores de 14 años de edad puedan realizarse procedimientos estéticos. Esta decisión ha generado controversia. Por un lado, aquellos que están a favor aducen que no permitirlo iría en contra de derechos fundamentales como el libre desarrollo de la personalidad. Por otro lado, sus detractores opinan que a los 14 años los menores aún no han completado su desarrollo emocional y que, por tanto, no tienen la capacidad para tomar este tipo de decisiones.\n\nPREGUNTA: ¿Está de acuerdo con que en Colombia se permita a los menores de 14 años realizarse procedimientos estéticos?",
-    "question_type": "open_ended_essay",
-    "image_path": null,
-    "creation_date": "2025-07-17T20:00:56.000Z",
-    "ai_generated": 0,
-    "difficulty": "high",
-    "justification": "El estudiante debe producir un texto argumentativo en el que justifique su respuesta a la problemática planteada. Se evaluará la claridad de la tesis, el desarrollo de los argumentos, la coherencia del texto y la corrección gramatical.",
-    "status": "approved",
-    "sub_category_id": "22d0b86e-5688-11f0-8239-0897989b7c9d",
-    "answers": []
-  },
-  {
-    "question_id": "e44ddfc3-6348-11f0-86f3-0897989b7c9d",
-    "statement": "A continuación se presenta una situación problemática y una pregunta. Para responder esta pregunta, escriba un texto argumentativo con introducción, desarrollo y conclusión en el que justifique su posición.\n\nSITUACIÓN: Con el propósito de disminuir las emisiones de gases contaminantes, varios gobiernos de Centroamérica han aprobado una ley que promueve el uso de vehículos eléctricos mediante la eliminación de los impuestos de circulación para este tipo de vehículos.\n\nPREGUNTA: ¿Está de acuerdo con que en Colombia se eliminen los impuestos de circulación para los vehículos eléctricos?",
-    "question_type": "open_ended_essay",
-    "image_path": null,
-    "creation_date": "2025-07-17T20:01:56.000Z",
-    "ai_generated": 0,
-    "difficulty": "high",
-    "justification": "El estudiante debe producir un texto argumentativo en el que justifique su respuesta a la problemática planteada. Se evaluará la claridad de la tesis, el desarrollo de los argumentos, la coherencia del texto y la corrección gramatical.",
-    "status": "approved",
-    "sub_category_id": "22d0b86e-5688-11f0-8239-0897989b7c9d",
-    "answers": []
   }
 ]
