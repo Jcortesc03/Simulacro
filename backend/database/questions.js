@@ -109,62 +109,63 @@ const saveQuestion = async (
 // =================================================================================
 // <<< LA ÚNICA MODIFICACIÓN: AÑADIMOS EL ARRAY 'answers' QUE FALTA PARA ESCRITURA >>>
 // =================================================================================
-const getLastQuestions = async (categoryName, questionNumber) => {
-  
-  if (categoryName === 'Escritura') {
-    const [questionsFromDB] = await db.query(
+  const getLastQuestions = async (categoryName, questionNumber) => {
+    
+    if (categoryName === 'Escritura') {
+      const [questionsFromDB] = await db.query(
+        `
+          SELECT q.question_id, q.statement, q.difficulty, q.image_path, sc.sub_category_name
+          FROM questions q
+          JOIN sub_categories sc ON q.sub_category_id = sc.sub_category_id
+          JOIN categories c ON sc.category_id = c.category_id
+          WHERE c.category_name = ?
+          ORDER BY q.creation_date DESC
+          LIMIT ?;
+        `,
+        [categoryName, questionNumber]
+      );
+      // AÑADIDO: Mapeamos los resultados para añadir la propiedad 'answers: []' que el frontend necesita.
+      const questionsWithAnswers = questionsFromDB.map(q => ({
+          ...q,
+          answers: [] 
+      }));
+      return questionsWithAnswers;
+    }
+    
+    // TU LÓGICA ORIGINAL PARA OTRAS CATEGORÍAS SE MANTIENE INTACTA
+    const limit = Number(questionNumber);
+    if (isNaN(limit) || limit <= 0) {
+      throw new Error('Número de preguntas inválido');
+    }
+
+    const [questions] = await db.query(
       `
         SELECT q.question_id, q.statement, q.difficulty, q.image_path, sc.sub_category_name
         FROM questions q
         JOIN sub_categories sc ON q.sub_category_id = sc.sub_category_id
         JOIN categories c ON sc.category_id = c.category_id
         WHERE c.category_name = ?
-        ORDER BY q.creation_date DESC;
+        ORDER BY RAND()
+        LIMIT ?;
       `,
-      [categoryName]
+      [categoryName, limit]
     );
-    // AÑADIDO: Mapeamos los resultados para añadir la propiedad 'answers: []' que el frontend necesita.
-    const questionsWithAnswers = questionsFromDB.map(q => ({
-        ...q,
-        answers: [] 
-    }));
-    return questionsWithAnswers;
-  }
-  
-  // TU LÓGICA ORIGINAL PARA OTRAS CATEGORÍAS SE MANTIENE INTACTA
-  const limit = Number(questionNumber);
-  if (isNaN(limit) || limit <= 0) {
-    throw new Error('Número de preguntas inválido');
-  }
 
-  const [questions] = await db.query(
-    `
-      SELECT q.question_id, q.statement, q.difficulty, q.image_path, sc.sub_category_name
-      FROM questions q
-      JOIN sub_categories sc ON q.sub_category_id = sc.sub_category_id
-      JOIN categories c ON sc.category_id = c.category_id
-      WHERE c.category_name = ?
-      ORDER BY RAND()
-      LIMIT ?;
-    `,
-    [categoryName, limit]
-  );
+    const enrichedQuestions = [];
+    for (const question of questions) {
+      const [answers] = await db.query(
+        `
+          SELECT option_id, option_text, is_correct
+          FROM answer_options
+          WHERE question_id = ?
+        `,
+        [question.question_id]
+      );
+      enrichedQuestions.push({ ...question, answers });
+    }
 
-  const enrichedQuestions = [];
-  for (const question of questions) {
-    const [answers] = await db.query(
-      `
-        SELECT option_id, option_text, is_correct
-        FROM answer_options
-        WHERE question_id = ?
-      `,
-      [question.question_id]
-    );
-    enrichedQuestions.push({ ...question, answers });
-  }
-
-  return enrichedQuestions;
-};
+    return enrichedQuestions;
+  };
 
 // =================================================================================
 // =================== EL RESTO DE TU CÓDIGO SE MANTIENE 100% ORIGINAL ===============

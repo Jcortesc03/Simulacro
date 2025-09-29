@@ -68,6 +68,32 @@
     ]
   },
   {
+    "question_id": "e44ddfc3-6348-11f0-86f3-0897989b7c9d",
+    "statement": "A continuación se presenta una situación problemática y una pregunta. Para responder esta pregunta, escriba un texto argumentativo con introducción, desarrollo y conclusión en el que justifique su posición.\n\nSITUACIÓN: Con el propósito de disminuir las emisiones de gases contaminantes, varios gobiernos de Centroamérica han aprobado una ley que promueve el uso de vehículos eléctricos mediante la eliminación de los impuestos de circulación para este tipo de vehículos.\n\nPREGUNTA: ¿Está de acuerdo con que en Colombia se eliminen los impuestos de circulación para los vehículos eléctricos?",
+    "question_type": "open_ended_essay",
+    "image_path": null,
+    "creation_date": "2025-07-17T20:01:56.000Z",
+    "ai_generated": 0,
+    "difficulty": "high",
+    "justification": "El estudiante debe producir un texto argumentativo en el que justifique su respuesta a la problemática planteada. Se evaluará la claridad de la tesis, el desarrollo de los argumentos, la coherencia del texto y la corrección gramatical.",
+    "status": "approved",
+    "sub_category_id": "22d0b86e-5688-11f0-8239-0897989b7c9d",
+    "answers": []
+  },
+  {
+    "question_id": "c0a366f6-6348-11f0-86f3-0897989b7c9d",
+    "statement": "A continuación se presenta una situación problemática y una pregunta. Para responder esta pregunta, escriba un texto argumentativo con introducción, desarrollo y conclusión en el que justifique su posición.\n\nSITUACIÓN: Actualmente es permitido que los menores de 14 años de edad puedan realizarse procedimientos estéticos. Esta decisión ha generado controversia. Por un lado, aquellos que están a favor aducen que no permitirlo iría en contra de derechos fundamentales como el libre desarrollo de la personalidad. Por otro lado, sus detractores opinan que a los 14 años los menores aún no han completado su desarrollo emocional y que, por tanto, no tienen la capacidad para tomar este tipo de decisiones.\n\nPREGUNTA: ¿Está de acuerdo con que en Colombia se permita a los menores de 14 años realizarse procedimientos estéticos?",
+    "question_type": "open_ended_essay",
+    "image_path": null,
+    "creation_date": "2025-07-17T20:00:56.000Z",
+    "ai_generated": 0,
+    "difficulty": "high",
+    "justification": "El estudiante debe producir un texto argumentativo en el que justifique su respuesta a la problemática planteada. Se evaluará la claridad de la tesis, el desarrollo de los argumentos, la coherencia del texto y la corrección gramatical.",
+    "status": "approved",
+    "sub_category_id": "22d0b86e-5688-11f0-8239-0897989b7c9d",
+    "answers": []
+  },
+  {
     "question_id": "4c0cd429-56eb-11f0-8dfd-0897989b7c9d",
     "statement": "La tecnología, como la entendemos hoy, es hija legítima de la ciencia moderna. Ambas surgieron en Europa durante los siglos XVI y XVII, con la revolución científica. Antes de la modernidad, la tecnología era el conjunto de habilidades y destrezas necesarias para transformar la naturaleza; era un conocimiento práctico que no dependía de la ciencia.\nLa revolución científica cambió esto: la ciencia empezó a entenderse como el conocimiento verdadero, y la tecnología como su aplicación. De esta manera, la ciencia se convirtió en el nuevo modelo de conocimiento, y la técnica en su instrumento de transformación.\n\nSegún el texto, antes de la modernidad la tecnología era:",
     "question_type": "multiple_choice",

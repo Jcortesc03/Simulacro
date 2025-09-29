@@ -15,23 +15,27 @@ const generateQuestionHandler = async (req, res) => {
     
     try {
         const pastQuestions = await getLastQuestionsForAI();
-        const rawText = await generateQuestion(topic, subtopic, difficulty, pastQuestions , questionNumbers);
-
-        // Regex para extraer el JSON limpio si viene envuelto en backticks c:
-        const regex = /```json\n([\s\S]*?)\n```/;
-
-        //Para confirmar que el texto sin formato sea compatible con 
-        const match = rawText.match(regex);
-        
-        let jsonToParse = rawText;
-        
-        if (match && match[1]) {
-            jsonToParse = match[1];
+    // Asegúrate de que generateQuestion devuelve una CADENA JSON o maneja el error
+    const rawText = await generateQuestion(topic, subtopic, difficulty, pastQuestions , questionNumbers);
+    
+    // ***Punto crítico 1: Manejar el JSON ***
+    let questions;
+    try {
+        questions = JSON.parse(rawText);
+        // Verificación adicional: Asegúrate de que no sea un objeto vacío '{}'
+        if (Object.keys(questions).length === 0) {
+             // Puedes manejar el caso del JSON vacío devolviendo un error 400 o un array vacío
+             return res.status(400).json({ error: "La IA no pudo generar preguntas válidas." });
         }
-        
-        const questions = JSON.parse(jsonToParse);
-        
-        return res.status(200).json({ questions });
+    } catch (parseError) {
+        // Esto captura el error si rawText no es un JSON válido
+        console.error("Error al parsear la respuesta de la IA:", parseError);
+        // Devuelve un error 500 claro al frontend
+        return res.status(500).json({ error: "El servidor recibió una respuesta no válida de la IA.", rawResponse: rawText });
+    }
+    
+    return res.status(200).json({ questions });
+
     } catch (error) {
         console.error(error);
         return res.status(500).json({ error: "Error generating the question" });

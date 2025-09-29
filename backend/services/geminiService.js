@@ -30,6 +30,19 @@ const generateQuestion = async (topic, subtopic, difficulty, pastQuestions, ques
   });
 
   const response = await result.response.text();
+  try {
+      // ¡Importante! Simplemente devuelve la cadena de texto que esperas que sea JSON
+      // Si el modelo falló y devolvió '{}', esto devuelve la cadena '{}'
+      const parsed = JSON.parse(response); 
+      
+      // Si el parseo fue exitoso, devuelve la CADENA JSON original, no el objeto parseado.
+      return response; // Devuelve la cadena '{"statement": "..."}'
+      
+  } catch (e) {
+      console.error("Fallo al parsear respuesta de IA:", e);
+      // Si falla, devuelve la cadena '{}' según tu prompt
+      return '{}'; 
+  }
   return JSON.parse(response); 
 };
 

@@ -75,13 +75,14 @@ const saveQuestionHandler = async (req, res) => {
 //------------------------------------------------------------------------------------------------------------------------------
 
 const getLastQuestionsHandler = async (req, res) => {
-    const { categoryName, questionNumber } = req.query; 
+    const { categoryName, questionNumber } = req.query;
     const numQuestions = parseInt(questionNumber, 10);
     
     if (!categoryName || isNaN(numQuestions) || numQuestions <= 0)
         return res.status(400).json({ message: 'Faltan parámetros: categoryName y questionNumber (número válido)' });
     
     try {
+        console.log(await getLastQuestions(categoryName, numQuestions));
         const result = await getLastQuestions(categoryName, numQuestions);
         res.status(200).json(result);
     } catch (err) {

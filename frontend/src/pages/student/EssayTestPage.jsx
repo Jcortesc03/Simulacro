@@ -89,7 +89,9 @@ const EssayTestPage = () => {
     try {
       // YA NO NECESITAMOS MANEJAR EL TOKEN AQUÍ.
       // El backend identificará al usuario a través de la cookie 'jwt'.
-      
+       console.log("🔍 Question object:", question);
+      console.log("🔍 Question ID:", question.question_id);
+      console.log("🔍 Essay text length:", essayText.length);
       const attemptPayload = {
         simulation_id: simulationId,
         start_time: startTimeRef.current.toISOString(),
