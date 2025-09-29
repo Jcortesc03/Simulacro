@@ -86,8 +86,8 @@ export const registerUser = async (req, res) => {
     const generatedId = id();
     const token = generateToken(generatedId, email, name, 1);
 
-    await db.saveUser(generatedId, name, hash, programName, email);
     await sendVerificationEmail(email, token);
+    await db.saveUser(generatedId, name, hash, programName, email);
 
     res
       .status(201)
