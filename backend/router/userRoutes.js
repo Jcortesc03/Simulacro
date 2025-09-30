@@ -8,11 +8,12 @@ import {
   logoutUser, // Importar la nueva función de logout
 } from "../controllers/authControllers.js";
 import authMiddleware from "../middlewares/authMiddleware.js";
+import { authLimiter } from "../middlewares/rateLimiter.js";
 
 const router = express.Router();
 
-router.post("/login", loginUser);
-router.post("/register", registerUser);
+router.post("/login", authLimiter, loginUser); 
+router.post("/register", authLimiter, registerUser);
 router.get("/verify/:token", verifyEmail);
 router.patch("/changePassword", authMiddleware, changePasswordHandler);
 router.get("/profile", authMiddleware, getProfile);

@@ -1,12 +1,29 @@
-import db from '../database/admin.js'
+import db from '../database/admin.js';
 import bcrypt from 'bcrypt';
 import id from '../utils/uuid.js';
-import generateToken from '../utils/generateToken.js';
+// La importación de generateToken ya no es necesaria aquí si solo se usa para el registro
+// import generateToken from '../utils/generateToken.js'; 
+import { logAction } from '../services/auditService.js'; // <-- Importación clave del servicio de auditoría
 
 const deleteUserHandler = async (req, res) => {
   try {
     const { email } = req.body;
-    db.deleteUser(email);
+    // Es buena práctica verificar que el usuario a eliminar existe antes de auditar
+    const userToDelete = await db.getUserByEmail(email); // Asumiendo que tienes una función así en admin.js
+    if (!userToDelete) {
+      return res.status(404).send('Usuario no encontrado.');
+    }
+
+    await db.deleteUser(email);
+
+    // --- REGISTRA LA ACCIÓN ---
+    await logAction(
+      req.user, // El admin que realiza la acción
+      'DELETE_USER', // Tipo de acción
+      `Eliminó al usuario: ${userToDelete.user_name} (Email: ${email})`, // Detalles
+      req.ip // Dirección IP
+    );
+
     return res.status(200).send('Usuario eliminado con éxito');
   } catch(err) {
     console.log(err);
@@ -23,6 +40,15 @@ const changeRoleHandler = async (req, res) => {
     }
 
     await db.changeRole(email, roleName);
+
+    // --- REGISTRA LA ACCIÓN ---
+    await logAction(
+      req.user,
+      'CHANGE_ROLE',
+      `Cambió el rol del usuario con email ${email} a '${roleName}'`,
+      req.ip
+    );
+
     res.status(200).send('Usuario modificado con éxito');
   } catch (err) {
     console.error("Error en changeRoleHandler:", err.message);
@@ -30,15 +56,26 @@ const changeRoleHandler = async (req, res) => {
   }
 };
 
-
 const adminCreateUserHandler = async (req, res) => {
   try {
     const { password, name, programName, email } = req.body;
     const saltRounds = 10;
     const hash = await bcrypt.hash(password, saltRounds);
     const generatedId = id();
-    const token = generateToken(email, name, 1);
+    
+    // No es necesario generar un token aquí, ya que el admin está creando el usuario
+    // const token = generateToken(email, name, 1); 
+
     await db.adminSaveUser(generatedId, name, hash, programName, email);
+
+    // --- REGISTRA LA ACCIÓN ---
+    await logAction(
+      req.user,
+      'ADMIN_CREATE_USER',
+      `Creó un nuevo usuario desde el panel de admin: ${name} (Email: ${email})`,
+      req.ip
+    );
+
     res.status(201).send(`Usuario ${name} creado con éxito.`);
   } catch(err) {
     console.log(err);
@@ -46,61 +83,34 @@ const adminCreateUserHandler = async (req, res) => {
   };
 };
 
+// --- Las siguientes funciones son de solo lectura, por lo que NO necesitan auditoría ---
+
 const getPagedUsersHandler = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const offset = (page - 1) * limit;
     const users = await db.getPagedUsers(limit, offset);
-    return res.status(200).send({ message: 'Usuarios enviados con éxito.', users });
+    return res.status(200).json({ message: 'Usuarios enviados con éxito.', users }); // Cambiado a .json para consistencia
   } catch (err) {
     console.log(err);
     return res.status(400).send('Hubo un error obteniendo los usuarios');
   }
 };
 
-
 const getUserByEmailHandler = async (req, res) => {
   try {
     const { email } = req.params;
-    console.log('Buscando usuario con email:', email);
+    const user = await db.getUserByEmail(email); // Asumiendo que tienes esta función
 
-    let page = 1;
-    const limit = 100;
-    let userData = null;
-
-    while (!userData && page <= 50) {
-      const users = await db.getPagedUsers(limit, (page - 1) * limit);
-
-      if (!users || users.length === 0) {
-        break;
-      }
-
-
-      userData = users.find(user => user.email === email);
-
-      if (userData) {
-        console.log('Usuario encontrado en página', page);
-        return res.status(200).json({
-          message: 'Usuario encontrado con éxito',
-          user: userData
-        });
-      }
-
-      page++;
+    if (user) {
+      return res.status(200).json({ message: 'Usuario encontrado con éxito', user });
+    } else {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
     }
-
-    console.log('Usuario no encontrado con email:', email);
-    return res.status(404).json({
-      message: 'Usuario no encontrado'
-    });
-
   } catch (err) {
     console.log('Error en getUserByEmailHandler:', err);
-    return res.status(400).json({
-      message: 'Error obteniendo el usuario',
-      error: err.message
-    });
+    return res.status(500).json({ message: 'Error obteniendo el usuario' });
   }
 };
 

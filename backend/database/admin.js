@@ -4,18 +4,16 @@ import userDb from "./usersAuth.js";
 const getPagedUsers = async (limit, offset) => {
   const [usuarios] = await db.query(
     `SELECT
-    u.user_name AS name,
-    u.email AS email,
-    u.verificated AS verified,
-    pro.program_name AS program,
-    ro.role_name AS role
-FROM users u
-JOIN roles ro
-    ON u.role_id = ro.role_id
-JOIN programs pro
-    ON u.program_id = pro.program_id
-ORDER BY u.user_name DESC
-LIMIT ? OFFSET ?`,
+      u.user_name AS name,
+      u.email AS email,
+      u.verificated AS verified,
+      pro.program_name AS program,
+      ro.role_name AS role
+    FROM users u
+    JOIN roles ro ON u.role_id = ro.role_id
+    JOIN programs pro ON u.program_id = pro.program_id
+    ORDER BY u.user_name DESC
+    LIMIT ? OFFSET ?`,
     [limit, offset]
   );
   return usuarios;
@@ -27,37 +25,27 @@ const adminSaveUser = async (id, name, password, programName, email) => {
 };
 
 const changeRole = async (email, roleName) => {
-  // Mapeo de nombres a IDs
   const roleMapping = {
     estudiante: 1,
     profesor: 2,
     admin: 3,
   };
-
-  const roleId = roleMapping[roleName.toLowerCase()]; // Ignora mayúsculas/minúsculas
-
+  const roleId = roleMapping[roleName.toLowerCase()];
   if (!roleId) {
     throw new Error(`Rol no reconocido: ${roleName}`);
   }
-
-  await db.query(
-    `UPDATE users
-      SET role_id = ?
-      WHERE email = ?`,
-    [roleId, email]
-  );
+  await db.query(`UPDATE users SET role_id = ? WHERE email = ?`, [roleId, email]);
 };
 
-
-
 const deleteUser = async (email) => {
-  await db.query(`delete from users where email = ?`, [email]);
+  await db.query(`DELETE FROM users WHERE email = ?`, [email]);
 };
 
 const getCategories = async () => {
   const [categories] = await db.query("SELECT * FROM categories");
   return categories;
 };
+
 const getSubCategories = async () => {
   const [subCategories] = await db.query(`
     SELECT
@@ -74,16 +62,12 @@ const getSubCategories = async () => {
 };
 
 const getTotalUsers = async () => {
-  const [[{ total }]] = await db.query(
-    `SELECT COUNT(*) AS total FROM users`
-  );
+  const [[{ total }]] = await db.query(`SELECT COUNT(*) AS total FROM users`);
   return total;
 };
 
 const getTotalSimulations = async () => {
-  const [[{ total }]] = await db.query(
-    `SELECT COUNT(*) AS total FROM simulation_attempts`
-  );
+  const [[{ total }]] = await db.query(`SELECT COUNT(*) AS total FROM simulation_attempts`);
   return total;
 };
 
@@ -100,6 +84,15 @@ const getAverageScoresBySubject = async () => {
   return rows;
 };
 
+// --- FUNCIÓN AÑADIDA ---
+const getUserByEmail = async (email) => {
+  const [rows] = await db.query(
+    `SELECT user_id, user_name, email FROM users WHERE email = ?`,
+    [email]
+  );
+  if (rows.length === 0) return null;
+  return rows[0];
+};
 
 export default {
   getPagedUsers,
@@ -108,7 +101,8 @@ export default {
   deleteUser,
   getCategories,
   getSubCategories,
-  getTotalUsers, 
+  getTotalUsers,
   getTotalSimulations,
-  getAverageScoresBySubject
+  getAverageScoresBySubject,
+  getUserByEmail, // <-- Exportación añadida
 };
