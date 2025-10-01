@@ -67,7 +67,7 @@ export const logoutUser = (req, res) => {
   res.cookie('jwt', 'loggedout', { // Sobreescribe la cookie con un valor que no sea un token válido
     httpOnly: true,
     expires: new Date(Date.now() + 10 * 1000), // Expira en 10 segundos
-    secure: process.env.NODE_ENV === 'production',
+    secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
     sameSite: 'Lax',
     path: '/',
   });
