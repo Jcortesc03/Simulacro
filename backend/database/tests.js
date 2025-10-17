@@ -22,10 +22,10 @@ export const saveSimulationAttempt = async (
     feedback, // Se incluye en los parámetros
   ].map((v) => (v === undefined ? null : v));
 
-  const [rows] = await db.execute(
+  const { rows } = await db.query(
     `INSERT INTO simulation_attempts
       (attempt_id, user_id, simulation_id, start_time, end_time, total_score, status, feedback)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`, // Se añade la columna y el valor
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`, // Se añade la columna y el valor
     params
   );
 
@@ -39,9 +39,9 @@ const saveSimulation = async (
   creationDate,
   isActive
 ) => {
-  const [rows] = await db.execute(
+  const { rows } = await db.query(
     `INSERT INTO simulations (simulation_id, simulation_name, description, creation_date, is_active)
-     VALUES (?, ?, ?, ?, ?)`,
+     VALUES ($1, $2, $3, $4, $5)`,
     [simulationId, simulationName, description, creationDate, isActive]
   );
   return rows;
@@ -53,42 +53,42 @@ const saveSimulationQuestions = async (
   questionId,
   displayOrder
 ) => {
-  const [rows] = await db.execute(
+  const { rows } = await db.query(
     `INSERT INTO simulation_questions
-      (simulation_question_id, simulation_questions, question_id, display_order)
-     VALUES (?, ?, ?, ?)`,
+      (simulation_question_id, simulation_id, question_id, display_order)
+     VALUES ($1, $2, $3, $4)`,
     [simulationQuestionId, simulationQuestions, questionId, displayOrder]
   );
   return rows;
 };
 
 const getSimulationByName = async (simulationName) => {
-  const [rows] = await db.query(
-    `SELECT simulation_id FROM simulations WHERE simulation_name = ?`,
+  const { rows } = await db.query(
+    `SELECT simulation_id FROM simulations WHERE simulation_name = $1`,
     [simulationName]
   );
   return rows[0]?.simulation_id || null;
 };
 
 const getQuestionById = async (questionId) => {
-  const [rows] = await db.query(
-    `SELECT statement FROM questions WHERE question_id = ?`,
+  const { rows } = await db.query(
+    `SELECT statement FROM questions WHERE question_id = $1`,
     [questionId]
   );
   return rows[0] || null;
 };
 
 const getAnswerById = async (answerId) => {
-  const [rows] = await db.query(
-    `SELECT option_text FROM answer_options WHERE option_id = ?`,
+  const { rows } = await db.query(
+    `SELECT option_text FROM answer_options WHERE option_id = $1`,
     [answerId]
   );
   return rows[0] || null;
 };
 
 const getTestsByUser = async (userEmail) => {
-  const [userRows] = await db.execute(
-    `SELECT user_id FROM users WHERE email = ?`,
+  const { rows: userRows } = await db.query(
+    `SELECT user_id FROM users WHERE email = $1`,
     [userEmail]
   );
 
@@ -96,7 +96,7 @@ const getTestsByUser = async (userEmail) => {
 
   const userId = userRows[0].user_id;
 
-  const [rows] = await db.query(
+  const { rows } = await db.query(
     `SELECT
         u.user_id,
         u.user_name,
@@ -124,7 +124,7 @@ const getTestsByUser = async (userEmail) => {
           ON s.simulation_id = sq.simulation_id
          AND q.question_id = sq.question_id
      LEFT JOIN answer_options ao ON uq.selected_option_id = ao.option_id
-     WHERE u.user_id = ?
+     WHERE u.user_id = $1
      ORDER BY sa.start_time DESC, sq.display_order ASC;`,
     [userId]
   );
@@ -133,7 +133,7 @@ const getTestsByUser = async (userEmail) => {
 };
 
 const getSimulationAttempts = async () => {
-  const [rows] = await db.query(
+  const { rows } = await db.query(
     `SELECT
         u.user_name AS estudiante,
         p.program_name AS carrera,
@@ -150,7 +150,7 @@ const getSimulationAttempts = async () => {
 };
 
 const getTestsByUserId = async (userId) => {
-  const [rows] = await db.query(
+  const { rows } = await db.query(
     `SELECT
         sa.attempt_id,
         s.simulation_name,
@@ -159,7 +159,7 @@ const getTestsByUserId = async (userId) => {
         sa.end_time
      FROM simulation_attempts sa
      JOIN simulations s ON sa.simulation_id = s.simulation_id
-     WHERE sa.user_id = ?
+     WHERE sa.user_id = $1
      ORDER BY sa.start_time DESC;`,
     [userId]
   );
@@ -167,7 +167,7 @@ const getTestsByUserId = async (userId) => {
   return rows;
 };
 const getAttemptById = async (attemptId) => {
-  const [rows] = await db.query(
+  const { rows } = await db.query(
     `SELECT
         sa.attempt_id,
         sa.total_score,
@@ -177,38 +177,37 @@ const getAttemptById = async (attemptId) => {
         s.simulation_name
      FROM simulation_attempts sa
      JOIN simulations s ON sa.simulation_id = s.simulation_id
-     WHERE sa.attempt_id = ?;`,
+     WHERE sa.attempt_id = $1;`,
     [attemptId]
   );
   return rows[0];
 };
 
 const getUserAnswersByAttemptId = async (attemptId) => {
-  const [rows] = await db.query(
+  const { rows } = await db.query(
     `SELECT
         ua.question_id,
         q.statement,
         q.image_path,
         ua.answer_text,
         ua.selected_option_id,
-        (SELECT JSON_ARRAYAGG(JSON_OBJECT('option_id', option_id, 'option_text', option_text, 'is_correct', is_correct)) FROM answer_options WHERE answer_options.question_id = q.question_id) as options
+        (SELECT JSON_AGG(JSON_BUILD_OBJECT('option_id', option_id, 'option_text', option_text, 'is_correct', is_correct)) FROM answer_options WHERE answer_options.question_id = q.question_id) as options
      FROM user_answers ua
      JOIN questions q ON ua.question_id = q.question_id
-     WHERE ua.attempt_id = ?;`,
+     WHERE ua.attempt_id = $1;`,
     [attemptId]
   );
   return rows.map(row => ({
       ...row,
-      // La base de datos MySQL 8+ puede devolver esto ya como un array. 
-      // Si recibes un string, descomenta la siguiente línea:
-      // options: typeof row.options === 'string' ? JSON.parse(row.options) : row.options || []
+      // PostgreSQL ya devuelve esto como JSON
+      options: row.options || []
   }));
 };
 const saveUserAnswer = async (attemptId, answer) => {
-  const userAnswerId = id(); 
-  await db.execute(
+  const userAnswerId = id();
+  await db.query(
      `INSERT INTO user_answers (user_answer_id, attempt_id, question_id, selected_option_id, answer_text, is_correct, question_score)
-     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+     VALUES ($1, $2, $3, $4, $5, $6, $7)`,
     [
       userAnswerId,
       attemptId,
@@ -216,7 +215,7 @@ const saveUserAnswer = async (attemptId, answer) => {
       answer.selected_option_id || null,
       answer.answer_text || null,
       answer.is_correct,
-      answer.question_score 
+      answer.question_score
     ]
   );
 };

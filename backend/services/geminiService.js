@@ -1,5 +1,19 @@
 import genAI from '../config/gemini.js';
 
+// Función helper para limpiar respuestas de Gemini que vienen con bloques de código markdown
+const cleanJsonResponse = (response) => {
+  let cleaned = response.trim();
+
+  // Remover bloques de código markdown si existen
+  if (cleaned.startsWith('```json')) {
+    cleaned = cleaned.replace(/^```json\s*\n?/, '').replace(/\n?```\s*$/, '');
+  } else if (cleaned.startsWith('```')) {
+    cleaned = cleaned.replace(/^```\s*\n?/, '').replace(/\n?```\s*$/, '');
+  }
+
+  return cleaned.trim();
+};
+
 const generateQuestion = async (topic, subtopic, difficulty, pastQuestions, questionNumbers) => {
   const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
 
@@ -31,19 +45,17 @@ const generateQuestion = async (topic, subtopic, difficulty, pastQuestions, ques
 
   const response = await result.response.text();
   try {
-      // ¡Importante! Simplemente devuelve la cadena de texto que esperas que sea JSON
-      // Si el modelo falló y devolvió '{}', esto devuelve la cadena '{}'
-      const parsed = JSON.parse(response); 
-      
-      // Si el parseo fue exitoso, devuelve la CADENA JSON original, no el objeto parseado.
-      return response; // Devuelve la cadena '{"statement": "..."}'
-      
+      const cleaned = cleanJsonResponse(response);
+      const parsed = JSON.parse(cleaned);
+
+      // Si el parseo fue exitoso, devuelve la CADENA JSON limpia
+      return JSON.stringify(parsed);
+
   } catch (e) {
       console.error("Fallo al parsear respuesta de IA:", e);
       // Si falla, devuelve la cadena '{}' según tu prompt
-      return '{}'; 
-  }
-  return JSON.parse(response); 
+      return '{}';
+  } 
 };
 
 const evaluateQuestion = async (subject, question, answer) =>  {
@@ -67,20 +79,39 @@ const evaluateQuestion = async (subject, question, answer) =>  {
   });
 
   const response = await result.response.text();
-  return JSON.parse(response);
+  const cleaned = cleanJsonResponse(response);
+  return JSON.parse(cleaned);
 };
 
 const retroalimentateTest = async (test) => {
   const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
 
   const prompt = `
-  Eres una inteligencia artificial especializada en evaluar respuestas de simulacros del examen Saber PRO, una prueba estandarizada aplicada a universitarios en Colombia para medir competencias genéricas y específicas.
-  Tu tarea es analizar el siguiente conjunto de respuestas, que se encuentra en formato JSON:
+  Eres un evaluador experto del examen Saber PRO de Colombia. Analiza los resultados de este simulacro y genera una retroalimentación constructiva.
+
+  IMPORTANTE: Los datos vienen en formato JSON. Analiza el desempeño general del estudiante basándote en:
+  - El número total de preguntas respondidas
+  - El número de respuestas correctas vs incorrectas
+  - El puntaje obtenido (question_score)
+  - Las áreas de conocimiento evaluadas
+
+  DATOS DEL SIMULACRO:
   ${test}
-  Genera una retroalimentación escrita en un tono académico y constructivo, de máximo 500 palabras. En tu análisis, identifica los puntos fuertes y débiles del desempeño evidenciado en la prueba. Puedes referirte a aspectos como comprensión lectora, razonamiento cuantitativo, comunicación escrita, competencias ciudadanas, o cualquier otra área evaluada según el contenido del JSON.
-  Si lo consideras pertinente, incluye 1 o 2 recursos de apoyo, en forma de links válidos y completos (por ejemplo, páginas web reconocidas o videos de YouTube).
-  ⚠️ Importante: si no puedes garantizar que un enlace sea real y vigente, no inventes ninguno.
-  No incluyas encabezados ni repitas el contenido del JSON. Solo entrega el análisis como un texto continuo.
+
+  INSTRUCCIONES PARA TU RESPUESTA:
+  1. Escribe un análisis en español, máximo 400 palabras
+  2. Usa un tono académico, constructivo y motivador
+  3. Identifica fortalezas y áreas de mejora
+  4. Organiza tu respuesta en 3 párrafos:
+     - Párrafo 1: Resumen del desempeño general (porcentaje de aciertos, puntaje total)
+     - Párrafo 2: Áreas fuertes y aspectos positivos
+     - Párrafo 3: Áreas de mejora con recomendaciones específicas
+  5. NO menciones IDs de preguntas (question_id)
+  6. NO uses encabezados, solo texto continuo
+  7. NO transcribas ni repitas el contenido del JSON
+  8. Si quieres sugerir recursos, menciona solo tipos generales (ej: "videos educativos", "ejercicios de práctica") sin URLs específicas
+
+  Entrega SOLO el texto de retroalimentación, sin ningún otro contenido.
   `;
   const result = await model.generateContent(prompt);
   const response = await result.response.text();
@@ -112,7 +143,8 @@ const evaluateWrittenCommunication = async (studentText) => {
     });
 
     const response = await result.response.text();
-    return JSON.parse(response);
+    const cleaned = cleanJsonResponse(response);
+    return JSON.parse(cleaned);
   } catch (error) {
     console.error("❌ Error en la llamada a Gemini o al parsear la respuesta:", error.message);
     // Manejo de error mejorado.

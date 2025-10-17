@@ -2,7 +2,7 @@ import db from "./config.js";
 import userDb from "./usersAuth.js";
 
 const getPagedUsers = async (limit, offset) => {
-  const [usuarios] = await db.query(
+  const { rows: usuarios } = await db.query(
     `SELECT
       u.user_name AS name,
       u.email AS email,
@@ -13,7 +13,7 @@ const getPagedUsers = async (limit, offset) => {
     JOIN roles ro ON u.role_id = ro.role_id
     JOIN programs pro ON u.program_id = pro.program_id
     ORDER BY u.user_name DESC
-    LIMIT ? OFFSET ?`,
+    LIMIT $1 OFFSET $2`,
     [limit, offset]
   );
   return usuarios;
@@ -34,20 +34,20 @@ const changeRole = async (email, roleName) => {
   if (!roleId) {
     throw new Error(`Rol no reconocido: ${roleName}`);
   }
-  await db.query(`UPDATE users SET role_id = ? WHERE email = ?`, [roleId, email]);
+  await db.query(`UPDATE users SET role_id = $1 WHERE email = $2`, [roleId, email]);
 };
 
 const deleteUser = async (email) => {
-  await db.query(`DELETE FROM users WHERE email = ?`, [email]);
+  await db.query(`DELETE FROM users WHERE email = $1`, [email]);
 };
 
 const getCategories = async () => {
-  const [categories] = await db.query("SELECT * FROM categories");
+  const { rows: categories } = await db.query("SELECT * FROM categories");
   return categories;
 };
 
 const getSubCategories = async () => {
-  const [subCategories] = await db.query(`
+  const { rows: subCategories } = await db.query(`
     SELECT
       sc.sub_category_id,
       sc.sub_category_name,
@@ -62,18 +62,18 @@ const getSubCategories = async () => {
 };
 
 const getTotalUsers = async () => {
-  const [[{ total }]] = await db.query(`SELECT COUNT(*) AS total FROM users`);
-  return total;
+  const { rows } = await db.query(`SELECT COUNT(*) AS total FROM users`);
+  return rows[0].total;
 };
 
 const getTotalSimulations = async () => {
-  const [[{ total }]] = await db.query(`SELECT COUNT(*) AS total FROM simulation_attempts`);
-  return total;
+  const { rows } = await db.query(`SELECT COUNT(*) AS total FROM simulation_attempts`);
+  return rows[0].total;
 };
 
 const getAverageScoresBySubject = async () => {
-  const [rows] = await db.query(`
-    SELECT 
+  const { rows } = await db.query(`
+    SELECT
       s.simulation_name AS subject,
       ROUND(AVG(sa.total_score)) AS averageScore
     FROM simulation_attempts sa
@@ -86,8 +86,8 @@ const getAverageScoresBySubject = async () => {
 
 // --- FUNCIÓN AÑADIDA ---
 const getUserByEmail = async (email) => {
-  const [rows] = await db.query(
-    `SELECT user_id, user_name, email FROM users WHERE email = ?`,
+  const { rows } = await db.query(
+    `SELECT user_id, user_name, email FROM users WHERE email = $1`,
     [email]
   );
   if (rows.length === 0) return null;

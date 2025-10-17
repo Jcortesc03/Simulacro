@@ -4,7 +4,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -16,7 +16,7 @@ model answer_options {
   questions    questions      @relation(fields: [question_id], references: [question_id], onDelete: Cascade, onUpdate: NoAction, map: "answer_options_ibfk_1")
   user_answers user_answers[]
 
-  @@index([question_id], map: "question_id")
+  @@index([question_id], map: "answer_options_question_id_idx")
 }
 
 model categories {
@@ -38,7 +38,7 @@ model questions {
   statement            String                 @db.Text
   question_type        String                 @db.VarChar(30)
   image_path           String?                @db.VarChar(255)
-  creation_date        DateTime?              @default(now()) @db.DateTime(0)
+  creation_date        DateTime?              @default(now()) @db.Timestamp(3)
   ai_generated         Boolean?               @default(false)
   difficulty           questions_difficulty   @default(medium)
   justification        String?                @db.Text
@@ -62,16 +62,16 @@ model simulation_attempts {
   attempt_id    String         @id @db.VarChar(36)
   user_id       String         @db.VarChar(36)
   simulation_id String         @db.VarChar(36)
-  start_time    DateTime       @db.DateTime(0)
-  end_time      DateTime?      @db.DateTime(0)
+  start_time    DateTime       @db.Timestamp(3)
+  end_time      DateTime?      @db.Timestamp(3)
   total_score   Decimal?       @db.Decimal(5, 2)
   status        String         @db.VarChar(20)
+  feedback      String         @db.Text
   users         users          @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "simulation_attempts_ibfk_1")
   simulations   simulations    @relation(fields: [simulation_id], references: [simulation_id], onDelete: Cascade, onUpdate: NoAction, map: "simulation_attempts_ibfk_2")
   user_answers  user_answers[]
-  feedback      String         @db.Text       
 
-  @@index([simulation_id], map: "simulation_id")
+  @@index([simulation_id], map: "simulation_attempts_simulation_id_idx")
   @@index([user_id], map: "user_id")
 }
 
@@ -83,16 +83,16 @@ model simulation_questions {
   simulations            simulations @relation(fields: [simulation_id], references: [simulation_id], onDelete: Cascade, onUpdate: NoAction, map: "simulation_questions_ibfk_1")
   questions              questions   @relation(fields: [question_id], references: [question_id], onDelete: Cascade, onUpdate: NoAction, map: "simulation_questions_ibfk_2")
 
-  @@unique([simulation_id, question_id], map: "simulation_id")
+  @@unique([simulation_id, question_id], map: "simulation_questions_sim_quest_unique")
   @@unique([simulation_id, display_order], map: "simulation_id_2")
-  @@index([question_id], map: "question_id")
+  @@index([question_id], map: "simulation_questions_question_id_idx")
 }
 
 model simulations {
   simulation_id        String                 @id @db.VarChar(36)
   simulation_name      String                 @unique @db.VarChar(150)
   description          String?                @db.Text
-  creation_date        DateTime?              @default(now()) @db.DateTime(0)
+  creation_date        DateTime?              @default(now()) @db.Timestamp(3)
   is_active            Boolean?               @default(true)
   simulation_attempts  simulation_attempts[]
   simulation_questions simulation_questions[]
@@ -122,7 +122,7 @@ model user_answers {
   answer_options      answer_options?     @relation(fields: [selected_option_id], references: [option_id], onDelete: NoAction, onUpdate: NoAction, map: "user_answers_ibfk_3")
 
   @@index([attempt_id], map: "attempt_id")
-  @@index([question_id], map: "question_id")
+  @@index([question_id], map: "user_answers_question_id_idx")
   @@index([selected_option_id], map: "selected_option_id")
 }
 
@@ -133,14 +133,27 @@ model users {
   user_name           String                @db.VarChar(100)
   email               String                @unique(map: "email") @db.VarChar(100)
   password_hash       String                @db.VarChar(255)
-  registration_date   DateTime?             @default(now()) @db.DateTime(0)
+  registration_date   DateTime?             @default(now()) @db.Timestamp(3)
   verificated         Boolean?              @default(false)
   simulation_attempts simulation_attempts[]
+  audit_logs          audit_logs[]
   roles               roles                 @relation(fields: [role_id], references: [role_id], onDelete: NoAction, onUpdate: NoAction, map: "users_ibfk_1")
   programs            programs?             @relation(fields: [program_id], references: [program_id], onDelete: NoAction, onUpdate: NoAction, map: "users_ibfk_2")
 
   @@index([program_id], map: "program_id")
   @@index([role_id], map: "role_id")
+}
+
+model audit_logs {
+  log_id      BigInt   @id @default(autoincrement())
+  user_id     String   @db.VarChar(36)
+  action_type String   @db.VarChar(50)
+  details     String?  @db.Text
+  ip_address  String?  @db.VarChar(45)
+  timestamp   DateTime @default(now()) @db.Timestamp(3)
+  users       users    @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "audit_logs_ibfk_1")
+
+  @@index([user_id], map: "audit_logs_user_id_idx")
 }
 
 enum questions_difficulty {

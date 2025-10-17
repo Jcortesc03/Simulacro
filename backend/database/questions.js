@@ -2,7 +2,7 @@ import db from './config.js';
 import id from '../utils/uuid.js';
 
 const getLastQuestionsForAI = async () => {
-  const [rows] = await db.query(`
+  const { rows } = await db.query(`
     SELECT
       q.question_id,
       q.statement,
@@ -14,7 +14,7 @@ const getLastQuestionsForAI = async () => {
       a.is_correct
     FROM questions q
     JOIN answer_options a ON q.question_id = a.question_id
-    WHERE q.ai_generated = 0
+    WHERE q.ai_generated = false
     ORDER BY q.creation_date DESC
     LIMIT 20;
   `);
@@ -73,7 +73,7 @@ const saveQuestion = async (
       difficulty,
       justification,
       status
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
     `,
     [
       questionId,
@@ -95,7 +95,7 @@ const saveQuestion = async (
       await db.query(
         `
           INSERT INTO answer_options(option_id, question_id, option_text, is_correct)
-          VALUES (?, ?, ?, ?)
+          VALUES ($1, $2, $3, $4)
         `,
         [id(), questionId, option_text, isCorrect]
       );
@@ -110,54 +110,54 @@ const saveQuestion = async (
 // <<< LA ÚNICA MODIFICACIÓN: AÑADIMOS EL ARRAY 'answers' QUE FALTA PARA ESCRITURA >>>
 // =================================================================================
   const getLastQuestions = async (categoryName, questionNumber) => {
-    
+
     if (categoryName === 'Escritura') {
-      const [questionsFromDB] = await db.query(
+      const { rows: questionsFromDB } = await db.query(
         `
           SELECT q.question_id, q.statement, q.difficulty, q.image_path, sc.sub_category_name
           FROM questions q
           JOIN sub_categories sc ON q.sub_category_id = sc.sub_category_id
           JOIN categories c ON sc.category_id = c.category_id
-          WHERE c.category_name = ?
+          WHERE c.category_name = $1
           ORDER BY q.creation_date DESC
-          LIMIT ?;
+          LIMIT $2;
         `,
         [categoryName, questionNumber]
       );
       // AÑADIDO: Mapeamos los resultados para añadir la propiedad 'answers: []' que el frontend necesita.
       const questionsWithAnswers = questionsFromDB.map(q => ({
           ...q,
-          answers: [] 
+          answers: []
       }));
       return questionsWithAnswers;
     }
-    
+
     // TU LÓGICA ORIGINAL PARA OTRAS CATEGORÍAS SE MANTIENE INTACTA
     const limit = Number(questionNumber);
     if (isNaN(limit) || limit <= 0) {
       throw new Error('Número de preguntas inválido');
     }
 
-    const [questions] = await db.query(
+    const { rows: questions } = await db.query(
       `
         SELECT q.question_id, q.statement, q.difficulty, q.image_path, sc.sub_category_name
         FROM questions q
         JOIN sub_categories sc ON q.sub_category_id = sc.sub_category_id
         JOIN categories c ON sc.category_id = c.category_id
-        WHERE c.category_name = ?
-        ORDER BY RAND()
-        LIMIT ?;
+        WHERE c.category_name = $1
+        ORDER BY RANDOM()
+        LIMIT $2;
       `,
       [categoryName, limit]
     );
 
     const enrichedQuestions = [];
     for (const question of questions) {
-      const [answers] = await db.query(
+      const { rows: answers } = await db.query(
         `
           SELECT option_id, option_text, is_correct
           FROM answer_options
-          WHERE question_id = ?
+          WHERE question_id = $1
         `,
         [question.question_id]
       );
@@ -176,7 +176,7 @@ const getAllCategoriesQuestions = async () => {
 
   try {
     console.log("1. Buscando pregunta de Ensayo...");
-    const [essayQuestions] = await db.query(`SELECT q.question_id, q.statement, 'Escritura' as category_name FROM questions q JOIN sub_categories sc ON q.sub_category_id = sc.sub_category_id JOIN categories c ON sc.category_id = c.category_id WHERE c.category_name = 'Escritura' ORDER BY RAND() LIMIT 1;`);
+    const { rows: essayQuestions } = await db.query(`SELECT q.question_id, q.statement, 'Escritura' as category_name FROM questions q JOIN sub_categories sc ON q.sub_category_id = sc.sub_category_id JOIN categories c ON sc.category_id = c.category_id WHERE c.category_name = 'Escritura' ORDER BY RANDOM() LIMIT 1;`);
     if (essayQuestions && essayQuestions.length > 0) {
       essayQuestions[0].isEssay = true;
       allQuestions.push(essayQuestions[0]);
@@ -186,13 +186,13 @@ const getAllCategoriesQuestions = async () => {
     }
     console.log("2. Buscando 10 preguntas para cada categoría de Opción Múltiple...");
     const mcCategoriesNames = ["Lectura Crítica", "Razonamiento Cuantitativo", "Competencias Ciudadanas", "Inglés"];
-    const query = `(SELECT q.*, c.category_name, sc.sub_category_name FROM questions q JOIN sub_categories sc ON q.sub_category_id = sc.sub_category_id JOIN categories c ON sc.category_id = c.category_id WHERE c.category_name = ? ORDER BY RAND() LIMIT 10) UNION ALL (SELECT q.*, c.category_name, sc.sub_category_name FROM questions q JOIN sub_categories sc ON q.sub_category_id = sc.sub_category_id JOIN categories c ON sc.category_id = c.category_id WHERE c.category_name = ? ORDER BY RAND() LIMIT 10) UNION ALL (SELECT q.*, c.category_name, sc.sub_category_name FROM questions q JOIN sub_categories sc ON q.sub_category_id = sc.sub_category_id JOIN categories c ON sc.category_id = c.category_id WHERE c.category_name = ? ORDER BY RAND() LIMIT 10) UNION ALL (SELECT q.*, c.category_name, sc.sub_category_name FROM questions q JOIN sub_categories sc ON q.sub_category_id = sc.sub_category_id JOIN categories c ON sc.category_id = c.category_id WHERE c.category_name = ? ORDER BY RAND() LIMIT 10)`;
-    const [mcQuestions] = await db.query(query, [...mcCategoriesNames]);
+    const query = `(SELECT q.*, c.category_name, sc.sub_category_name FROM questions q JOIN sub_categories sc ON q.sub_category_id = sc.sub_category_id JOIN categories c ON sc.category_id = c.category_id WHERE c.category_name = $1 ORDER BY RANDOM() LIMIT 10) UNION ALL (SELECT q.*, c.category_name, sc.sub_category_name FROM questions q JOIN sub_categories sc ON q.sub_category_id = sc.sub_category_id JOIN categories c ON sc.category_id = c.category_id WHERE c.category_name = $2 ORDER BY RANDOM() LIMIT 10) UNION ALL (SELECT q.*, c.category_name, sc.sub_category_name FROM questions q JOIN sub_categories sc ON q.sub_category_id = sc.sub_category_id JOIN categories c ON sc.category_id = c.category_id WHERE c.category_name = $3 ORDER BY RANDOM() LIMIT 10) UNION ALL (SELECT q.*, c.category_name, sc.sub_category_name FROM questions q JOIN sub_categories sc ON q.sub_category_id = sc.sub_category_id JOIN categories c ON sc.category_id = c.category_id WHERE c.category_name = $4 ORDER BY RANDOM() LIMIT 10)`;
+    const { rows: mcQuestions } = await db.query(query, [...mcCategoriesNames]);
     console.log(`-> Se encontraron ${mcQuestions.length} preguntas de opción múltiple en total.`);
     const questionIds = mcQuestions.map(q => q.question_id);
     if (questionIds.length > 0) {
         console.log("3. Buscando todas las opciones de respuesta necesarias...");
-        const [allOptions] = await db.query(`SELECT * FROM answer_options WHERE question_id IN (?)`, [questionIds]);
+        const { rows: allOptions } = await db.query(`SELECT * FROM answer_options WHERE question_id = ANY($1::varchar[])`, [questionIds]);
         console.log(`-> Se encontraron ${allOptions.length} opciones en total.`);
         const mcQuestionsWithOptions = mcQuestions.map(question => ({ ...question, answers: allOptions.filter(option => option.question_id === question.question_id) }));
         allQuestions.push(...mcQuestionsWithOptions);
@@ -208,33 +208,33 @@ const getAllCategoriesQuestions = async () => {
 };
 
 const getCategories = async () => {
-  const [categories] = await db.query("SELECT * FROM categories");
+  const { rows: categories } = await db.query("SELECT * FROM categories");
   return categories;
 };
 
 const deleteQuestion = async (questionId) => {
-  await db.query(`DELETE FROM answer_options WHERE question_id = ?`, [questionId]);
-  const [result] = await db.query(`DELETE FROM questions WHERE question_id = ?`, [questionId]);
-  return result.affectedRows > 0;
+  await db.query(`DELETE FROM answer_options WHERE question_id = $1`, [questionId]);
+  const { rowCount } = await db.query(`DELETE FROM questions WHERE question_id = $1`, [questionId]);
+  return rowCount > 0;
 };
 
 const updateQuestion = async (questionId, questionData) => {
   const { statement, questionType, imagePath, difficulty, justification, status, answers } = questionData;
-  const [result] = await db.query(
+  const { rowCount } = await db.query(
     `
-      UPDATE questions SET statement = ?, question_type = ?, image_path = ?,
-      difficulty = ?, justification = ?, status = ? WHERE question_id = ?
+      UPDATE questions SET statement = $1, question_type = $2, image_path = $3,
+      difficulty = $4, justification = $5, status = $6 WHERE question_id = $7
     `,
     [statement, questionType, imagePath, difficulty, justification, status, questionId]
   );
-  if (result.affectedRows === 0) {
+  if (rowCount === 0) {
     return { success: false };
   }
-  await db.query('DELETE FROM answer_options WHERE question_id = ?', [questionId]);
+  await db.query('DELETE FROM answer_options WHERE question_id = $1', [questionId]);
   if (answers && answers.length > 0) {
     for (const answer of answers) {
       const { option_text, isCorrect } = answer;
-      await db.query(`INSERT INTO answer_options(option_id, question_id, option_text, is_correct) VALUES (?, ?, ?, ?)`, [id(), questionId, option_text, isCorrect]);
+      await db.query(`INSERT INTO answer_options(option_id, question_id, option_text, is_correct) VALUES ($1, $2, $3, $4)`, [id(), questionId, option_text, isCorrect]);
     }
   }
   return { success: true };

@@ -86,15 +86,31 @@ export const registerUser = async (req, res) => {
     const generatedId = id();
     const token = generateToken(generatedId, email, name, 1);
 
-    await sendVerificationEmail(email, token);
+    // Intentar enviar email de verificación
+    let emailSent = false;
+    try {
+      await sendVerificationEmail(email, token);
+      emailSent = true;
+    } catch (emailError) {
+      console.error('Error enviando email de verificación:', emailError.message);
+      // Continuar con el registro aunque falle el email
+    }
+
+    // Guardar usuario en la base de datos
     await db.saveUser(generatedId, name, hash, programName, email);
 
-    res
-      .status(201)
-      .send(`Usuario ${name} creado con éxito, por favor verifique su correo`);
+    if (emailSent) {
+      res
+        .status(201)
+        .send(`Usuario ${name} creado con éxito, por favor verifique su correo`);
+    } else {
+      res
+        .status(201)
+        .send(`Usuario ${name} creado con éxito. Nota: No se pudo enviar email de verificación. Contacte al administrador para activar su cuenta.`);
+    }
   } catch (err) {
     console.log(err);
-    return res.status(400).send("Hubo un error");
+    return res.status(400).send("Hubo un error al crear el usuario");
   }
 };
 

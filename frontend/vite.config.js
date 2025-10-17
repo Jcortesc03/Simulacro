@@ -6,7 +6,16 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   plugins: [react(),tailwindcss()],
   server: {
-    host: true,
-    allowedHosts: 'all'
+    host: '0.0.0.0',
+    port: 5173,
+    hmr: {
+      host: 'pruebassaberpro.ipsuniversitariadecolombia.com',
+      protocol: 'wss',
+    },
+    allowedHosts: [
+      'localhost',
+      'pruebassaberpro.ipsuniversitariadecolombia.com',
+      '.ipsuniversitariadecolombia.com'
+    ]
   },
 })

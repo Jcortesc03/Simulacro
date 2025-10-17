@@ -32,7 +32,8 @@ app.use((req, res, next) => {
   const allowedOrigins = [
     'http://localhost:5173',
     'http://192.168.137.1:5173',
-    'http://192.168.1.7:5173' // IP de la red, sin la barra al final
+    'http://192.168.1.7:5173',
+    'https://pruebassaberpro.ipsuniversitariadecolombia.com'
   ];
   const origin = req.headers.origin;
 
@@ -72,20 +73,19 @@ const server = app.listen(port, () => {
   console.log(`🚀 Servidor corriendo en: ${url}`);
 });
 
-// Lógica de cierre elegante (ya estaba bien)
-const gracefulShutdown = () => {
+// Lógica de cierre elegante (actualizado para PostgreSQL Pool)
+const gracefulShutdown = async () => {
   console.log('🔌 Recibida señal de cierre. Cerrando conexiones...');
-  server.close(() => {
+  server.close(async () => {
     console.log('🚪 Servidor HTTP cerrado.');
-    db.end(err => {
-      if (err) {
-        console.error('❌ Error al cerrar la conexión a la BD:', err.message);
-        process.exit(1);
-      } else {
-        console.log('✅ Conexión a la BD cerrada limpiamente.');
-        process.exit(0);
-      }
-    });
+    try {
+      await db.end();
+      console.log('✅ Conexión a la BD cerrada limpiamente.');
+      process.exit(0);
+    } catch (err) {
+      console.error('❌ Error al cerrar la conexión a la BD:', err.message);
+      process.exit(1);
+    }
   });
 };
 

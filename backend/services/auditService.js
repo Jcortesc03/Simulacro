@@ -19,7 +19,7 @@ export const logAction = async (adminUser, actionType, details, ipAddress) => {
     }
 
     await db.query(
-      `INSERT INTO audit_logs (user_id, action_type, details, ip_address) VALUES (?, ?, ?, ?)`,
+      `INSERT INTO audit_logs (user_id, action_type, details, ip_address) VALUES ($1, $2, $3, $4)`,
       [adminUserId, actionType, details, ipAddress]
     );
 

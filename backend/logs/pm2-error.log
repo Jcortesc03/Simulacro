@@ -1,0 +1,913 @@
+2025-10-17T15:44:59: error: syntax error at end of input
+2025-10-17T15:44:59:     at /home/ubuntu/Simulacro/backend/node_modules/pg-pool/index.js:45:11
+2025-10-17T15:44:59:     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2025-10-17T15:44:59:     at async Object.getUser (file:///home/ubuntu/Simulacro/backend/database/usersAuth.js:19:18)
+2025-10-17T15:44:59:     at async loginUser (file:///home/ubuntu/Simulacro/backend/controllers/authControllers.js:19:18) {
+2025-10-17T15:44:59:   length: 91,
+2025-10-17T15:44:59:   severity: 'ERROR',
+2025-10-17T15:44:59:   code: '42601',
+2025-10-17T15:44:59:   detail: undefined,
+2025-10-17T15:44:59:   hint: undefined,
+2025-10-17T15:44:59:   position: '36',
+2025-10-17T15:44:59:   internalPosition: undefined,
+2025-10-17T15:44:59:   internalQuery: undefined,
+2025-10-17T15:44:59:   where: undefined,
+2025-10-17T15:44:59:   schema: undefined,
+2025-10-17T15:44:59:   table: undefined,
+2025-10-17T15:44:59:   column: undefined,
+2025-10-17T15:44:59:   dataType: undefined,
+2025-10-17T15:44:59:   constraint: undefined,
+2025-10-17T15:44:59:   file: 'scan.l',
+2025-10-17T15:44:59:   line: '1236',
+2025-10-17T15:44:59:   routine: 'scanner_yyerror'
+2025-10-17T15:44:59: }
+2025-10-17T15:45:47: error: syntax error at end of input
+2025-10-17T15:45:47:     at /home/ubuntu/Simulacro/backend/node_modules/pg-pool/index.js:45:11
+2025-10-17T15:45:47:     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2025-10-17T15:45:47:     at async Object.getUser (file:///home/ubuntu/Simulacro/backend/database/usersAuth.js:19:18)
+2025-10-17T15:45:47:     at async loginUser (file:///home/ubuntu/Simulacro/backend/controllers/authControllers.js:19:18) {
+2025-10-17T15:45:47:   length: 91,
+2025-10-17T15:45:47:   severity: 'ERROR',
+2025-10-17T15:45:47:   code: '42601',
+2025-10-17T15:45:47:   detail: undefined,
+2025-10-17T15:45:47:   hint: undefined,
+2025-10-17T15:45:47:   position: '36',
+2025-10-17T15:45:47:   internalPosition: undefined,
+2025-10-17T15:45:47:   internalQuery: undefined,
+2025-10-17T15:45:47:   where: undefined,
+2025-10-17T15:45:47:   schema: undefined,
+2025-10-17T15:45:47:   table: undefined,
+2025-10-17T15:45:47:   column: undefined,
+2025-10-17T15:45:47:   dataType: undefined,
+2025-10-17T15:45:47:   constraint: undefined,
+2025-10-17T15:45:47:   file: 'scan.l',
+2025-10-17T15:45:47:   line: '1236',
+2025-10-17T15:45:47:   routine: 'scanner_yyerror'
+2025-10-17T15:45:47: }
+2025-10-17T17:55:17: Error enviando email de verificación: Missing credentials for "PLAIN"
+2025-10-17T17:55:34: Error enviando email de verificación: Missing credentials for "PLAIN"
+2025-10-17T17:55:58: Error enviando email de verificación: Missing credentials for "PLAIN"
+2025-10-17T17:57:17: Error enviando email de verificación: Missing credentials for "PLAIN"
+2025-10-17T18:39:35: !!! ERROR DURANTE LA BÚSQUEDA GENERAL: error: operator does not exist: character varying = uuid
+2025-10-17T18:39:35:     at /home/ubuntu/Simulacro/backend/node_modules/pg-pool/index.js:45:11
+2025-10-17T18:39:35:     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2025-10-17T18:39:35:     at async getAllCategoriesQuestions (file:///home/ubuntu/Simulacro/backend/database/questions.js:195:38)
+2025-10-17T18:39:35:     at async getAllCategoriesQuestionsHandler (file:///home/ubuntu/Simulacro/backend/controllers/questionControllers.js:98:27) {
+2025-10-17T18:39:35:   length: 209,
+2025-10-17T18:39:35:   severity: 'ERROR',
+2025-10-17T18:39:35:   code: '42883',
+2025-10-17T18:39:35:   detail: undefined,
+2025-10-17T18:39:35:   hint: 'No operator matches the given name and argument types. You might need to add explicit type casts.',
+2025-10-17T18:39:35:   position: '48',
+2025-10-17T18:39:35:   internalPosition: undefined,
+2025-10-17T18:39:35:   internalQuery: undefined,
+2025-10-17T18:39:35:   where: undefined,
+2025-10-17T18:39:35:   schema: undefined,
+2025-10-17T18:39:35:   table: undefined,
+2025-10-17T18:39:35:   column: undefined,
+2025-10-17T18:39:35:   dataType: undefined,
+2025-10-17T18:39:35:   constraint: undefined,
+2025-10-17T18:39:35:   file: 'parse_oper.c',
+2025-10-17T18:39:35:   line: '635',
+2025-10-17T18:39:35:   routine: 'op_error'
+2025-10-17T18:39:35: }
+2025-10-17T18:39:35: !!! ERROR DURANTE LA BÚSQUEDA GENERAL: error: operator does not exist: character varying = uuid
+2025-10-17T18:39:35:     at /home/ubuntu/Simulacro/backend/node_modules/pg-pool/index.js:45:11
+2025-10-17T18:39:35:     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2025-10-17T18:39:35:     at async getAllCategoriesQuestions (file:///home/ubuntu/Simulacro/backend/database/questions.js:195:38)
+2025-10-17T18:39:35:     at async getAllCategoriesQuestionsHandler (file:///home/ubuntu/Simulacro/backend/controllers/questionControllers.js:98:27) {
+2025-10-17T18:39:35:   length: 209,
+2025-10-17T18:39:35:   severity: 'ERROR',
+2025-10-17T18:39:35:   code: '42883',
+2025-10-17T18:39:35:   detail: undefined,
+2025-10-17T18:39:35:   hint: 'No operator matches the given name and argument types. You might need to add explicit type casts.',
+2025-10-17T18:39:35:   position: '48',
+2025-10-17T18:39:35:   internalPosition: undefined,
+2025-10-17T18:39:35:   internalQuery: undefined,
+2025-10-17T18:39:35:   where: undefined,
+2025-10-17T18:39:35:   schema: undefined,
+2025-10-17T18:39:35:   table: undefined,
+2025-10-17T18:39:35:   column: undefined,
+2025-10-17T18:39:35:   dataType: undefined,
+2025-10-17T18:39:35:   constraint: undefined,
+2025-10-17T18:39:35:   file: 'parse_oper.c',
+2025-10-17T18:39:35:   line: '635',
+2025-10-17T18:39:35:   routine: 'op_error'
+2025-10-17T18:39:35: }
+2025-10-17T18:39:40: !!! ERROR DURANTE LA BÚSQUEDA GENERAL: error: operator does not exist: character varying = uuid
+2025-10-17T18:39:40:     at /home/ubuntu/Simulacro/backend/node_modules/pg-pool/index.js:45:11
+2025-10-17T18:39:40:     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2025-10-17T18:39:40:     at async getAllCategoriesQuestions (file:///home/ubuntu/Simulacro/backend/database/questions.js:195:38)
+2025-10-17T18:39:40:     at async getAllCategoriesQuestionsHandler (file:///home/ubuntu/Simulacro/backend/controllers/questionControllers.js:98:27) {
+2025-10-17T18:39:40:   length: 209,
+2025-10-17T18:39:40:   severity: 'ERROR',
+2025-10-17T18:39:40:   code: '42883',
+2025-10-17T18:39:40:   detail: undefined,
+2025-10-17T18:39:40:   hint: 'No operator matches the given name and argument types. You might need to add explicit type casts.',
+2025-10-17T18:39:40:   position: '48',
+2025-10-17T18:39:40:   internalPosition: undefined,
+2025-10-17T18:39:40:   internalQuery: undefined,
+2025-10-17T18:39:40:   where: undefined,
+2025-10-17T18:39:40:   schema: undefined,
+2025-10-17T18:39:40:   table: undefined,
+2025-10-17T18:39:40:   column: undefined,
+2025-10-17T18:39:40:   dataType: undefined,
+2025-10-17T18:39:40:   constraint: undefined,
+2025-10-17T18:39:40:   file: 'parse_oper.c',
+2025-10-17T18:39:40:   line: '635',
+2025-10-17T18:39:40:   routine: 'op_error'
+2025-10-17T18:39:40: }
+2025-10-17T18:39:40: !!! ERROR DURANTE LA BÚSQUEDA GENERAL: error: operator does not exist: character varying = uuid
+2025-10-17T18:39:40:     at /home/ubuntu/Simulacro/backend/node_modules/pg-pool/index.js:45:11
+2025-10-17T18:39:40:     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2025-10-17T18:39:40:     at async getAllCategoriesQuestions (file:///home/ubuntu/Simulacro/backend/database/questions.js:195:38)
+2025-10-17T18:39:40:     at async getAllCategoriesQuestionsHandler (file:///home/ubuntu/Simulacro/backend/controllers/questionControllers.js:98:27) {
+2025-10-17T18:39:40:   length: 209,
+2025-10-17T18:39:40:   severity: 'ERROR',
+2025-10-17T18:39:40:   code: '42883',
+2025-10-17T18:39:40:   detail: undefined,
+2025-10-17T18:39:40:   hint: 'No operator matches the given name and argument types. You might need to add explicit type casts.',
+2025-10-17T18:39:40:   position: '48',
+2025-10-17T18:39:40:   internalPosition: undefined,
+2025-10-17T18:39:40:   internalQuery: undefined,
+2025-10-17T18:39:40:   where: undefined,
+2025-10-17T18:39:40:   schema: undefined,
+2025-10-17T18:39:40:   table: undefined,
+2025-10-17T18:39:40:   column: undefined,
+2025-10-17T18:39:40:   dataType: undefined,
+2025-10-17T18:39:40:   constraint: undefined,
+2025-10-17T18:39:40:   file: 'parse_oper.c',
+2025-10-17T18:39:40:   line: '635',
+2025-10-17T18:39:40:   routine: 'op_error'
+2025-10-17T18:39:40: }
+2025-10-17T18:52:09: !!! ERROR DURANTE LA BÚSQUEDA GENERAL: error: operator does not exist: character varying = uuid
+2025-10-17T18:52:09:     at /home/ubuntu/Simulacro/backend/node_modules/pg-pool/index.js:45:11
+2025-10-17T18:52:09:     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2025-10-17T18:52:09:     at async getAllCategoriesQuestions (file:///home/ubuntu/Simulacro/backend/database/questions.js:195:38)
+2025-10-17T18:52:09:     at async getAllCategoriesQuestionsHandler (file:///home/ubuntu/Simulacro/backend/controllers/questionControllers.js:98:27) {
+2025-10-17T18:52:09:   length: 209,
+2025-10-17T18:52:09:   severity: 'ERROR',
+2025-10-17T18:52:09:   code: '42883',
+2025-10-17T18:52:09:   detail: undefined,
+2025-10-17T18:52:09:   hint: 'No operator matches the given name and argument types. You might need to add explicit type casts.',
+2025-10-17T18:52:09:   position: '48',
+2025-10-17T18:52:09:   internalPosition: undefined,
+2025-10-17T18:52:09:   internalQuery: undefined,
+2025-10-17T18:52:09:   where: undefined,
+2025-10-17T18:52:09:   schema: undefined,
+2025-10-17T18:52:09:   table: undefined,
+2025-10-17T18:52:09:   column: undefined,
+2025-10-17T18:52:09:   dataType: undefined,
+2025-10-17T18:52:09:   constraint: undefined,
+2025-10-17T18:52:09:   file: 'parse_oper.c',
+2025-10-17T18:52:09:   line: '635',
+2025-10-17T18:52:09:   routine: 'op_error'
+2025-10-17T18:52:09: }
+2025-10-17T18:52:09: !!! ERROR DURANTE LA BÚSQUEDA GENERAL: error: operator does not exist: character varying = uuid
+2025-10-17T18:52:09:     at /home/ubuntu/Simulacro/backend/node_modules/pg-pool/index.js:45:11
+2025-10-17T18:52:09:     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2025-10-17T18:52:09:     at async getAllCategoriesQuestions (file:///home/ubuntu/Simulacro/backend/database/questions.js:195:38)
+2025-10-17T18:52:09:     at async getAllCategoriesQuestionsHandler (file:///home/ubuntu/Simulacro/backend/controllers/questionControllers.js:98:27) {
+2025-10-17T18:52:09:   length: 209,
+2025-10-17T18:52:09:   severity: 'ERROR',
+2025-10-17T18:52:09:   code: '42883',
+2025-10-17T18:52:09:   detail: undefined,
+2025-10-17T18:52:09:   hint: 'No operator matches the given name and argument types. You might need to add explicit type casts.',
+2025-10-17T18:52:09:   position: '48',
+2025-10-17T18:52:09:   internalPosition: undefined,
+2025-10-17T18:52:09:   internalQuery: undefined,
+2025-10-17T18:52:09:   where: undefined,
+2025-10-17T18:52:09:   schema: undefined,
+2025-10-17T18:52:09:   table: undefined,
+2025-10-17T18:52:09:   column: undefined,
+2025-10-17T18:52:09:   dataType: undefined,
+2025-10-17T18:52:09:   constraint: undefined,
+2025-10-17T18:52:09:   file: 'parse_oper.c',
+2025-10-17T18:52:09:   line: '635',
+2025-10-17T18:52:09:   routine: 'op_error'
+2025-10-17T18:52:09: }
+2025-10-17T18:52:25: !!! ERROR DURANTE LA BÚSQUEDA GENERAL: error: operator does not exist: character varying = uuid
+2025-10-17T18:52:25:     at /home/ubuntu/Simulacro/backend/node_modules/pg-pool/index.js:45:11
+2025-10-17T18:52:25:     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2025-10-17T18:52:25:     at async getAllCategoriesQuestions (file:///home/ubuntu/Simulacro/backend/database/questions.js:195:38)
+2025-10-17T18:52:25:     at async getAllCategoriesQuestionsHandler (file:///home/ubuntu/Simulacro/backend/controllers/questionControllers.js:98:27) {
+2025-10-17T18:52:25:   length: 209,
+2025-10-17T18:52:25:   severity: 'ERROR',
+2025-10-17T18:52:25:   code: '42883',
+2025-10-17T18:52:25:   detail: undefined,
+2025-10-17T18:52:25:   hint: 'No operator matches the given name and argument types. You might need to add explicit type casts.',
+2025-10-17T18:52:25:   position: '48',
+2025-10-17T18:52:25:   internalPosition: undefined,
+2025-10-17T18:52:25:   internalQuery: undefined,
+2025-10-17T18:52:25:   where: undefined,
+2025-10-17T18:52:25:   schema: undefined,
+2025-10-17T18:52:25:   table: undefined,
+2025-10-17T18:52:25:   column: undefined,
+2025-10-17T18:52:25:   dataType: undefined,
+2025-10-17T18:52:25:   constraint: undefined,
+2025-10-17T18:52:25:   file: 'parse_oper.c',
+2025-10-17T18:52:25:   line: '635',
+2025-10-17T18:52:25:   routine: 'op_error'
+2025-10-17T18:52:25: }
+2025-10-17T18:52:26: !!! ERROR DURANTE LA BÚSQUEDA GENERAL: error: operator does not exist: character varying = uuid
+2025-10-17T18:52:26:     at /home/ubuntu/Simulacro/backend/node_modules/pg-pool/index.js:45:11
+2025-10-17T18:52:26:     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2025-10-17T18:52:26:     at async getAllCategoriesQuestions (file:///home/ubuntu/Simulacro/backend/database/questions.js:195:38)
+2025-10-17T18:52:26:     at async getAllCategoriesQuestionsHandler (file:///home/ubuntu/Simulacro/backend/controllers/questionControllers.js:98:27) {
+2025-10-17T18:52:26:   length: 209,
+2025-10-17T18:52:26:   severity: 'ERROR',
+2025-10-17T18:52:26:   code: '42883',
+2025-10-17T18:52:26:   detail: undefined,
+2025-10-17T18:52:26:   hint: 'No operator matches the given name and argument types. You might need to add explicit type casts.',
+2025-10-17T18:52:26:   position: '48',
+2025-10-17T18:52:26:   internalPosition: undefined,
+2025-10-17T18:52:26:   internalQuery: undefined,
+2025-10-17T18:52:26:   where: undefined,
+2025-10-17T18:52:26:   schema: undefined,
+2025-10-17T18:52:26:   table: undefined,
+2025-10-17T18:52:26:   column: undefined,
+2025-10-17T18:52:26:   dataType: undefined,
+2025-10-17T18:52:26:   constraint: undefined,
+2025-10-17T18:52:26:   file: 'parse_oper.c',
+2025-10-17T18:52:26:   line: '635',
+2025-10-17T18:52:26:   routine: 'op_error'
+2025-10-17T18:52:26: }
+2025-10-17T18:53:35: !!! ERROR DURANTE LA BÚSQUEDA GENERAL: error: operator does not exist: character varying = uuid
+2025-10-17T18:53:35:     at /home/ubuntu/Simulacro/backend/node_modules/pg-pool/index.js:45:11
+2025-10-17T18:53:35:     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2025-10-17T18:53:35:     at async getAllCategoriesQuestions (file:///home/ubuntu/Simulacro/backend/database/questions.js:195:38)
+2025-10-17T18:53:35:     at async getAllCategoriesQuestionsHandler (file:///home/ubuntu/Simulacro/backend/controllers/questionControllers.js:98:27) {
+2025-10-17T18:53:35:   length: 209,
+2025-10-17T18:53:35:   severity: 'ERROR',
+2025-10-17T18:53:35:   code: '42883',
+2025-10-17T18:53:35:   detail: undefined,
+2025-10-17T18:53:35:   hint: 'No operator matches the given name and argument types. You might need to add explicit type casts.',
+2025-10-17T18:53:35:   position: '48',
+2025-10-17T18:53:35:   internalPosition: undefined,
+2025-10-17T18:53:35:   internalQuery: undefined,
+2025-10-17T18:53:35:   where: undefined,
+2025-10-17T18:53:35:   schema: undefined,
+2025-10-17T18:53:35:   table: undefined,
+2025-10-17T18:53:35:   column: undefined,
+2025-10-17T18:53:35:   dataType: undefined,
+2025-10-17T18:53:35:   constraint: undefined,
+2025-10-17T18:53:35:   file: 'parse_oper.c',
+2025-10-17T18:53:35:   line: '635',
+2025-10-17T18:53:35:   routine: 'op_error'
+2025-10-17T18:53:35: }
+2025-10-17T18:53:35: !!! ERROR DURANTE LA BÚSQUEDA GENERAL: error: operator does not exist: character varying = uuid
+2025-10-17T18:53:35:     at /home/ubuntu/Simulacro/backend/node_modules/pg-pool/index.js:45:11
+2025-10-17T18:53:35:     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2025-10-17T18:53:35:     at async getAllCategoriesQuestions (file:///home/ubuntu/Simulacro/backend/database/questions.js:195:38)
+2025-10-17T18:53:35:     at async getAllCategoriesQuestionsHandler (file:///home/ubuntu/Simulacro/backend/controllers/questionControllers.js:98:27) {
+2025-10-17T18:53:35:   length: 209,
+2025-10-17T18:53:35:   severity: 'ERROR',
+2025-10-17T18:53:35:   code: '42883',
+2025-10-17T18:53:35:   detail: undefined,
+2025-10-17T18:53:35:   hint: 'No operator matches the given name and argument types. You might need to add explicit type casts.',
+2025-10-17T18:53:35:   position: '48',
+2025-10-17T18:53:35:   internalPosition: undefined,
+2025-10-17T18:53:35:   internalQuery: undefined,
+2025-10-17T18:53:35:   where: undefined,
+2025-10-17T18:53:35:   schema: undefined,
+2025-10-17T18:53:35:   table: undefined,
+2025-10-17T18:53:35:   column: undefined,
+2025-10-17T18:53:35:   dataType: undefined,
+2025-10-17T18:53:35:   constraint: undefined,
+2025-10-17T18:53:35:   file: 'parse_oper.c',
+2025-10-17T18:53:35:   line: '635',
+2025-10-17T18:53:35:   routine: 'op_error'
+2025-10-17T18:53:35: }
+2025-10-17T19:19:28: !!! ERROR DURANTE LA BÚSQUEDA GENERAL: error: operator does not exist: character varying = uuid
+2025-10-17T19:19:28:     at /home/ubuntu/Simulacro/backend/node_modules/pg-pool/index.js:45:11
+2025-10-17T19:19:28:     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2025-10-17T19:19:28:     at async getAllCategoriesQuestions (file:///home/ubuntu/Simulacro/backend/database/questions.js:195:38)
+2025-10-17T19:19:28:     at async getAllCategoriesQuestionsHandler (file:///home/ubuntu/Simulacro/backend/controllers/questionControllers.js:98:27) {
+2025-10-17T19:19:28:   length: 209,
+2025-10-17T19:19:28:   severity: 'ERROR',
+2025-10-17T19:19:28:   code: '42883',
+2025-10-17T19:19:28:   detail: undefined,
+2025-10-17T19:19:28:   hint: 'No operator matches the given name and argument types. You might need to add explicit type casts.',
+2025-10-17T19:19:28:   position: '48',
+2025-10-17T19:19:28:   internalPosition: undefined,
+2025-10-17T19:19:28:   internalQuery: undefined,
+2025-10-17T19:19:28:   where: undefined,
+2025-10-17T19:19:28:   schema: undefined,
+2025-10-17T19:19:28:   table: undefined,
+2025-10-17T19:19:28:   column: undefined,
+2025-10-17T19:19:28:   dataType: undefined,
+2025-10-17T19:19:28:   constraint: undefined,
+2025-10-17T19:19:28:   file: 'parse_oper.c',
+2025-10-17T19:19:28:   line: '635',
+2025-10-17T19:19:28:   routine: 'op_error'
+2025-10-17T19:19:28: }
+2025-10-17T19:19:28: !!! ERROR DURANTE LA BÚSQUEDA GENERAL: error: operator does not exist: character varying = uuid
+2025-10-17T19:19:28:     at /home/ubuntu/Simulacro/backend/node_modules/pg-pool/index.js:45:11
+2025-10-17T19:19:28:     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2025-10-17T19:19:28:     at async getAllCategoriesQuestions (file:///home/ubuntu/Simulacro/backend/database/questions.js:195:38)
+2025-10-17T19:19:28:     at async getAllCategoriesQuestionsHandler (file:///home/ubuntu/Simulacro/backend/controllers/questionControllers.js:98:27) {
+2025-10-17T19:19:28:   length: 209,
+2025-10-17T19:19:28:   severity: 'ERROR',
+2025-10-17T19:19:28:   code: '42883',
+2025-10-17T19:19:28:   detail: undefined,
+2025-10-17T19:19:28:   hint: 'No operator matches the given name and argument types. You might need to add explicit type casts.',
+2025-10-17T19:19:28:   position: '48',
+2025-10-17T19:19:28:   internalPosition: undefined,
+2025-10-17T19:19:28:   internalQuery: undefined,
+2025-10-17T19:19:28:   where: undefined,
+2025-10-17T19:19:28:   schema: undefined,
+2025-10-17T19:19:28:   table: undefined,
+2025-10-17T19:19:28:   column: undefined,
+2025-10-17T19:19:28:   dataType: undefined,
+2025-10-17T19:19:28:   constraint: undefined,
+2025-10-17T19:19:28:   file: 'parse_oper.c',
+2025-10-17T19:19:28:   line: '635',
+2025-10-17T19:19:28:   routine: 'op_error'
+2025-10-17T19:19:28: }
+2025-10-17T19:19:35: !!! ERROR DURANTE LA BÚSQUEDA GENERAL: error: operator does not exist: character varying = uuid
+2025-10-17T19:19:35:     at /home/ubuntu/Simulacro/backend/node_modules/pg-pool/index.js:45:11
+2025-10-17T19:19:35:     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2025-10-17T19:19:35:     at async getAllCategoriesQuestions (file:///home/ubuntu/Simulacro/backend/database/questions.js:195:38)
+2025-10-17T19:19:35:     at async getAllCategoriesQuestionsHandler (file:///home/ubuntu/Simulacro/backend/controllers/questionControllers.js:98:27) {
+2025-10-17T19:19:35:   length: 209,
+2025-10-17T19:19:35:   severity: 'ERROR',
+2025-10-17T19:19:35:   code: '42883',
+2025-10-17T19:19:35:   detail: undefined,
+2025-10-17T19:19:35:   hint: 'No operator matches the given name and argument types. You might need to add explicit type casts.',
+2025-10-17T19:19:35:   position: '48',
+2025-10-17T19:19:35:   internalPosition: undefined,
+2025-10-17T19:19:35:   internalQuery: undefined,
+2025-10-17T19:19:35:   where: undefined,
+2025-10-17T19:19:35:   schema: undefined,
+2025-10-17T19:19:35:   table: undefined,
+2025-10-17T19:19:35:   column: undefined,
+2025-10-17T19:19:35:   dataType: undefined,
+2025-10-17T19:19:35:   constraint: undefined,
+2025-10-17T19:19:35:   file: 'parse_oper.c',
+2025-10-17T19:19:35:   line: '635',
+2025-10-17T19:19:35:   routine: 'op_error'
+2025-10-17T19:19:35: }
+2025-10-17T19:19:35: !!! ERROR DURANTE LA BÚSQUEDA GENERAL: error: operator does not exist: character varying = uuid
+2025-10-17T19:19:35:     at /home/ubuntu/Simulacro/backend/node_modules/pg-pool/index.js:45:11
+2025-10-17T19:19:35:     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2025-10-17T19:19:35:     at async getAllCategoriesQuestions (file:///home/ubuntu/Simulacro/backend/database/questions.js:195:38)
+2025-10-17T19:19:35:     at async getAllCategoriesQuestionsHandler (file:///home/ubuntu/Simulacro/backend/controllers/questionControllers.js:98:27) {
+2025-10-17T19:19:35:   length: 209,
+2025-10-17T19:19:35:   severity: 'ERROR',
+2025-10-17T19:19:35:   code: '42883',
+2025-10-17T19:19:35:   detail: undefined,
+2025-10-17T19:19:35:   hint: 'No operator matches the given name and argument types. You might need to add explicit type casts.',
+2025-10-17T19:19:35:   position: '48',
+2025-10-17T19:19:35:   internalPosition: undefined,
+2025-10-17T19:19:35:   internalQuery: undefined,
+2025-10-17T19:19:35:   where: undefined,
+2025-10-17T19:19:35:   schema: undefined,
+2025-10-17T19:19:35:   table: undefined,
+2025-10-17T19:19:35:   column: undefined,
+2025-10-17T19:19:35:   dataType: undefined,
+2025-10-17T19:19:35:   constraint: undefined,
+2025-10-17T19:19:35:   file: 'parse_oper.c',
+2025-10-17T19:19:35:   line: '635',
+2025-10-17T19:19:35:   routine: 'op_error'
+2025-10-17T19:19:35: }
+2025-10-17T19:19:43: !!! ERROR DURANTE LA BÚSQUEDA GENERAL: error: operator does not exist: character varying = uuid
+2025-10-17T19:19:43:     at /home/ubuntu/Simulacro/backend/node_modules/pg-pool/index.js:45:11
+2025-10-17T19:19:43:     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2025-10-17T19:19:43:     at async getAllCategoriesQuestions (file:///home/ubuntu/Simulacro/backend/database/questions.js:195:38)
+2025-10-17T19:19:43:     at async getAllCategoriesQuestionsHandler (file:///home/ubuntu/Simulacro/backend/controllers/questionControllers.js:98:27) {
+2025-10-17T19:19:43:   length: 209,
+2025-10-17T19:19:43:   severity: 'ERROR',
+2025-10-17T19:19:43:   code: '42883',
+2025-10-17T19:19:43:   detail: undefined,
+2025-10-17T19:19:43:   hint: 'No operator matches the given name and argument types. You might need to add explicit type casts.',
+2025-10-17T19:19:43:   position: '48',
+2025-10-17T19:19:43:   internalPosition: undefined,
+2025-10-17T19:19:43:   internalQuery: undefined,
+2025-10-17T19:19:43:   where: undefined,
+2025-10-17T19:19:43:   schema: undefined,
+2025-10-17T19:19:43:   table: undefined,
+2025-10-17T19:19:43:   column: undefined,
+2025-10-17T19:19:43:   dataType: undefined,
+2025-10-17T19:19:43:   constraint: undefined,
+2025-10-17T19:19:43:   file: 'parse_oper.c',
+2025-10-17T19:19:43:   line: '635',
+2025-10-17T19:19:43:   routine: 'op_error'
+2025-10-17T19:19:43: }
+2025-10-17T19:19:43: !!! ERROR DURANTE LA BÚSQUEDA GENERAL: error: operator does not exist: character varying = uuid
+2025-10-17T19:19:43:     at /home/ubuntu/Simulacro/backend/node_modules/pg-pool/index.js:45:11
+2025-10-17T19:19:43:     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2025-10-17T19:19:43:     at async getAllCategoriesQuestions (file:///home/ubuntu/Simulacro/backend/database/questions.js:195:38)
+2025-10-17T19:19:43:     at async getAllCategoriesQuestionsHandler (file:///home/ubuntu/Simulacro/backend/controllers/questionControllers.js:98:27) {
+2025-10-17T19:19:43:   length: 209,
+2025-10-17T19:19:43:   severity: 'ERROR',
+2025-10-17T19:19:43:   code: '42883',
+2025-10-17T19:19:43:   detail: undefined,
+2025-10-17T19:19:43:   hint: 'No operator matches the given name and argument types. You might need to add explicit type casts.',
+2025-10-17T19:19:43:   position: '48',
+2025-10-17T19:19:43:   internalPosition: undefined,
+2025-10-17T19:19:43:   internalQuery: undefined,
+2025-10-17T19:19:43:   where: undefined,
+2025-10-17T19:19:43:   schema: undefined,
+2025-10-17T19:19:43:   table: undefined,
+2025-10-17T19:19:43:   column: undefined,
+2025-10-17T19:19:43:   dataType: undefined,
+2025-10-17T19:19:43:   constraint: undefined,
+2025-10-17T19:19:43:   file: 'parse_oper.c',
+2025-10-17T19:19:43:   line: '635',
+2025-10-17T19:19:43:   routine: 'op_error'
+2025-10-17T19:19:43: }
+2025-10-17T19:20:01: !!! ERROR DURANTE LA BÚSQUEDA GENERAL: error: operator does not exist: character varying = uuid
+2025-10-17T19:20:01:     at /home/ubuntu/Simulacro/backend/node_modules/pg-pool/index.js:45:11
+2025-10-17T19:20:01:     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2025-10-17T19:20:01:     at async getAllCategoriesQuestions (file:///home/ubuntu/Simulacro/backend/database/questions.js:195:38)
+2025-10-17T19:20:01:     at async getAllCategoriesQuestionsHandler (file:///home/ubuntu/Simulacro/backend/controllers/questionControllers.js:98:27) {
+2025-10-17T19:20:01:   length: 209,
+2025-10-17T19:20:01:   severity: 'ERROR',
+2025-10-17T19:20:01:   code: '42883',
+2025-10-17T19:20:01:   detail: undefined,
+2025-10-17T19:20:01:   hint: 'No operator matches the given name and argument types. You might need to add explicit type casts.',
+2025-10-17T19:20:01:   position: '48',
+2025-10-17T19:20:01:   internalPosition: undefined,
+2025-10-17T19:20:01:   internalQuery: undefined,
+2025-10-17T19:20:01:   where: undefined,
+2025-10-17T19:20:01:   schema: undefined,
+2025-10-17T19:20:01:   table: undefined,
+2025-10-17T19:20:01:   column: undefined,
+2025-10-17T19:20:01:   dataType: undefined,
+2025-10-17T19:20:01:   constraint: undefined,
+2025-10-17T19:20:01:   file: 'parse_oper.c',
+2025-10-17T19:20:01:   line: '635',
+2025-10-17T19:20:01:   routine: 'op_error'
+2025-10-17T19:20:01: }
+2025-10-17T19:20:02: !!! ERROR DURANTE LA BÚSQUEDA GENERAL: error: operator does not exist: character varying = uuid
+2025-10-17T19:20:02:     at /home/ubuntu/Simulacro/backend/node_modules/pg-pool/index.js:45:11
+2025-10-17T19:20:02:     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2025-10-17T19:20:02:     at async getAllCategoriesQuestions (file:///home/ubuntu/Simulacro/backend/database/questions.js:195:38)
+2025-10-17T19:20:02:     at async getAllCategoriesQuestionsHandler (file:///home/ubuntu/Simulacro/backend/controllers/questionControllers.js:98:27) {
+2025-10-17T19:20:02:   length: 209,
+2025-10-17T19:20:02:   severity: 'ERROR',
+2025-10-17T19:20:02:   code: '42883',
+2025-10-17T19:20:02:   detail: undefined,
+2025-10-17T19:20:02:   hint: 'No operator matches the given name and argument types. You might need to add explicit type casts.',
+2025-10-17T19:20:02:   position: '48',
+2025-10-17T19:20:02:   internalPosition: undefined,
+2025-10-17T19:20:02:   internalQuery: undefined,
+2025-10-17T19:20:02:   where: undefined,
+2025-10-17T19:20:02:   schema: undefined,
+2025-10-17T19:20:02:   table: undefined,
+2025-10-17T19:20:02:   column: undefined,
+2025-10-17T19:20:02:   dataType: undefined,
+2025-10-17T19:20:02:   constraint: undefined,
+2025-10-17T19:20:02:   file: 'parse_oper.c',
+2025-10-17T19:20:02:   line: '635',
+2025-10-17T19:20:02:   routine: 'op_error'
+2025-10-17T19:20:02: }
+2025-10-17T19:21:42: !!! ERROR DURANTE LA BÚSQUEDA GENERAL: error: operator does not exist: character varying = uuid
+2025-10-17T19:21:42:     at /home/ubuntu/Simulacro/backend/node_modules/pg-pool/index.js:45:11
+2025-10-17T19:21:42:     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2025-10-17T19:21:42:     at async getAllCategoriesQuestions (file:///home/ubuntu/Simulacro/backend/database/questions.js:195:38)
+2025-10-17T19:21:42:     at async getAllCategoriesQuestionsHandler (file:///home/ubuntu/Simulacro/backend/controllers/questionControllers.js:98:27) {
+2025-10-17T19:21:42:   length: 209,
+2025-10-17T19:21:42:   severity: 'ERROR',
+2025-10-17T19:21:42:   code: '42883',
+2025-10-17T19:21:42:   detail: undefined,
+2025-10-17T19:21:42:   hint: 'No operator matches the given name and argument types. You might need to add explicit type casts.',
+2025-10-17T19:21:42:   position: '48',
+2025-10-17T19:21:42:   internalPosition: undefined,
+2025-10-17T19:21:42:   internalQuery: undefined,
+2025-10-17T19:21:42:   where: undefined,
+2025-10-17T19:21:42:   schema: undefined,
+2025-10-17T19:21:42:   table: undefined,
+2025-10-17T19:21:42:   column: undefined,
+2025-10-17T19:21:42:   dataType: undefined,
+2025-10-17T19:21:42:   constraint: undefined,
+2025-10-17T19:21:42:   file: 'parse_oper.c',
+2025-10-17T19:21:42:   line: '635',
+2025-10-17T19:21:42:   routine: 'op_error'
+2025-10-17T19:21:42: }
+2025-10-17T19:21:42: !!! ERROR DURANTE LA BÚSQUEDA GENERAL: error: operator does not exist: character varying = uuid
+2025-10-17T19:21:42:     at /home/ubuntu/Simulacro/backend/node_modules/pg-pool/index.js:45:11
+2025-10-17T19:21:42:     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2025-10-17T19:21:42:     at async getAllCategoriesQuestions (file:///home/ubuntu/Simulacro/backend/database/questions.js:195:38)
+2025-10-17T19:21:42:     at async getAllCategoriesQuestionsHandler (file:///home/ubuntu/Simulacro/backend/controllers/questionControllers.js:98:27) {
+2025-10-17T19:21:42:   length: 209,
+2025-10-17T19:21:42:   severity: 'ERROR',
+2025-10-17T19:21:42:   code: '42883',
+2025-10-17T19:21:42:   detail: undefined,
+2025-10-17T19:21:42:   hint: 'No operator matches the given name and argument types. You might need to add explicit type casts.',
+2025-10-17T19:21:42:   position: '48',
+2025-10-17T19:21:42:   internalPosition: undefined,
+2025-10-17T19:21:42:   internalQuery: undefined,
+2025-10-17T19:21:42:   where: undefined,
+2025-10-17T19:21:42:   schema: undefined,
+2025-10-17T19:21:42:   table: undefined,
+2025-10-17T19:21:42:   column: undefined,
+2025-10-17T19:21:42:   dataType: undefined,
+2025-10-17T19:21:42:   constraint: undefined,
+2025-10-17T19:21:42:   file: 'parse_oper.c',
+2025-10-17T19:21:42:   line: '635',
+2025-10-17T19:21:42:   routine: 'op_error'
+2025-10-17T19:21:42: }
+2025-10-17T19:21:49: !!! ERROR DURANTE LA BÚSQUEDA GENERAL: error: operator does not exist: character varying = uuid
+2025-10-17T19:21:49:     at /home/ubuntu/Simulacro/backend/node_modules/pg-pool/index.js:45:11
+2025-10-17T19:21:49:     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2025-10-17T19:21:49:     at async getAllCategoriesQuestions (file:///home/ubuntu/Simulacro/backend/database/questions.js:195:38)
+2025-10-17T19:21:49:     at async getAllCategoriesQuestionsHandler (file:///home/ubuntu/Simulacro/backend/controllers/questionControllers.js:98:27) {
+2025-10-17T19:21:49:   length: 209,
+2025-10-17T19:21:49:   severity: 'ERROR',
+2025-10-17T19:21:49:   code: '42883',
+2025-10-17T19:21:49:   detail: undefined,
+2025-10-17T19:21:49:   hint: 'No operator matches the given name and argument types. You might need to add explicit type casts.',
+2025-10-17T19:21:49:   position: '48',
+2025-10-17T19:21:49:   internalPosition: undefined,
+2025-10-17T19:21:49:   internalQuery: undefined,
+2025-10-17T19:21:49:   where: undefined,
+2025-10-17T19:21:49:   schema: undefined,
+2025-10-17T19:21:49:   table: undefined,
+2025-10-17T19:21:49:   column: undefined,
+2025-10-17T19:21:49:   dataType: undefined,
+2025-10-17T19:21:49:   constraint: undefined,
+2025-10-17T19:21:49:   file: 'parse_oper.c',
+2025-10-17T19:21:49:   line: '635',
+2025-10-17T19:21:49:   routine: 'op_error'
+2025-10-17T19:21:49: }
+2025-10-17T19:21:49: !!! ERROR DURANTE LA BÚSQUEDA GENERAL: error: operator does not exist: character varying = uuid
+2025-10-17T19:21:49:     at /home/ubuntu/Simulacro/backend/node_modules/pg-pool/index.js:45:11
+2025-10-17T19:21:49:     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2025-10-17T19:21:49:     at async getAllCategoriesQuestions (file:///home/ubuntu/Simulacro/backend/database/questions.js:195:38)
+2025-10-17T19:21:49:     at async getAllCategoriesQuestionsHandler (file:///home/ubuntu/Simulacro/backend/controllers/questionControllers.js:98:27) {
+2025-10-17T19:21:49:   length: 209,
+2025-10-17T19:21:49:   severity: 'ERROR',
+2025-10-17T19:21:49:   code: '42883',
+2025-10-17T19:21:49:   detail: undefined,
+2025-10-17T19:21:49:   hint: 'No operator matches the given name and argument types. You might need to add explicit type casts.',
+2025-10-17T19:21:49:   position: '48',
+2025-10-17T19:21:49:   internalPosition: undefined,
+2025-10-17T19:21:49:   internalQuery: undefined,
+2025-10-17T19:21:49:   where: undefined,
+2025-10-17T19:21:49:   schema: undefined,
+2025-10-17T19:21:49:   table: undefined,
+2025-10-17T19:21:49:   column: undefined,
+2025-10-17T19:21:49:   dataType: undefined,
+2025-10-17T19:21:49:   constraint: undefined,
+2025-10-17T19:21:49:   file: 'parse_oper.c',
+2025-10-17T19:21:49:   line: '635',
+2025-10-17T19:21:49:   routine: 'op_error'
+2025-10-17T19:21:49: }
+2025-10-17T19:21:55: !!! ERROR DURANTE LA BÚSQUEDA GENERAL: error: operator does not exist: character varying = uuid
+2025-10-17T19:21:55:     at /home/ubuntu/Simulacro/backend/node_modules/pg-pool/index.js:45:11
+2025-10-17T19:21:55:     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2025-10-17T19:21:55:     at async getAllCategoriesQuestions (file:///home/ubuntu/Simulacro/backend/database/questions.js:195:38)
+2025-10-17T19:21:55:     at async getAllCategoriesQuestionsHandler (file:///home/ubuntu/Simulacro/backend/controllers/questionControllers.js:98:27) {
+2025-10-17T19:21:55:   length: 209,
+2025-10-17T19:21:55:   severity: 'ERROR',
+2025-10-17T19:21:55:   code: '42883',
+2025-10-17T19:21:55:   detail: undefined,
+2025-10-17T19:21:55:   hint: 'No operator matches the given name and argument types. You might need to add explicit type casts.',
+2025-10-17T19:21:55:   position: '48',
+2025-10-17T19:21:55:   internalPosition: undefined,
+2025-10-17T19:21:55:   internalQuery: undefined,
+2025-10-17T19:21:55:   where: undefined,
+2025-10-17T19:21:55:   schema: undefined,
+2025-10-17T19:21:55:   table: undefined,
+2025-10-17T19:21:55:   column: undefined,
+2025-10-17T19:21:55:   dataType: undefined,
+2025-10-17T19:21:55:   constraint: undefined,
+2025-10-17T19:21:55:   file: 'parse_oper.c',
+2025-10-17T19:21:55:   line: '635',
+2025-10-17T19:21:55:   routine: 'op_error'
+2025-10-17T19:21:55: }
+2025-10-17T19:21:55: !!! ERROR DURANTE LA BÚSQUEDA GENERAL: error: operator does not exist: character varying = uuid
+2025-10-17T19:21:55:     at /home/ubuntu/Simulacro/backend/node_modules/pg-pool/index.js:45:11
+2025-10-17T19:21:55:     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2025-10-17T19:21:55:     at async getAllCategoriesQuestions (file:///home/ubuntu/Simulacro/backend/database/questions.js:195:38)
+2025-10-17T19:21:55:     at async getAllCategoriesQuestionsHandler (file:///home/ubuntu/Simulacro/backend/controllers/questionControllers.js:98:27) {
+2025-10-17T19:21:55:   length: 209,
+2025-10-17T19:21:55:   severity: 'ERROR',
+2025-10-17T19:21:55:   code: '42883',
+2025-10-17T19:21:55:   detail: undefined,
+2025-10-17T19:21:55:   hint: 'No operator matches the given name and argument types. You might need to add explicit type casts.',
+2025-10-17T19:21:55:   position: '48',
+2025-10-17T19:21:55:   internalPosition: undefined,
+2025-10-17T19:21:55:   internalQuery: undefined,
+2025-10-17T19:21:55:   where: undefined,
+2025-10-17T19:21:55:   schema: undefined,
+2025-10-17T19:21:55:   table: undefined,
+2025-10-17T19:21:55:   column: undefined,
+2025-10-17T19:21:55:   dataType: undefined,
+2025-10-17T19:21:55:   constraint: undefined,
+2025-10-17T19:21:55:   file: 'parse_oper.c',
+2025-10-17T19:21:55:   line: '635',
+2025-10-17T19:21:55:   routine: 'op_error'
+2025-10-17T19:21:55: }
+2025-10-17T19:22:00: !!! ERROR DURANTE LA BÚSQUEDA GENERAL: error: operator does not exist: character varying = uuid
+2025-10-17T19:22:00:     at /home/ubuntu/Simulacro/backend/node_modules/pg-pool/index.js:45:11
+2025-10-17T19:22:00:     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2025-10-17T19:22:00:     at async getAllCategoriesQuestions (file:///home/ubuntu/Simulacro/backend/database/questions.js:195:38)
+2025-10-17T19:22:00:     at async getAllCategoriesQuestionsHandler (file:///home/ubuntu/Simulacro/backend/controllers/questionControllers.js:98:27) {
+2025-10-17T19:22:00:   length: 209,
+2025-10-17T19:22:00:   severity: 'ERROR',
+2025-10-17T19:22:00:   code: '42883',
+2025-10-17T19:22:00:   detail: undefined,
+2025-10-17T19:22:00:   hint: 'No operator matches the given name and argument types. You might need to add explicit type casts.',
+2025-10-17T19:22:00:   position: '48',
+2025-10-17T19:22:00:   internalPosition: undefined,
+2025-10-17T19:22:00:   internalQuery: undefined,
+2025-10-17T19:22:00:   where: undefined,
+2025-10-17T19:22:00:   schema: undefined,
+2025-10-17T19:22:00:   table: undefined,
+2025-10-17T19:22:00:   column: undefined,
+2025-10-17T19:22:00:   dataType: undefined,
+2025-10-17T19:22:00:   constraint: undefined,
+2025-10-17T19:22:00:   file: 'parse_oper.c',
+2025-10-17T19:22:00:   line: '635',
+2025-10-17T19:22:00:   routine: 'op_error'
+2025-10-17T19:22:00: }
+2025-10-17T19:22:00: !!! ERROR DURANTE LA BÚSQUEDA GENERAL: error: operator does not exist: character varying = uuid
+2025-10-17T19:22:00:     at /home/ubuntu/Simulacro/backend/node_modules/pg-pool/index.js:45:11
+2025-10-17T19:22:00:     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2025-10-17T19:22:00:     at async getAllCategoriesQuestions (file:///home/ubuntu/Simulacro/backend/database/questions.js:195:38)
+2025-10-17T19:22:00:     at async getAllCategoriesQuestionsHandler (file:///home/ubuntu/Simulacro/backend/controllers/questionControllers.js:98:27) {
+2025-10-17T19:22:00:   length: 209,
+2025-10-17T19:22:00:   severity: 'ERROR',
+2025-10-17T19:22:00:   code: '42883',
+2025-10-17T19:22:00:   detail: undefined,
+2025-10-17T19:22:00:   hint: 'No operator matches the given name and argument types. You might need to add explicit type casts.',
+2025-10-17T19:22:00:   position: '48',
+2025-10-17T19:22:00:   internalPosition: undefined,
+2025-10-17T19:22:00:   internalQuery: undefined,
+2025-10-17T19:22:00:   where: undefined,
+2025-10-17T19:22:00:   schema: undefined,
+2025-10-17T19:22:00:   table: undefined,
+2025-10-17T19:22:00:   column: undefined,
+2025-10-17T19:22:00:   dataType: undefined,
+2025-10-17T19:22:00:   constraint: undefined,
+2025-10-17T19:22:00:   file: 'parse_oper.c',
+2025-10-17T19:22:00:   line: '635',
+2025-10-17T19:22:00:   routine: 'op_error'
+2025-10-17T19:22:00: }
+2025-10-17T19:22:11: !!! ERROR DURANTE LA BÚSQUEDA GENERAL: error: operator does not exist: character varying = uuid
+2025-10-17T19:22:11:     at /home/ubuntu/Simulacro/backend/node_modules/pg-pool/index.js:45:11
+2025-10-17T19:22:11:     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2025-10-17T19:22:11:     at async getAllCategoriesQuestions (file:///home/ubuntu/Simulacro/backend/database/questions.js:195:38)
+2025-10-17T19:22:11:     at async getAllCategoriesQuestionsHandler (file:///home/ubuntu/Simulacro/backend/controllers/questionControllers.js:98:27) {
+2025-10-17T19:22:11:   length: 209,
+2025-10-17T19:22:11:   severity: 'ERROR',
+2025-10-17T19:22:11:   code: '42883',
+2025-10-17T19:22:11:   detail: undefined,
+2025-10-17T19:22:11:   hint: 'No operator matches the given name and argument types. You might need to add explicit type casts.',
+2025-10-17T19:22:11:   position: '48',
+2025-10-17T19:22:11:   internalPosition: undefined,
+2025-10-17T19:22:11:   internalQuery: undefined,
+2025-10-17T19:22:11:   where: undefined,
+2025-10-17T19:22:11:   schema: undefined,
+2025-10-17T19:22:11:   table: undefined,
+2025-10-17T19:22:11:   column: undefined,
+2025-10-17T19:22:11:   dataType: undefined,
+2025-10-17T19:22:11:   constraint: undefined,
+2025-10-17T19:22:11:   file: 'parse_oper.c',
+2025-10-17T19:22:11:   line: '635',
+2025-10-17T19:22:11:   routine: 'op_error'
+2025-10-17T19:22:11: }
+2025-10-17T19:22:56: !!! ERROR DURANTE LA BÚSQUEDA GENERAL: error: operator does not exist: character varying = uuid
+2025-10-17T19:22:56:     at /home/ubuntu/Simulacro/backend/node_modules/pg-pool/index.js:45:11
+2025-10-17T19:22:56:     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2025-10-17T19:22:56:     at async getAllCategoriesQuestions (file:///home/ubuntu/Simulacro/backend/database/questions.js:195:38)
+2025-10-17T19:22:56:     at async getAllCategoriesQuestionsHandler (file:///home/ubuntu/Simulacro/backend/controllers/questionControllers.js:98:27) {
+2025-10-17T19:22:56:   length: 209,
+2025-10-17T19:22:56:   severity: 'ERROR',
+2025-10-17T19:22:56:   code: '42883',
+2025-10-17T19:22:56:   detail: undefined,
+2025-10-17T19:22:56:   hint: 'No operator matches the given name and argument types. You might need to add explicit type casts.',
+2025-10-17T19:22:56:   position: '48',
+2025-10-17T19:22:56:   internalPosition: undefined,
+2025-10-17T19:22:56:   internalQuery: undefined,
+2025-10-17T19:22:56:   where: undefined,
+2025-10-17T19:22:56:   schema: undefined,
+2025-10-17T19:22:56:   table: undefined,
+2025-10-17T19:22:56:   column: undefined,
+2025-10-17T19:22:56:   dataType: undefined,
+2025-10-17T19:22:56:   constraint: undefined,
+2025-10-17T19:22:56:   file: 'parse_oper.c',
+2025-10-17T19:22:56:   line: '635',
+2025-10-17T19:22:56:   routine: 'op_error'
+2025-10-17T19:22:56: }
+2025-10-17T19:22:56: !!! ERROR DURANTE LA BÚSQUEDA GENERAL: error: operator does not exist: character varying = uuid
+2025-10-17T19:22:56:     at /home/ubuntu/Simulacro/backend/node_modules/pg-pool/index.js:45:11
+2025-10-17T19:22:56:     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2025-10-17T19:22:56:     at async getAllCategoriesQuestions (file:///home/ubuntu/Simulacro/backend/database/questions.js:195:38)
+2025-10-17T19:22:56:     at async getAllCategoriesQuestionsHandler (file:///home/ubuntu/Simulacro/backend/controllers/questionControllers.js:98:27) {
+2025-10-17T19:22:56:   length: 209,
+2025-10-17T19:22:56:   severity: 'ERROR',
+2025-10-17T19:22:56:   code: '42883',
+2025-10-17T19:22:56:   detail: undefined,
+2025-10-17T19:22:56:   hint: 'No operator matches the given name and argument types. You might need to add explicit type casts.',
+2025-10-17T19:22:56:   position: '48',
+2025-10-17T19:22:56:   internalPosition: undefined,
+2025-10-17T19:22:56:   internalQuery: undefined,
+2025-10-17T19:22:56:   where: undefined,
+2025-10-17T19:22:56:   schema: undefined,
+2025-10-17T19:22:56:   table: undefined,
+2025-10-17T19:22:56:   column: undefined,
+2025-10-17T19:22:56:   dataType: undefined,
+2025-10-17T19:22:56:   constraint: undefined,
+2025-10-17T19:22:56:   file: 'parse_oper.c',
+2025-10-17T19:22:56:   line: '635',
+2025-10-17T19:22:56:   routine: 'op_error'
+2025-10-17T19:22:56: }
+2025-10-17T19:24:44: !!! ERROR DURANTE LA BÚSQUEDA GENERAL: error: operator does not exist: character varying = uuid
+2025-10-17T19:24:44:     at /home/ubuntu/Simulacro/backend/node_modules/pg-pool/index.js:45:11
+2025-10-17T19:24:44:     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2025-10-17T19:24:44:     at async getAllCategoriesQuestions (file:///home/ubuntu/Simulacro/backend/database/questions.js:195:38)
+2025-10-17T19:24:44:     at async getAllCategoriesQuestionsHandler (file:///home/ubuntu/Simulacro/backend/controllers/questionControllers.js:98:27) {
+2025-10-17T19:24:44:   length: 209,
+2025-10-17T19:24:44:   severity: 'ERROR',
+2025-10-17T19:24:44:   code: '42883',
+2025-10-17T19:24:44:   detail: undefined,
+2025-10-17T19:24:44:   hint: 'No operator matches the given name and argument types. You might need to add explicit type casts.',
+2025-10-17T19:24:44:   position: '48',
+2025-10-17T19:24:44:   internalPosition: undefined,
+2025-10-17T19:24:44:   internalQuery: undefined,
+2025-10-17T19:24:44:   where: undefined,
+2025-10-17T19:24:44:   schema: undefined,
+2025-10-17T19:24:44:   table: undefined,
+2025-10-17T19:24:44:   column: undefined,
+2025-10-17T19:24:44:   dataType: undefined,
+2025-10-17T19:24:44:   constraint: undefined,
+2025-10-17T19:24:44:   file: 'parse_oper.c',
+2025-10-17T19:24:44:   line: '635',
+2025-10-17T19:24:44:   routine: 'op_error'
+2025-10-17T19:24:44: }
+2025-10-17T19:24:46: !!! ERROR DURANTE LA BÚSQUEDA GENERAL: error: operator does not exist: character varying = uuid
+2025-10-17T19:24:46:     at /home/ubuntu/Simulacro/backend/node_modules/pg-pool/index.js:45:11
+2025-10-17T19:24:46:     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2025-10-17T19:24:46:     at async getAllCategoriesQuestions (file:///home/ubuntu/Simulacro/backend/database/questions.js:195:38)
+2025-10-17T19:24:46:     at async getAllCategoriesQuestionsHandler (file:///home/ubuntu/Simulacro/backend/controllers/questionControllers.js:98:27) {
+2025-10-17T19:24:46:   length: 209,
+2025-10-17T19:24:46:   severity: 'ERROR',
+2025-10-17T19:24:46:   code: '42883',
+2025-10-17T19:24:46:   detail: undefined,
+2025-10-17T19:24:46:   hint: 'No operator matches the given name and argument types. You might need to add explicit type casts.',
+2025-10-17T19:24:46:   position: '48',
+2025-10-17T19:24:46:   internalPosition: undefined,
+2025-10-17T19:24:46:   internalQuery: undefined,
+2025-10-17T19:24:46:   where: undefined,
+2025-10-17T19:24:46:   schema: undefined,
+2025-10-17T19:24:46:   table: undefined,
+2025-10-17T19:24:46:   column: undefined,
+2025-10-17T19:24:46:   dataType: undefined,
+2025-10-17T19:24:46:   constraint: undefined,
+2025-10-17T19:24:46:   file: 'parse_oper.c',
+2025-10-17T19:24:46:   line: '635',
+2025-10-17T19:24:46:   routine: 'op_error'
+2025-10-17T19:24:46: }
+2025-10-17T19:24:46: !!! ERROR DURANTE LA BÚSQUEDA GENERAL: error: operator does not exist: character varying = uuid
+2025-10-17T19:24:46:     at /home/ubuntu/Simulacro/backend/node_modules/pg-pool/index.js:45:11
+2025-10-17T19:24:46:     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2025-10-17T19:24:46:     at async getAllCategoriesQuestions (file:///home/ubuntu/Simulacro/backend/database/questions.js:195:38)
+2025-10-17T19:24:46:     at async getAllCategoriesQuestionsHandler (file:///home/ubuntu/Simulacro/backend/controllers/questionControllers.js:98:27) {
+2025-10-17T19:24:46:   length: 209,
+2025-10-17T19:24:46:   severity: 'ERROR',
+2025-10-17T19:24:46:   code: '42883',
+2025-10-17T19:24:46:   detail: undefined,
+2025-10-17T19:24:46:   hint: 'No operator matches the given name and argument types. You might need to add explicit type casts.',
+2025-10-17T19:24:46:   position: '48',
+2025-10-17T19:24:46:   internalPosition: undefined,
+2025-10-17T19:24:46:   internalQuery: undefined,
+2025-10-17T19:24:46:   where: undefined,
+2025-10-17T19:24:46:   schema: undefined,
+2025-10-17T19:24:46:   table: undefined,
+2025-10-17T19:24:46:   column: undefined,
+2025-10-17T19:24:46:   dataType: undefined,
+2025-10-17T19:24:46:   constraint: undefined,
+2025-10-17T19:24:46:   file: 'parse_oper.c',
+2025-10-17T19:24:46:   line: '635',
+2025-10-17T19:24:46:   routine: 'op_error'
+2025-10-17T19:24:46: }
+2025-10-17T19:24:46: !!! ERROR DURANTE LA BÚSQUEDA GENERAL: error: operator does not exist: character varying = uuid
+2025-10-17T19:24:46:     at /home/ubuntu/Simulacro/backend/node_modules/pg-pool/index.js:45:11
+2025-10-17T19:24:46:     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2025-10-17T19:24:46:     at async getAllCategoriesQuestions (file:///home/ubuntu/Simulacro/backend/database/questions.js:195:38)
+2025-10-17T19:24:46:     at async getAllCategoriesQuestionsHandler (file:///home/ubuntu/Simulacro/backend/controllers/questionControllers.js:98:27) {
+2025-10-17T19:24:46:   length: 209,
+2025-10-17T19:24:46:   severity: 'ERROR',
+2025-10-17T19:24:46:   code: '42883',
+2025-10-17T19:24:46:   detail: undefined,
+2025-10-17T19:24:46:   hint: 'No operator matches the given name and argument types. You might need to add explicit type casts.',
+2025-10-17T19:24:46:   position: '48',
+2025-10-17T19:24:46:   internalPosition: undefined,
+2025-10-17T19:24:46:   internalQuery: undefined,
+2025-10-17T19:24:46:   where: undefined,
+2025-10-17T19:24:46:   schema: undefined,
+2025-10-17T19:24:46:   table: undefined,
+2025-10-17T19:24:46:   column: undefined,
+2025-10-17T19:24:46:   dataType: undefined,
+2025-10-17T19:24:46:   constraint: undefined,
+2025-10-17T19:24:46:   file: 'parse_oper.c',
+2025-10-17T19:24:46:   line: '635',
+2025-10-17T19:24:46:   routine: 'op_error'
+2025-10-17T19:24:46: }
+2025-10-17T19:24:46: !!! ERROR DURANTE LA BÚSQUEDA GENERAL: error: operator does not exist: character varying = uuid
+2025-10-17T19:24:46:     at /home/ubuntu/Simulacro/backend/node_modules/pg-pool/index.js:45:11
+2025-10-17T19:24:46:     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2025-10-17T19:24:46:     at async getAllCategoriesQuestions (file:///home/ubuntu/Simulacro/backend/database/questions.js:195:38)
+2025-10-17T19:24:46:     at async getAllCategoriesQuestionsHandler (file:///home/ubuntu/Simulacro/backend/controllers/questionControllers.js:98:27) {
+2025-10-17T19:24:46:   length: 209,
+2025-10-17T19:24:46:   severity: 'ERROR',
+2025-10-17T19:24:46:   code: '42883',
+2025-10-17T19:24:46:   detail: undefined,
+2025-10-17T19:24:46:   hint: 'No operator matches the given name and argument types. You might need to add explicit type casts.',
+2025-10-17T19:24:46:   position: '48',
+2025-10-17T19:24:46:   internalPosition: undefined,
+2025-10-17T19:24:46:   internalQuery: undefined,
+2025-10-17T19:24:46:   where: undefined,
+2025-10-17T19:24:46:   schema: undefined,
+2025-10-17T19:24:46:   table: undefined,
+2025-10-17T19:24:46:   column: undefined,
+2025-10-17T19:24:46:   dataType: undefined,
+2025-10-17T19:24:46:   constraint: undefined,
+2025-10-17T19:24:46:   file: 'parse_oper.c',
+2025-10-17T19:24:46:   line: '635',
+2025-10-17T19:24:46:   routine: 'op_error'
+2025-10-17T19:24:46: }
+2025-10-17T19:24:47: !!! ERROR DURANTE LA BÚSQUEDA GENERAL: error: operator does not exist: character varying = uuid
+2025-10-17T19:24:47:     at /home/ubuntu/Simulacro/backend/node_modules/pg-pool/index.js:45:11
+2025-10-17T19:24:47:     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2025-10-17T19:24:47:     at async getAllCategoriesQuestions (file:///home/ubuntu/Simulacro/backend/database/questions.js:195:38)
+2025-10-17T19:24:47:     at async getAllCategoriesQuestionsHandler (file:///home/ubuntu/Simulacro/backend/controllers/questionControllers.js:98:27) {
+2025-10-17T19:24:47:   length: 209,
+2025-10-17T19:24:47:   severity: 'ERROR',
+2025-10-17T19:24:47:   code: '42883',
+2025-10-17T19:24:47:   detail: undefined,
+2025-10-17T19:24:47:   hint: 'No operator matches the given name and argument types. You might need to add explicit type casts.',
+2025-10-17T19:24:47:   position: '48',
+2025-10-17T19:24:47:   internalPosition: undefined,
+2025-10-17T19:24:47:   internalQuery: undefined,
+2025-10-17T19:24:47:   where: undefined,
+2025-10-17T19:24:47:   schema: undefined,
+2025-10-17T19:24:47:   table: undefined,
+2025-10-17T19:24:47:   column: undefined,
+2025-10-17T19:24:47:   dataType: undefined,
+2025-10-17T19:24:47:   constraint: undefined,
+2025-10-17T19:24:47:   file: 'parse_oper.c',
+2025-10-17T19:24:47:   line: '635',
+2025-10-17T19:24:47:   routine: 'op_error'
+2025-10-17T19:24:47: }
+2025-10-17T19:24:47: !!! ERROR DURANTE LA BÚSQUEDA GENERAL: error: operator does not exist: character varying = uuid
+2025-10-17T19:24:47:     at /home/ubuntu/Simulacro/backend/node_modules/pg-pool/index.js:45:11
+2025-10-17T19:24:47:     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2025-10-17T19:24:47:     at async getAllCategoriesQuestions (file:///home/ubuntu/Simulacro/backend/database/questions.js:195:38)
+2025-10-17T19:24:47:     at async getAllCategoriesQuestionsHandler (file:///home/ubuntu/Simulacro/backend/controllers/questionControllers.js:98:27) {
+2025-10-17T19:24:47:   length: 209,
+2025-10-17T19:24:47:   severity: 'ERROR',
+2025-10-17T19:24:47:   code: '42883',
+2025-10-17T19:24:47:   detail: undefined,
+2025-10-17T19:24:47:   hint: 'No operator matches the given name and argument types. You might need to add explicit type casts.',
+2025-10-17T19:24:47:   position: '48',
+2025-10-17T19:24:47:   internalPosition: undefined,
+2025-10-17T19:24:47:   internalQuery: undefined,
+2025-10-17T19:24:47:   where: undefined,
+2025-10-17T19:24:47:   schema: undefined,
+2025-10-17T19:24:47:   table: undefined,
+2025-10-17T19:24:47:   column: undefined,
+2025-10-17T19:24:47:   dataType: undefined,
+2025-10-17T19:24:47:   constraint: undefined,
+2025-10-17T19:24:47:   file: 'parse_oper.c',
+2025-10-17T19:24:47:   line: '635',
+2025-10-17T19:24:47:   routine: 'op_error'
+2025-10-17T19:24:47: }
+2025-10-17T19:24:47: !!! ERROR DURANTE LA BÚSQUEDA GENERAL: error: operator does not exist: character varying = uuid
+2025-10-17T19:24:47:     at /home/ubuntu/Simulacro/backend/node_modules/pg-pool/index.js:45:11
+2025-10-17T19:24:47:     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2025-10-17T19:24:47:     at async getAllCategoriesQuestions (file:///home/ubuntu/Simulacro/backend/database/questions.js:195:38)
+2025-10-17T19:24:47:     at async getAllCategoriesQuestionsHandler (file:///home/ubuntu/Simulacro/backend/controllers/questionControllers.js:98:27) {
+2025-10-17T19:24:47:   length: 209,
+2025-10-17T19:24:47:   severity: 'ERROR',
+2025-10-17T19:24:47:   code: '42883',
+2025-10-17T19:24:47:   detail: undefined,
+2025-10-17T19:24:47:   hint: 'No operator matches the given name and argument types. You might need to add explicit type casts.',
+2025-10-17T19:24:47:   position: '48',
+2025-10-17T19:24:47:   internalPosition: undefined,
+2025-10-17T19:24:47:   internalQuery: undefined,
+2025-10-17T19:24:47:   where: undefined,
+2025-10-17T19:24:47:   schema: undefined,
+2025-10-17T19:24:47:   table: undefined,
+2025-10-17T19:24:47:   column: undefined,
+2025-10-17T19:24:47:   dataType: undefined,
+2025-10-17T19:24:47:   constraint: undefined,
+2025-10-17T19:24:47:   file: 'parse_oper.c',
+2025-10-17T19:24:47:   line: '635',
+2025-10-17T19:24:47:   routine: 'op_error'
+2025-10-17T19:24:47: }
+2025-10-17T19:30:16: ❌ Error en la llamada a Gemini o al parsear la respuesta: Unexpected token '`', "```json
+2025-10-17T19:30:16: {
+2025-10-17T19:30:16: "... is not valid JSON
+2025-10-17T19:34:59: ❌ Error en la llamada a Gemini o al parsear la respuesta: Unexpected token '`', "```json
+2025-10-17T19:34:59: {
+2025-10-17T19:34:59: "... is not valid JSON
+2025-10-17T19:37:31: ❌ Error en la llamada a Gemini o al parsear la respuesta: Unexpected token '`', "```json
+2025-10-17T19:37:31: {
+2025-10-17T19:37:31: "... is not valid JSON
+2025-10-17T19:44:09: ❌ Error en la llamada a Gemini o al parsear la respuesta: Unexpected token '`', "```json
+2025-10-17T19:44:09: {
+2025-10-17T19:44:09: "... is not valid JSON
